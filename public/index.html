@@ -207,7 +207,10 @@ label{font-size:13px;color:#aeb9cc}
 <body>
 
 <header>
-  <div class="logo">Scrim<span>Forge</span></div>
+
+  <div class="logo">
+    Scrim<span>Forge</span>
+  </div>
 
   <nav>
     <a href="#scrims">Daily Scrims</a>
@@ -215,20 +218,27 @@ label{font-size:13px;color:#aeb9cc}
     <a href="#leaderboard">Leaderboard</a>
     <a href="#admin" onclick="openAdmin()">Admin</a>
   </nav>
+
 </header>
 
 
 <section class="hero">
+
   <span class="pill">LIVE V2</span>
 
-  <h1>Find your lobby. Register. Get connected.</h1>
+  <h1>
+    Find your lobby. Register. Get connected.
+  </h1>
 
   <p>
     ScrimForge uses a shared server database, so registrations from
     customers appear in the admin dashboard on your device too.
   </p>
 
-  <a class="btn" href="#scrims">Browse Today's Scrims</a>
+  <a class="btn" href="#scrims">
+    Browse Today's Scrims
+  </a>
+
 </section>
 
 
@@ -241,14 +251,20 @@ label{font-size:13px;color:#aeb9cc}
   <h2>🔥 Daily Scrims</h2>
 
   <p class="sub">
-    Every session: <b>12 teams · 6 matches · ~1.5–2 hours</b>.
+    Every session:
+    <b>12 teams · 6 matches · ~1.5–2 hours</b>.
   </p>
 
   <div class="timebar" id="times"></div>
 
   <div class="notice">
-    Choose a lobby and register. Your registration is saved on the
-    ScrimForge server as <b>Pending</b> until an admin confirms it.
+
+    Choose a lobby and register.
+
+    Your registration is saved on the
+    ScrimForge server as <b>Pending</b>
+    until an admin confirms it.
+
   </div>
 
   <div class="grid" id="lobbies"></div>
@@ -264,20 +280,43 @@ label{font-size:13px;color:#aeb9cc}
 
   <h2>🏆 Tournaments</h2>
 
-  <p class="sub">Separate from daily scrims.</p>
+  <p class="sub">
+    Separate from daily scrims.
+  </p>
 
   <div class="grid">
 
     <div class="card">
-      <span class="tag">128 SLOTS</span>
-      <h3>Open Cup</h3>
-      <p class="muted">Qualifiers → Finals</p>
+
+      <span class="tag">
+        128 SLOTS
+      </span>
+
+      <h3>
+        Open Cup
+      </h3>
+
+      <p class="muted">
+        Qualifiers → Finals
+      </p>
+
     </div>
 
+
     <div class="card">
-      <span class="tag">256 SLOTS</span>
-      <h3>Grand League</h3>
-      <p class="muted">Multi-stage competition</p>
+
+      <span class="tag">
+        256 SLOTS
+      </span>
+
+      <h3>
+        Grand League
+      </h3>
+
+      <p class="muted">
+        Multi-stage competition
+      </p>
+
     </div>
 
   </div>
@@ -291,7 +330,9 @@ label{font-size:13px;color:#aeb9cc}
 
 <section class="container" id="leaderboard">
 
-  <h2>🏆 Live Scrim Leaderboard</h2>
+  <h2>
+    🏆 Live Scrim Leaderboard
+  </h2>
 
   <p class="sub">
     Cumulative points are updated after every match.
@@ -300,50 +341,107 @@ label{font-size:13px;color:#aeb9cc}
   <div class="row">
 
     <div>
-      <label>Select Lobby</label>
 
-      <select id="publicLeaderboardLobby"
-              onchange="loadPublicLeaderboard()">
+      <label>
+        Select Lobby
+      </label>
+
+      <select
+        id="publicLeaderboardLobby"
+        onchange="loadPublicLeaderboard()">
       </select>
+
     </div>
 
+
     <div>
-      <label>Current Match</label>
 
-      <select id="publicMatchSelect"
-              onchange="loadPublicLeaderboard()">
+      <label>
+        Current Match
+      </label>
 
-        <option value="1">Match 1</option>
-        <option value="2">Match 2</option>
-        <option value="3">Match 3</option>
-        <option value="4">Match 4</option>
-        <option value="5">Match 5</option>
-        <option value="6">Match 6</option>
+      <select
+        id="publicMatchSelect"
+        onchange="loadPublicLeaderboard()">
+
+        <option value="1">
+          Match 1
+        </option>
+
+        <option value="2">
+          Match 2
+        </option>
+
+        <option value="3">
+          Match 3
+        </option>
+
+        <option value="4">
+          Match 4
+        </option>
+
+        <option value="5">
+          Match 5
+        </option>
+
+        <option value="6">
+          Match 6
+        </option>
 
       </select>
+
     </div>
 
   </div>
+
 
   <div class="leaderboard-table">
 
     <table>
 
       <thead>
+
         <tr>
-          <th>Position</th>
-          <th>Team Name</th>
-          <th>Booyahs</th>
-          <th>Placement Points</th>
-          <th>Kill Points</th>
-          <th>Total Points</th>
+
+          <th>
+            Position
+          </th>
+
+          <th>
+            Team Name
+          </th>
+
+          <th>
+            Booyahs
+          </th>
+
+          <th>
+            Placement Points
+          </th>
+
+          <th>
+            Kill Points
+          </th>
+
+          <th>
+            Total Points
+          </th>
+
         </tr>
+
       </thead>
 
+
       <tbody id="publicLeaderboardBody">
+
         <tr>
-          <td colspan="6">Select a lobby.</td>
+
+          <td colspan="6">
+            Select a lobby.
+          </td>
+
         </tr>
+
       </tbody>
 
     </table>
@@ -357,14 +455,25 @@ label{font-size:13px;color:#aeb9cc}
      ADMIN BAR
 ========================= -->
 
-<div class="adminbar" id="adminbar">
+<div
+  class="adminbar"
+  id="adminbar">
 
   <span>
-    🔐 <b id="adminName"></b> — Admin Mode
+
+    🔐
+    <b id="adminName"></b>
+    — Admin Mode
+
   </span>
 
-  <button class="btn small secondary" onclick="logout()">
+
+  <button
+    class="btn small secondary"
+    onclick="logout()">
+
     Log out
+
   </button>
 
 </div>
@@ -374,9 +483,13 @@ label{font-size:13px;color:#aeb9cc}
      ADMIN DASHBOARD
 ========================= -->
 
-<section class="container dash" id="adminDash">
+<section
+  class="container dash"
+  id="adminDash">
 
-  <h2>Admin Dashboard</h2>
+  <h2>
+    Admin Dashboard
+  </h2>
 
   <p class="sub">
     Manage registrations and control the live leaderboard.
@@ -388,18 +501,35 @@ label{font-size:13px;color:#aeb9cc}
   <div class="statgrid">
 
     <div class="stat">
+
       Pending
-      <b id="pendingCount">0</b>
+
+      <b id="pendingCount">
+        0
+      </b>
+
     </div>
 
+
     <div class="stat">
+
       Confirmed
-      <b id="confirmedCount">0</b>
+
+      <b id="confirmedCount">
+        0
+      </b>
+
     </div>
 
+
     <div class="stat">
+
       Active Lobbies
-      <b>30</b>
+
+      <b>
+        30
+      </b>
+
     </div>
 
   </div>
@@ -419,14 +549,19 @@ label{font-size:13px;color:#aeb9cc}
   ========================= -->
 
   <h3 style="margin-top:35px">
+
     🏆 Match Score Entry
+
   </h3>
+
 
   <div class="card">
 
     <p class="sub">
+
       Enter the result of all 12 teams for one match.
       Placement points and total points are calculated automatically.
+
     </p>
 
 
@@ -434,10 +569,13 @@ label{font-size:13px;color:#aeb9cc}
 
       <div>
 
-        <label>Lobby</label>
+        <label>
+          Lobby
+        </label>
 
-        <select id="scoreLobby"
-                onchange="loadScoreTeams()">
+        <select
+          id="scoreLobby"
+          onchange="loadScoreTeams()">
         </select>
 
       </div>
@@ -445,17 +583,37 @@ label{font-size:13px;color:#aeb9cc}
 
       <div>
 
-        <label>Match Number</label>
+        <label>
+          Match Number
+        </label>
 
-        <select id="scoreMatch"
-                onchange="loadExistingMatch()">
+        <select
+          id="scoreMatch"
+          onchange="loadExistingMatch()">
 
-          <option value="1">Match 1</option>
-          <option value="2">Match 2</option>
-          <option value="3">Match 3</option>
-          <option value="4">Match 4</option>
-          <option value="5">Match 5</option>
-          <option value="6">Match 6</option>
+          <option value="1">
+            Match 1
+          </option>
+
+          <option value="2">
+            Match 2
+          </option>
+
+          <option value="3">
+            Match 3
+          </option>
+
+          <option value="4">
+            Match 4
+          </option>
+
+          <option value="5">
+            Match 5
+          </option>
+
+          <option value="6">
+            Match 6
+          </option>
 
         </select>
 
@@ -464,25 +622,57 @@ label{font-size:13px;color:#aeb9cc}
     </div>
 
 
-    <div class="notice" style="margin-top:12px">
+    <div
+      class="notice"
+      style="margin-top:12px">
 
-      <b>Scoring:</b><br>
+      <b>Scoring:</b>
+      <br>
 
-      1st = 12 points<br>
-      2nd = 9 points<br>
-      3rd = 8 points<br>
-      4th = 7 points<br>
-      5th = 6 points<br>
-      6th = 5 points<br>
-      7th = 4 points<br>
-      8th = 3 points<br>
-      9th = 2 points<br>
-      10th = 1 point<br>
-      11th = 0 points<br>
-      12th = 0 points<br><br>
+      1st = 12 points
+      <br>
 
-      <b>1 kill = 1 point.</b><br>
-      Position 1 automatically counts as 1 Booyah.
+      2nd = 9 points
+      <br>
+
+      3rd = 8 points
+      <br>
+
+      4th = 7 points
+      <br>
+
+      5th = 6 points
+      <br>
+
+      6th = 5 points
+      <br>
+
+      7th = 4 points
+      <br>
+
+      8th = 3 points
+      <br>
+
+      9th = 2 points
+      <br>
+
+      10th = 1 point
+      <br>
+
+      11th = 0 points
+      <br>
+
+      12th = 0 points
+      <br><br>
+
+      <b>
+        1 kill = 1 point.
+      </b>
+
+      <br>
+
+      Position 1 automatically counts as
+      1 Booyah.
 
     </div>
 
@@ -494,15 +684,35 @@ label{font-size:13px;color:#aeb9cc}
         <thead>
 
           <tr>
-            <th>Team</th>
-            <th>Position</th>
-            <th>Booyahs</th>
-            <th>Placement Points</th>
-            <th>Kill Points</th>
-            <th>Match Total</th>
+
+            <th>
+              Team
+            </th>
+
+            <th>
+              Position
+            </th>
+
+            <th>
+              Booyahs
+            </th>
+
+            <th>
+              Placement Points
+            </th>
+
+            <th>
+              Kill Points
+            </th>
+
+            <th>
+              Match Total
+            </th>
+
           </tr>
 
         </thead>
+
 
         <tbody id="scoreEntryBody"></tbody>
 
@@ -528,8 +738,11 @@ label{font-size:13px;color:#aeb9cc}
   ========================= -->
 
   <h3 style="margin-top:35px">
+
     📊 Current Leaderboard
+
   </h3>
+
 
   <div class="card">
 
@@ -537,10 +750,13 @@ label{font-size:13px;color:#aeb9cc}
 
       <div>
 
-        <label>Leaderboard Lobby</label>
+        <label>
+          Leaderboard Lobby
+        </label>
 
-        <select id="adminLeaderboardLobby"
-                onchange="loadAdminLeaderboard()">
+        <select
+          id="adminLeaderboardLobby"
+          onchange="loadAdminLeaderboard()">
         </select>
 
       </div>
@@ -555,22 +771,44 @@ label{font-size:13px;color:#aeb9cc}
         <thead>
 
           <tr>
-            <th>Position</th>
-            <th>Team Name</th>
-            <th>Booyahs</th>
-            <th>Placement Points</th>
-            <th>Kill Points</th>
-            <th>Total Points</th>
+
+            <th>
+              Position
+            </th>
+
+            <th>
+              Team Name
+            </th>
+
+            <th>
+              Booyahs
+            </th>
+
+            <th>
+              Placement Points
+            </th>
+
+            <th>
+              Kill Points
+            </th>
+
+            <th>
+              Total Points
+            </th>
+
           </tr>
 
         </thead>
 
+
         <tbody id="adminLeaderboardBody">
 
           <tr>
+
             <td colspan="6">
               Select a lobby.
             </td>
+
           </tr>
 
         </tbody>
@@ -586,7 +824,10 @@ label{font-size:13px;color:#aeb9cc}
 
 <footer>
 
-  <b>ScrimForge</b>
+  <b>
+    ScrimForge
+  </b>
+
   <br>
 
   <span class="muted">
@@ -600,11 +841,19 @@ label{font-size:13px;color:#aeb9cc}
      MODAL
 ========================= -->
 
-<div class="modal" id="modal">
+<div
+  class="modal"
+  id="modal">
 
   <div class="box">
 
-    <button class="close" onclick="closeModal()">×</button>
+    <button
+      class="close"
+      onclick="closeModal()">
+
+      ×
+
+    </button>
 
     <div id="modalContent"></div>
 
@@ -615,7 +864,15 @@ label{font-size:13px;color:#aeb9cc}
 
 <script>
 
-const fees = ['25','30','45','50','75','100+'];
+const fees = [
+  '25',
+  '30',
+  '45',
+  '50',
+  '75',
+  '100+'
+];
+
 
 const times = [
   '12 PM',
@@ -625,11 +882,18 @@ const times = [
   '12 AM'
 ];
 
+
 let current = '12 PM';
 
 let regs = [];
 
+
+/* =========================
+   CORRECT SCORING OBJECT
+========================= */
+
 const placementPoints = {
+
   1:12,
   2:9,
   3:8,
@@ -642,11 +906,18 @@ const placementPoints = {
   10:1,
   11:0,
   12:0
+
 };
 
 
-const $ = id => document.getElementById(id);
+const $ =
+  id =>
+    document.getElementById(id);
 
+
+/* =========================
+   ESCAPE HTML
+========================= */
 
 function esc(s){
 
@@ -714,57 +985,66 @@ function setTime(t){
 
 function render(){
 
-  $('lobbies').innerHTML = fees.map(fee => {
+  $('lobbies').innerHTML =
+    fees.map(fee => {
 
-    let filled =
-      regs.filter(
-        r =>
-          r.time === current &&
-          r.fee === fee &&
-          r.status === 'confirmed'
-      ).length;
+      let filled =
+        regs.filter(
+          r =>
+            r.time === current &&
+            r.fee === fee &&
+            r.status === 'confirmed'
+        ).length;
 
-    let full = filled >= 12;
 
-    return `
+      let full =
+        filled >= 12;
 
-      <div class="card">
 
-        <span class="tag">
-          ${current}
-        </span>
+      return `
 
-        <h3>
-          ₹${fee} Scrim
-        </h3>
+        <div class="card">
 
-        <div class="fee">
-          ₹${fee}
+          <span class="tag">
+            ${current}
+          </span>
+
+          <h3>
+            ₹${fee} Scrim
+          </h3>
+
+          <div class="fee">
+            ₹${fee}
+          </div>
+
+          <p class="muted">
+            12 teams · 6 matches · ~1.5–2 hours
+          </p>
+
+          <p class="muted">
+
+            <b>
+              ${filled}/12
+            </b>
+
+            teams confirmed
+
+          </p>
+
+          <button
+            class="btn"
+            ${full?'disabled':''}
+            onclick="registerLobby('${current}','${fee}')">
+
+            ${full?'FULL':'REGISTER'}
+
+          </button>
+
         </div>
 
-        <p class="muted">
-          12 teams · 6 matches · ~1.5–2 hours
-        </p>
+      `;
 
-        <p class="muted">
-          <b>${filled}/12</b>
-          teams confirmed
-        </p>
-
-        <button
-          class="btn"
-          ${full?'disabled':''}
-          onclick="registerLobby('${current}','${fee}')">
-
-          ${full?'FULL':'REGISTER'}
-
-        </button>
-
-      </div>
-
-    `;
-
-  }).join('');
+    }).join('');
 
 }
 
@@ -777,40 +1057,71 @@ function registerLobby(time,fee){
 
   $('modalContent').innerHTML = `
 
-    <h2>Register for Scrim</h2>
+    <h2>
+      Register for Scrim
+    </h2>
 
     <p class="sub">
+
       Lobby:
-      <b>${time} · ₹${fee}</b>
+      <b>
+        ${time} · ₹${fee}
+      </b>
+
     </p>
 
+
     <div class="row">
 
       <div>
-        <label>Team name</label>
+
+        <label>
+          Team name
+        </label>
+
         <input id="rTeam">
+
       </div>
 
+
       <div>
-        <label>Captain name</label>
+
+        <label>
+          Captain name
+        </label>
+
         <input id="rCaptain">
+
       </div>
 
     </div>
+
 
     <div class="row">
 
       <div>
-        <label>WhatsApp number</label>
+
+        <label>
+          WhatsApp number
+        </label>
+
         <input id="rPhone">
+
       </div>
 
+
       <div>
-        <label>Game UID</label>
+
+        <label>
+          Game UID
+        </label>
+
         <input id="rUid">
+
       </div>
 
     </div>
+
 
     <button
       class="btn"
@@ -822,7 +1133,10 @@ function registerLobby(time,fee){
 
   `;
 
-  $('modal').classList.add('show');
+
+  $('modal')
+    .classList
+    .add('show');
 
 }
 
@@ -832,22 +1146,33 @@ async function saveRegistration(time,fee){
   let body = {
 
     time,
+
     fee,
 
-    team:$('rTeam').value.trim(),
+    team:
+      $('rTeam').value.trim(),
 
-    captain:$('rCaptain').value.trim(),
+    captain:
+      $('rCaptain').value.trim(),
 
-    phone:$('rPhone').value.trim(),
+    phone:
+      $('rPhone').value.trim(),
 
-    uid:$('rUid').value.trim()
+    uid:
+      $('rUid').value.trim()
 
   };
 
 
-  if(Object.values(body).some(v=>!v)){
+  if(
+    Object.values(body).some(
+      v => !v
+    )
+  ){
 
-    alert('Please fill all fields.');
+    alert(
+      'Please fill all fields.'
+    );
 
     return;
 
@@ -856,16 +1181,23 @@ async function saveRegistration(time,fee){
 
   try{
 
-    let r = await api(
-      '/api/registrations',
-      {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json'
-        },
-        body:JSON.stringify(body)
-      }
-    );
+    let r =
+      await api(
+        '/api/registrations',
+        {
+
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(body)
+
+        }
+      );
 
 
     $('modalContent').innerHTML = `
@@ -876,12 +1208,17 @@ async function saveRegistration(time,fee){
 
       <p>
         Your registration is
-        <b>Pending</b> admin confirmation.
+        <b>Pending</b>
+        admin confirmation.
       </p>
 
       <p class="sub">
+
         Reference:
-        <b>${esc(r.ref)}</b>
+        <b>
+          ${esc(r.ref)}
+        </b>
+
       </p>
 
       <button
@@ -896,6 +1233,7 @@ async function saveRegistration(time,fee){
 
 
     await loadPublic();
+
 
   }catch(e){
 
@@ -915,16 +1253,27 @@ async function saveRegistration(time,fee){
 
 async function api(url,opt={}){
 
-  let res = await fetch(url,opt);
+  let res =
+    await fetch(
+      url,
+      opt
+    );
+
 
   let data = {};
 
+
   try{
-    data = await res.json();
+
+    data =
+      await res.json();
+
   }catch{}
+
 
   if(!res.ok)
     throw data;
+
 
   return data;
 
@@ -938,8 +1287,13 @@ async function api(url,opt={}){
 async function loadPublic(){
 
   regs =
-    await api('/api/public/lobbies')
-      .catch(()=>[]);
+    await api(
+      '/api/public/lobbies'
+    )
+    .catch(
+      () => []
+    );
+
 
   render();
 
@@ -958,9 +1312,14 @@ async function populateLobbySelectors(){
 
   let confirmed = [];
 
-  for(const time of times){
 
-    for(const fee of fees){
+  for(
+    const time of times
+  ){
+
+    for(
+      const fee of fees
+    ){
 
       let count =
         regs.filter(
@@ -970,10 +1329,14 @@ async function populateLobbySelectors(){
             Number(r.confirmed) > 0
         ).length;
 
+
       if(count){
 
         confirmed.push(
-          lobbyName(time,fee)
+          lobbyName(
+            time,
+            fee
+          )
         );
 
       }
@@ -994,55 +1357,85 @@ async function populateLobbySelectors(){
   ];
 
 
-  selectors.forEach(select => {
+  selectors.forEach(
+    select => {
 
-    if(!select)
-      return;
+      if(!select)
+        return;
 
-    let old = select.value;
 
-    select.innerHTML = '';
+      let old =
+        select.value;
 
-    if(!confirmed.length){
 
-      let option =
-        document.createElement('option');
+      select.innerHTML =
+        '';
 
-      option.textContent =
-        'No confirmed lobbies';
 
-      option.value = '';
+      if(
+        !confirmed.length
+      ){
 
-      select.appendChild(option);
+        let option =
+          document.createElement(
+            'option'
+          );
 
-      return;
+
+        option.textContent =
+          'No confirmed lobbies';
+
+
+        option.value =
+          '';
+
+
+        select.appendChild(
+          option
+        );
+
+
+        return;
+
+      }
+
+
+      confirmed.forEach(
+        lobby => {
+
+          let option =
+            document.createElement(
+              'option'
+            );
+
+
+          option.value =
+            lobby;
+
+
+          option.textContent =
+            lobby;
+
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
+
+      if(
+        confirmed.includes(old)
+      ){
+
+        select.value =
+          old;
+
+      }
 
     }
-
-
-    confirmed.forEach(lobby => {
-
-      let option =
-        document.createElement('option');
-
-      option.value = lobby;
-
-      option.textContent = lobby;
-
-      select.appendChild(option);
-
-    });
-
-
-    if(
-      confirmed.includes(old)
-    ){
-
-      select.value = old;
-
-    }
-
-  });
+  );
 
 }
 
@@ -1056,12 +1449,16 @@ async function openAdmin(){
   try{
 
     let m =
-      await api('/api/me');
+      await api(
+        '/api/me'
+      );
 
 
     if(m.loggedIn){
 
-      showDashboard(m.name);
+      showDashboard(
+        m.name
+      );
 
       return;
 
@@ -1069,12 +1466,15 @@ async function openAdmin(){
 
 
     let e =
-      await api('/api/admin-exists');
+      await api(
+        '/api/admin-exists'
+      );
 
 
     e.exists
       ? showLogin()
       : showSetup();
+
 
   }catch(err){
 
@@ -1096,16 +1496,22 @@ function showLogin(){
 
   $('modalContent').innerHTML = `
 
-    <h2>Admin Login</h2>
+    <h2>
+      Admin Login
+    </h2>
 
-    <label>Email</label>
+    <label>
+      Email
+    </label>
 
     <input
       id="loginEmail"
       type="email"
       autocomplete="username">
 
-    <label>Password</label>
+    <label>
+      Password
+    </label>
 
     <input
       id="loginPass"
@@ -1122,7 +1528,10 @@ function showLogin(){
 
   `;
 
-  $('modal').classList.add('show');
+
+  $('modal')
+    .classList
+    .add('show');
 
 }
 
@@ -1135,23 +1544,32 @@ function showSetup(){
 
   $('modalContent').innerHTML = `
 
-    <h2>Create First Admin</h2>
+    <h2>
+      Create First Admin
+    </h2>
 
     <p class="sub">
       This appears only while no admin account exists.
     </p>
 
-    <label>Your name</label>
+    <label>
+      Your name
+    </label>
 
-    <input id="setupName">
+    <input
+      id="setupName">
 
-    <label>Admin email</label>
+    <label>
+      Admin email
+    </label>
 
     <input
       id="setupEmail"
       type="email">
 
-    <label>Password</label>
+    <label>
+      Password
+    </label>
 
     <input
       id="setupPass"
@@ -1167,7 +1585,10 @@ function showSetup(){
 
   `;
 
-  $('modal').classList.add('show');
+
+  $('modal')
+    .classList
+    .add('show');
 
 }
 
@@ -1177,13 +1598,20 @@ async function setupAdmin(){
   try{
 
     let name =
-      $('setupName').value.trim();
+      $('setupName')
+        .value
+        .trim();
+
 
     let email =
-      $('setupEmail').value.trim();
+      $('setupEmail')
+        .value
+        .trim();
+
 
     let password =
-      $('setupPass').value;
+      $('setupPass')
+        .value;
 
 
     if(
@@ -1205,22 +1633,31 @@ async function setupAdmin(){
       await api(
         '/api/setup-admin',
         {
+
           method:'POST',
+
           headers:{
-            'Content-Type':'application/json'
+            'Content-Type':
+              'application/json'
           },
-          body:JSON.stringify({
-            name,
-            email,
-            password
-          })
+
+          body:
+            JSON.stringify({
+              name,
+              email,
+              password
+            })
+
         }
       );
 
 
     closeModal();
 
-    showDashboard(r.name);
+    showDashboard(
+      r.name
+    );
+
 
   }catch(e){
 
@@ -1243,13 +1680,20 @@ async function loginAdmin(){
   try{
 
     let email =
-      $('loginEmail').value.trim();
+      $('loginEmail')
+        .value
+        .trim();
+
 
     let password =
-      $('loginPass').value;
+      $('loginPass')
+        .value;
 
 
-    if(!email || !password){
+    if(
+      !email ||
+      !password
+    ){
 
       alert(
         'Enter your admin email and password.'
@@ -1264,21 +1708,30 @@ async function loginAdmin(){
       await api(
         '/api/login',
         {
+
           method:'POST',
+
           headers:{
-            'Content-Type':'application/json'
+            'Content-Type':
+              'application/json'
           },
-          body:JSON.stringify({
-            email,
-            password
-          })
+
+          body:
+            JSON.stringify({
+              email,
+              password
+            })
+
         }
       );
 
 
     closeModal();
 
-    await showDashboard(r.name);
+    await showDashboard(
+      r.name
+    );
+
 
   }catch(e){
 
@@ -1302,12 +1755,16 @@ async function showDashboard(name){
     .classList
     .add('show');
 
+
   $('adminbar')
     .classList
     .add('show');
 
+
   $('adminName')
-    .textContent = name;
+    .textContent =
+      name;
+
 
   closeModal();
 
@@ -1337,18 +1794,25 @@ async function renderAdmin(){
   try{
 
     let s =
-      await api('/api/stats');
+      await api(
+        '/api/stats'
+      );
 
 
     $('pendingCount')
-      .textContent = s.pending;
+      .textContent =
+        s.pending;
+
 
     $('confirmedCount')
-      .textContent = s.confirmed;
+      .textContent =
+        s.confirmed;
 
 
     regs =
-      await api('/api/registrations');
+      await api(
+        '/api/registrations'
+      );
 
 
     $('adminRegs').innerHTML =
@@ -1356,108 +1820,111 @@ async function renderAdmin(){
 
       ?
 
-      regs.map(r => `
-
-        <div
-          class="card"
-          style="margin:10px 0">
+      regs.map(
+        r => `
 
           <div
-            style="display:flex;justify-content:space-between">
+            class="card"
+            style="margin:10px 0">
 
-            <b>
-              ${esc(r.team)}
-            </b>
+            <div
+              style="display:flex;justify-content:space-between">
 
-            <span
-              class="status ${r.status}">
+              <b>
+                ${esc(r.team)}
+              </b>
 
-              ${r.status.toUpperCase()}
+              <span
+                class="status ${r.status}">
 
-            </span>
+                ${r.status.toUpperCase()}
+
+              </span>
+
+            </div>
+
+
+            <p class="muted">
+
+              ${esc(r.time)}
+              · ₹${esc(r.fee)}
+              · ${esc(r.captain)}
+              · Ref ${esc(r.ref)}
+
+            </p>
+
+
+            <p class="muted">
+
+              WhatsApp:
+              ${esc(r.phone)}
+
+              · UID:
+              ${esc(r.uid)}
+
+            </p>
+
+
+            ${
+              r.status === 'pending'
+
+              ?
+
+              `
+
+                <button
+                  class="btn small"
+                  onclick="updateReg(${r.id},'confirmed')">
+
+                  Confirm
+
+                </button>
+
+
+                <button
+                  class="btn small danger"
+                  onclick="updateReg(${r.id},'rejected')">
+
+                  Reject
+
+                </button>
+
+              `
+
+              :
+
+              ''
+
+            }
+
+
+            ${
+              r.status === 'confirmed'
+
+              ?
+
+              `
+
+                <button
+                  class="btn small danger"
+                  onclick="updateReg(${r.id},'rejected')">
+
+                  Cancel
+
+                </button>
+
+              `
+
+              :
+
+              ''
+
+            }
 
           </div>
 
-
-          <p class="muted">
-
-            ${esc(r.time)}
-            · ₹${esc(r.fee)}
-            · ${esc(r.captain)}
-            · Ref ${esc(r.ref)}
-
-          </p>
-
-
-          <p class="muted">
-
-            WhatsApp:
-            ${esc(r.phone)}
-
-            · UID:
-            ${esc(r.uid)}
-
-          </p>
-
-
-          ${
-            r.status === 'pending'
-
-            ?
-
-            `
-
-              <button
-                class="btn small"
-                onclick="updateReg(${r.id},'confirmed')">
-
-                Confirm
-
-              </button>
-
-              <button
-                class="btn small danger"
-                onclick="updateReg(${r.id},'rejected')">
-
-                Reject
-
-              </button>
-
-            `
-
-            :
-
-            ''
-
-          }
-
-
-          ${
-            r.status === 'confirmed'
-
-            ?
-
-            `
-
-              <button
-                class="btn small danger"
-                onclick="updateReg(${r.id},'rejected')">
-
-                Cancel
-
-              </button>
-
-            `
-
-            :
-
-            ''
-
-          }
-
-        </div>
-
-      `).join('')
+        `
+      ).join('')
 
       :
 
@@ -1469,9 +1936,7 @@ async function renderAdmin(){
 
     await populateLobbySelectors();
 
-
     await loadScoreTeams();
-
 
     await loadAdminLeaderboard();
 
@@ -1493,18 +1958,29 @@ async function renderAdmin(){
    UPDATE REGISTRATION
 ========================= */
 
-async function updateReg(id,status){
+async function updateReg(
+  id,
+  status
+){
 
   try{
 
     await api(
       '/api/registrations/'+id,
       {
+
         method:'PATCH',
+
         headers:{
-          'Content-Type':'application/json'
+          'Content-Type':
+            'application/json'
         },
-        body:JSON.stringify({status})
+
+        body:
+          JSON.stringify({
+            status
+          })
+
       }
     );
 
@@ -1544,9 +2020,11 @@ async function loadScoreTeams(){
     $('scoreEntryBody').innerHTML = `
 
       <tr>
+
         <td colspan="6">
           No confirmed lobby selected.
         </td>
+
       </tr>
 
     `;
@@ -1561,11 +2039,14 @@ async function loadScoreTeams(){
     let teams =
       await api(
         '/api/leaderboard/teams?lobby='
-        + encodeURIComponent(lobby)
+        +
+        encodeURIComponent(lobby)
       );
 
 
-    if(teams.length !== 12){
+    if(
+      teams.length !== 12
+    ){
 
       $('scoreEntryBody').innerHTML = `
 
@@ -1595,14 +2076,16 @@ async function loadScoreTeams(){
 
     $('scoreEntryBody').innerHTML =
       teams.map(
-        (team,index) => scoreRow(
-          index,
-          team.team
-        )
+        (team,index) =>
+          scoreRow(
+            index,
+            team.team
+          )
       ).join('');
 
 
     await loadExistingMatch();
+
 
   }catch(e){
 
@@ -1611,9 +2094,7 @@ async function loadScoreTeams(){
       <tr>
 
         <td colspan="6">
-
           Could not load teams.
-
         </td>
 
       </tr>
@@ -1629,16 +2110,23 @@ async function loadScoreTeams(){
    SCORE ROW
 ========================= */
 
-function scoreRow(index,team,position='',kills=''){
+function scoreRow(
+  index,
+  team,
+  position='',
+  kills=''
+){
 
   return `
 
     <tr>
 
       <td>
+
         <b>
           ${esc(team)}
         </b>
+
       </td>
 
 
@@ -1649,19 +2137,28 @@ function scoreRow(index,team,position='',kills=''){
           data-index="${index}"
           onchange="calculateScoreRow(${index})">
 
-          <option value="">--</option>
+          <option value="">
+            --
+          </option>
+
 
           ${Array.from(
             {length:12},
             (_,i) => {
 
-              let p=i+1;
+              let p =
+                i + 1;
+
 
               return `
 
                 <option
                   value="${p}"
-                  ${Number(position)===p?'selected':''}>
+                  ${
+                    Number(position) === p
+                    ? 'selected'
+                    : ''
+                  }>
 
                   ${p}
 
@@ -1682,7 +2179,11 @@ function scoreRow(index,team,position='',kills=''){
         <input
           class="score-input booyah-output"
           id="booyah-${index}"
-          value="${Number(position)===1?1:0}"
+          value="${
+            Number(position) === 1
+            ? 1
+            : 0
+          }"
           readonly>
 
       </td>
@@ -1693,7 +2194,9 @@ function scoreRow(index,team,position='',kills=''){
         <input
           class="score-input placement-output"
           id="placement-${index}"
-          value="${positionPoints[position] || 0}"
+          value="${
+            placementPoints[position] || 0
+          }"
           readonly>
 
       </td>
@@ -1720,7 +2223,7 @@ function scoreRow(index,team,position='',kills=''){
         ${
           (placementPoints[position] || 0)
           +
-          (Number(kills)||0)
+          (Number(kills) || 0)
         }
 
       </td>
@@ -1767,13 +2270,18 @@ function calculateScoreRow(index){
 
 
   $(`booyah-${index}`)
-    .value = booyah;
+    .value =
+      booyah;
+
 
   $(`placement-${index}`)
-    .value = placement;
+    .value =
+      placement;
+
 
   $(`total-${index}`)
-    .textContent = total;
+    .textContent =
+      total;
 
 }
 
@@ -1787,8 +2295,11 @@ async function loadExistingMatch(){
   const lobby =
     $('scoreLobby').value;
 
+
   const match =
-    Number($('scoreMatch').value);
+    Number(
+      $('scoreMatch').value
+    );
 
 
   if(!lobby)
@@ -1803,16 +2314,21 @@ async function loadExistingMatch(){
       );
 
 
-    if(!existing.length){
+    if(
+      !existing.length
+    ){
 
       const teams =
         await api(
           '/api/leaderboard/teams?lobby='
-          + encodeURIComponent(lobby)
+          +
+          encodeURIComponent(lobby)
         );
 
 
-      if(teams.length === 12){
+      if(
+        teams.length === 12
+      ){
 
         $('scoreEntryBody').innerHTML =
           teams.map(
@@ -1862,8 +2378,11 @@ async function saveMatch(){
   const lobby =
     $('scoreLobby').value;
 
+
   const matchNo =
-    Number($('scoreMatch').value);
+    Number(
+      $('scoreMatch').value
+    );
 
 
   if(!lobby){
@@ -1878,12 +2397,16 @@ async function saveMatch(){
 
 
   let rows =
-    [...document.querySelectorAll(
-      '#scoreEntryBody tr'
-    )];
+    [
+      ...document.querySelectorAll(
+        '#scoreEntryBody tr'
+      )
+    ];
 
 
-  if(rows.length !== 12){
+  if(
+    rows.length !== 12
+  ){
 
     alert(
       'There must be exactly 12 confirmed teams.'
@@ -1897,7 +2420,11 @@ async function saveMatch(){
   let entries = [];
 
 
-  for(let i=0;i<12;i++){
+  for(
+    let i = 0;
+    i < 12;
+    i++
+  ){
 
     const position =
       Number(
@@ -1920,7 +2447,7 @@ async function saveMatch(){
     ){
 
       alert(
-        `Please select a position for ${i+1}th team.`
+        `Please select a position for team ${i+1}.`
       );
 
       return;
@@ -1928,7 +2455,9 @@ async function saveMatch(){
     }
 
 
-    if(kills < 0){
+    if(
+      kills < 0
+    ){
 
       alert(
         'Kills cannot be negative.'
@@ -1943,7 +2472,9 @@ async function saveMatch(){
 
       team:
         rows[i]
-          .querySelector('td:first-child')
+          .querySelector(
+            'td:first-child'
+          )
           .innerText
           .trim(),
 
@@ -1958,7 +2489,8 @@ async function saveMatch(){
 
   const positions =
     entries.map(
-      e => e.position
+      e =>
+        e.position
     );
 
 
@@ -1980,17 +2512,24 @@ async function saveMatch(){
     await api(
       '/api/leaderboard/match',
       {
+
         method:'POST',
 
         headers:{
-          'Content-Type':'application/json'
+          'Content-Type':
+            'application/json'
         },
 
-        body:JSON.stringify({
-          lobby,
-          matchNo,
-          entries
-        })
+        body:
+          JSON.stringify({
+
+            lobby,
+
+            matchNo,
+
+            entries
+
+          })
 
       }
     );
@@ -2027,7 +2566,8 @@ async function saveMatch(){
 async function loadPublicLeaderboard(){
 
   const lobby =
-    $('publicLeaderboardLobby')?.value;
+    $('publicLeaderboardLobby')
+      ?.value;
 
 
   if(!lobby){
@@ -2035,9 +2575,11 @@ async function loadPublicLeaderboard(){
     $('publicLeaderboardBody').innerHTML = `
 
       <tr>
+
         <td colspan="6">
           No leaderboard available yet.
         </td>
+
       </tr>
 
     `;
@@ -2052,7 +2594,8 @@ async function loadPublicLeaderboard(){
     let rows =
       await api(
         '/api/public-leaderboard?lobby='
-        + encodeURIComponent(lobby)
+        +
+        encodeURIComponent(lobby)
       );
 
 
@@ -2061,14 +2604,17 @@ async function loadPublicLeaderboard(){
       rows
     );
 
+
   }catch(e){
 
     $('publicLeaderboardBody').innerHTML = `
 
       <tr>
+
         <td colspan="6">
           Could not load leaderboard.
         </td>
+
       </tr>
 
     `;
@@ -2085,7 +2631,8 @@ async function loadPublicLeaderboard(){
 async function loadAdminLeaderboard(){
 
   const lobby =
-    $('adminLeaderboardLobby')?.value;
+    $('adminLeaderboardLobby')
+      ?.value;
 
 
   if(!lobby){
@@ -2093,9 +2640,11 @@ async function loadAdminLeaderboard(){
     $('adminLeaderboardBody').innerHTML = `
 
       <tr>
+
         <td colspan="6">
           No leaderboard available yet.
         </td>
+
       </tr>
 
     `;
@@ -2110,7 +2659,8 @@ async function loadAdminLeaderboard(){
     let rows =
       await api(
         '/api/leaderboard?lobby='
-        + encodeURIComponent(lobby)
+        +
+        encodeURIComponent(lobby)
       );
 
 
@@ -2119,14 +2669,17 @@ async function loadAdminLeaderboard(){
       rows
     );
 
+
   }catch(e){
 
     $('adminLeaderboardBody').innerHTML = `
 
       <tr>
+
         <td colspan="6">
           Could not load leaderboard.
         </td>
+
       </tr>
 
     `;
@@ -2140,13 +2693,18 @@ async function loadAdminLeaderboard(){
    RENDER LEADERBOARD
 ========================= */
 
-function renderLeaderboard(id,rows){
+function renderLeaderboard(
+  id,
+  rows
+){
 
   const body =
     $(id);
 
 
-  if(!rows.length){
+  if(
+    !rows.length
+  ){
 
     body.innerHTML = `
 
@@ -2168,56 +2726,52 @@ function renderLeaderboard(id,rows){
 
 
   body.innerHTML =
-    rows.map(r => `
+    rows.map(
+      r => `
 
-      <tr>
+        <tr>
 
-        <td class="rank-cell">
+          <td class="rank-cell">
 
-          ${r.position}
+            ${r.position}
 
-        </td>
-
-
-        <td>
-
-          <b>
-            ${esc(r.team)}
-          </b>
-
-        </td>
+          </td>
 
 
-        <td>
+          <td>
 
-          ${r.booyahs}
+            <b>
+              ${esc(r.team)}
+            </b>
 
-        </td>
-
-
-        <td>
-
-          ${r.placementPoints}
-
-        </td>
+          </td>
 
 
-        <td>
-
-          ${r.killPoints}
-
-        </td>
+          <td>
+            ${r.booyahs}
+          </td>
 
 
-        <td class="total-cell">
+          <td>
+            ${r.placementPoints}
+          </td>
 
-          ${r.totalPoints}
 
-        </td>
+          <td>
+            ${r.killPoints}
+          </td>
 
-      </tr>
 
-    `).join('');
+          <td class="total-cell">
+
+            ${r.totalPoints}
+
+          </td>
+
+        </tr>
+
+      `
+    ).join('');
 
 }
 
@@ -2239,6 +2793,7 @@ async function logout(){
   $('adminDash')
     .classList
     .remove('show');
+
 
   $('adminbar')
     .classList
