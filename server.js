@@ -1,4 +1,3 @@
-
 const express = require("express");
 const session = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(session);
@@ -7,6 +6,8 @@ const path = require("path");
 const Database = require("better-sqlite3");
 
 const app = express();
+app.set("trust proxy", 1);
+
 const PORT = process.env.PORT || 3000;
 const db = new Database(process.env.DB_PATH || "scrimforge.db");
 
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS admins (
   password_hash TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+
 CREATE TABLE IF NOT EXISTS registrations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   ref TEXT NOT NULL UNIQUE,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS registrations (
   status TEXT NOT NULL DEFAULT 'pending',
   created_at TEXT NOT NULL
 );
+
 CREATE TABLE IF NOT EXISTS results (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   lobby TEXT NOT NULL,
@@ -41,89 +44,433 @@ CREATE TABLE IF NOT EXISTS results (
 `);
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
-  store: new SQLiteStore({ db: "sessions.sqlite", dir: "." }),
+  store: new SQLiteStore({
+    db: "sessions.sqlite",
+    dir: "."
+  }),
   secret: process.env.SESSION_SECRET || "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET",
   resave: false,
   saveUninitialized: false,
-  cookie: { httpOnly:true, sameSite:"lax", secure:process.env.NODE_ENV === "production", maxAge: 1000*60*60*12 }
+  cookie: {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 1000 * 60 * 60 * 12
+  }
 }));
+
 app.use(express.static(path.join(__dirname, "public")));
 
-function auth(req,res,next){
-  if (!req.session.adminId) return res.status(401).json({error:"Unauthorized"});
+function auth(req, res, next) {
+  if (!req.session.adminId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
   next();
 }
-function now(){ return new Date().toISOString(); }
 
-app.post("/api/setup-admin", async (req,res)=>{
-  const count = db.prepare("SELECT COUNT(*) c FROM admins").get().c;
-  if (count) return res.status(403).json({error:"Admin already exists"});
-  const {name,email,password} = req.body;
-  if (!name || !email || !password || password.length < 6) return res.status(400).json({error:"Name, email and a password of at least 6 characters are required"});
-  const hash = await bcrypt.hash(password,12);
-  const info = db.prepare("INSERT INTO admins(name,email,password_hash,created_at) VALUES(?,?,?,?)").run(name,email.toLowerCase(),hash,now());
-  req.session.adminId = info.lastInsertRowid;
-  req.session.adminName = name;
-  res.json({ok:true,name});
+function now() {
+  return new Date().toISOString();
+}
+
+
+/* =========================
+   ADMIN SETUP
+========================= */
+
+app.post("/api/setup-admin", async (req, res) => {
+  try {
+    const count = db
+      .prepare("SELECT COUNT(*) c FROM admins")
+      .get().c;
+
+    if (count) {
+      return res.status(403).json({
+        error: "Admin already exists"
+      });
+    }
+
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password || password.length < 6) {
+      return res.status(400).json({
+        error: "Name, email and a password of at least 6 characters are required"
+      });
+    }
+
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    const hash = await bcrypt.hash(password, 12);
+
+    const info = db.prepare(`
+      INSERT INTO admins(
+        name,
+        email,
+        password_hash,
+        created_at
+      )
+      VALUES(?,?,?,?)
+    `).run(
+      cleanName,
+      cleanEmail,
+      hash,
+      now()
+    );
+
+    req.session.adminId = info.lastInsertRowid;
+    req.session.adminName = cleanName;
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("SESSION SAVE ERROR:", err);
+
+        return res.status(500).json({
+          error: "Admin created, but session could not be saved"
+        });
+      }
+
+      console.log("ADMIN CREATED:", cleanEmail);
+
+      res.json({
+        ok: true,
+        name: cleanName
+      });
+    });
+
+  } catch (err) {
+    console.error("SETUP ADMIN ERROR:", err);
+
+    res.status(500).json({
+      error: "Could not create admin. Check the Render logs for SETUP ADMIN ERROR."
+    });
+  }
 });
 
-app.post("/api/login", async (req,res)=>{
-  const {email,password} = req.body;
-  const admin = db.prepare("SELECT * FROM admins WHERE email=?").get((email||"").toLowerCase());
-  if (!admin || !(await bcrypt.compare(password||"",admin.password_hash))) return res.status(401).json({error:"Incorrect email or password"});
-  req.session.adminId = admin.id;
-  req.session.adminName = admin.name;
-  res.json({ok:true,name:admin.name});
-});
-app.post("/api/logout",(req,res)=>req.session.destroy(()=>res.json({ok:true})));
-app.get("/api/me",(req,res)=>res.json({loggedIn:!!req.session.adminId,name:req.session.adminName||null}));
 
-app.post("/api/registrations", (req,res)=>{
-  const {time,fee,team,captain,phone,uid} = req.body;
-  if(!time||!fee||!team||!captain||!phone||!uid) return res.status(400).json({error:"All fields are required"});
-  const ref = `SF-${time.replace(/\s/g,"").replace(":","")}-${fee}-${Math.floor(1000+Math.random()*9000)}`;
-  try{
-    db.prepare(`INSERT INTO registrations(ref,time,fee,team,captain,phone,uid,status,created_at)
-      VALUES(?,?,?,?,?,?,?,'pending',?)`).run(ref,time,fee,team,captain,phone,uid,now());
-    res.json({ok:true,ref});
-  }catch(e){ res.status(500).json({error:"Could not save registration"}); }
+/* =========================
+   ADMIN LOGIN
+========================= */
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = db
+      .prepare("SELECT * FROM admins WHERE email=?")
+      .get((email || "").trim().toLowerCase());
+
+    if (
+      !admin ||
+      !(await bcrypt.compare(
+        password || "",
+        admin.password_hash
+      ))
+    ) {
+      return res.status(401).json({
+        error: "Incorrect email or password"
+      });
+    }
+
+    req.session.adminId = admin.id;
+    req.session.adminName = admin.name;
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("LOGIN SESSION ERROR:", err);
+
+        return res.status(500).json({
+          error: "Login succeeded but session could not be saved"
+        });
+      }
+
+      res.json({
+        ok: true,
+        name: admin.name
+      });
+    });
+
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+
+    res.status(500).json({
+      error: "Could not log in"
+    });
+  }
 });
 
-app.get("/api/registrations",auth,(req,res)=>{
-  res.json(db.prepare("SELECT * FROM registrations ORDER BY id DESC").all());
+
+/* =========================
+   LOGOUT
+========================= */
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({ ok: true });
+  });
 });
 
-// Public endpoint: visitors only see confirmed lobby counts, never private registration details.
-app.get("/api/public/lobbies",(req,res)=>{
-  res.json(db.prepare("SELECT time, fee, COUNT(*) AS confirmed FROM registrations WHERE status='confirmed' GROUP BY time, fee").all());
+
+/* =========================
+   CURRENT ADMIN
+========================= */
+
+app.get("/api/me", (req, res) => {
+  res.json({
+    loggedIn: !!req.session.adminId,
+    name: req.session.adminName || null
+  });
 });
 
-app.get("/api/admin-exists",(req,res)=>{
-  res.json({exists: !!db.prepare("SELECT id FROM admins LIMIT 1").get()});
+
+/* =========================
+   REGISTRATIONS
+========================= */
+
+app.post("/api/registrations", (req, res) => {
+  const {
+    time,
+    fee,
+    team,
+    captain,
+    phone,
+    uid
+  } = req.body;
+
+  if (
+    !time ||
+    !fee ||
+    !team ||
+    !captain ||
+    !phone ||
+    !uid
+  ) {
+    return res.status(400).json({
+      error: "All fields are required"
+    });
+  }
+
+  const ref =
+    `SF-${time.replace(/\s/g, "").replace(":", "")}-${fee}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  try {
+    db.prepare(`
+      INSERT INTO registrations(
+        ref,
+        time,
+        fee,
+        team,
+        captain,
+        phone,
+        uid,
+        status,
+        created_at
+      )
+      VALUES(?,?,?,?,?,?,?,'pending',?)
+    `).run(
+      ref,
+      time,
+      fee,
+      team,
+      captain,
+      phone,
+      uid,
+      now()
+    );
+
+    res.json({
+      ok: true,
+      ref
+    });
+
+  } catch (e) {
+    console.error("REGISTRATION ERROR:", e);
+
+    res.status(500).json({
+      error: "Could not save registration"
+    });
+  }
 });
-app.patch("/api/registrations/:id",auth,(req,res)=>{
+
+
+app.get("/api/registrations", auth, (req, res) => {
+  res.json(
+    db
+      .prepare("SELECT * FROM registrations ORDER BY id DESC")
+      .all()
+  );
+});
+
+
+/* =========================
+   PUBLIC LOBBIES
+========================= */
+
+app.get("/api/public/lobbies", (req, res) => {
+  res.json(
+    db.prepare(`
+      SELECT
+        time,
+        fee,
+        COUNT(*) AS confirmed
+      FROM registrations
+      WHERE status='confirmed'
+      GROUP BY time, fee
+    `).all()
+  );
+});
+
+
+/* =========================
+   ADMIN EXISTS
+========================= */
+
+app.get("/api/admin-exists", (req, res) => {
+  res.json({
+    exists: !!db
+      .prepare("SELECT id FROM admins LIMIT 1")
+      .get()
+  });
+});
+
+
+/* =========================
+   UPDATE REGISTRATION
+========================= */
+
+app.patch("/api/registrations/:id", auth, (req, res) => {
   const status = req.body.status;
-  if(!["pending","confirmed","rejected"].includes(status)) return res.status(400).json({error:"Invalid status"});
-  const r = db.prepare("UPDATE registrations SET status=? WHERE id=?").run(status,req.params.id);
-  if(!r.changes) return res.status(404).json({error:"Registration not found"});
-  res.json({ok:true});
+
+  if (
+    !["pending", "confirmed", "rejected"]
+      .includes(status)
+  ) {
+    return res.status(400).json({
+      error: "Invalid status"
+    });
+  }
+
+  const r = db
+    .prepare(
+      "UPDATE registrations SET status=? WHERE id=?"
+    )
+    .run(status, req.params.id);
+
+  if (!r.changes) {
+    return res.status(404).json({
+      error: "Registration not found"
+    });
+  }
+
+  res.json({
+    ok: true
+  });
 });
 
-app.get("/api/results",(req,res)=>res.json(db.prepare("SELECT * FROM results ORDER BY id DESC").all()));
-app.post("/api/results",auth,(req,res)=>{
-  const {lobby,winner,kills,points}=req.body;
-  if(!lobby||!winner||kills===undefined||points===undefined) return res.status(400).json({error:"All result fields are required"});
-  db.prepare("INSERT INTO results(lobby,winner,kills,points,created_at) VALUES(?,?,?,?,?)").run(lobby,winner,Number(kills),Number(points),now());
-  res.json({ok:true});
+
+/* =========================
+   RESULTS
+========================= */
+
+app.get("/api/results", (req, res) => {
+  res.json(
+    db
+      .prepare("SELECT * FROM results ORDER BY id DESC")
+      .all()
+  );
 });
 
-app.get("/api/stats",auth,(req,res)=>{
-  const pending=db.prepare("SELECT COUNT(*) c FROM registrations WHERE status='pending'").get().c;
-  const confirmed=db.prepare("SELECT COUNT(*) c FROM registrations WHERE status='confirmed'").get().c;
-  res.json({pending,confirmed,activeLobbies:30});
+
+app.post("/api/results", auth, (req, res) => {
+  const {
+    lobby,
+    winner,
+    kills,
+    points
+  } = req.body;
+
+  if (
+    !lobby ||
+    !winner ||
+    kills === undefined ||
+    points === undefined
+  ) {
+    return res.status(400).json({
+      error: "All result fields are required"
+    });
+  }
+
+  db.prepare(`
+    INSERT INTO results(
+      lobby,
+      winner,
+      kills,
+      points,
+      created_at
+    )
+    VALUES(?,?,?,?,?)
+  `).run(
+    lobby,
+    winner,
+    Number(kills),
+    Number(points),
+    now()
+  );
+
+  res.json({
+    ok: true
+  });
 });
 
-app.get("*",(req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
-app.listen(PORT,()=>console.log(`ScrimForge V2 running on http://localhost:${PORT}`));
+
+/* =========================
+   ADMIN STATS
+========================= */
+
+app.get("/api/stats", auth, (req, res) => {
+  const pending = db
+    .prepare(
+      "SELECT COUNT(*) c FROM registrations WHERE status='pending'"
+    )
+    .get().c;
+
+  const confirmed = db
+    .prepare(
+      "SELECT COUNT(*) c FROM registrations WHERE status='confirmed'"
+    )
+    .get().c;
+
+  res.json({
+    pending,
+    confirmed,
+    activeLobbies: 30
+  });
+});
+
+
+/* =========================
+   FRONTEND
+========================= */
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "index.html"
+    )
+  );
+});
+
+
+/* =========================
+   START SERVER
+========================= */
+
+app.listen(PORT, () => {
+  console.log(
+    `ScrimForge V2 running on http://localhost:${PORT}`
+  );
+});
