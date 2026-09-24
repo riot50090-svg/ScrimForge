@@ -41,6 +41,21 @@ CREATE TABLE IF NOT EXISTS results (
   points INTEGER NOT NULL,
   created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS match_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  lobby TEXT NOT NULL,
+  match_no INTEGER NOT NULL,
+  team TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  kills INTEGER NOT NULL DEFAULT 0,
+  booyahs INTEGER NOT NULL DEFAULT 0,
+  placement_points INTEGER NOT NULL DEFAULT 0,
+  kill_points INTEGER NOT NULL DEFAULT 0,
+  total_points INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  UNIQUE(lobby, match_no, team)
+);
 `);
 
 app.use(express.json());
@@ -74,6 +89,26 @@ function auth(req, res, next) {
 function now() {
   return new Date().toISOString();
 }
+
+
+/* =========================
+   PLACEMENT SCORING
+========================= */
+
+const PLACEMENT_POINTS = {
+  1: 12,
+  2: 9,
+  3: 8,
+  4: 7,
+  5: 6,
+  6: 5,
+  7: 4,
+  8: 3,
+  9: 2,
+  10: 1,
+  11: 0,
+  12: 0
+};
 
 
 /* =========================
@@ -305,7 +340,7 @@ app.get("/api/registrations", auth, (req, res) => {
 
 
 /* =========================
-   PUBLIC LOBBIES
+   PUBLIC LOBBY COUNTS
 ========================= */
 
 app.get("/api/public/lobbies", (req, res) => {
@@ -371,7 +406,7 @@ app.patch("/api/registrations/:id", auth, (req, res) => {
 
 
 /* =========================
-   RESULTS
+   OLD RESULTS
 ========================= */
 
 app.get("/api/results", (req, res) => {
@@ -447,6 +482,310 @@ app.get("/api/stats", auth, (req, res) => {
     confirmed,
     activeLobbies: 30
   });
+});
+
+
+/* =========================
+   LEADERBOARD:
+   GET CONFIRMED TEAMS
+========================= */
+
+app.get("/api/leaderboard/teams", auth, (req, res) => {
+  const { lobby } = req.query;
+
+  if (!lobby) {
+    return res.status(400).json({
+      error: "Lobby is required"
+    });
+  }
+
+  const parts = lobby.split(" · ");
+  const time = parts[0];
+  const fee = parts.slice(1).join(" · ").replace(/^₹/, "");
+
+  if (!time || !fee) {
+    return res.status(400).json({
+      error: "Invalid lobby"
+    });
+  }
+
+  const teams = db.prepare(`
+    SELECT
+      id,
+      team,
+      captain,
+      uid
+    FROM registrations
+    WHERE time=?
+      AND fee=?
+      AND status='confirmed'
+    ORDER BY id ASC
+    LIMIT 12
+  `).all(time, fee);
+
+  res.json(teams);
+});
+
+
+/* =========================
+   SAVE ONE MATCH
+========================= */
+
+app.post("/api/leaderboard/match", auth, (req, res) => {
+  try {
+    const { lobby, matchNo, entries } = req.body;
+
+    const match = Number(matchNo);
+
+    if (!lobby || !Number.isInteger(match) || match < 1 || match > 6) {
+      return res.status(400).json({
+        error: "Valid lobby and match number 1-6 are required"
+      });
+    }
+
+    if (!Array.isArray(entries) || entries.length !== 12) {
+      return res.status(400).json({
+        error: "Exactly 12 team entries are required"
+      });
+    }
+
+    const positions = entries.map(e => Number(e.position));
+
+    const uniquePositions = new Set(positions);
+
+    if (
+      positions.some(p => !Number.isInteger(p) || p < 1 || p > 12) ||
+      uniquePositions.size !== 12
+    ) {
+      return res.status(400).json({
+        error: "Positions must contain every number from 1 to 12 exactly once"
+      });
+    }
+
+    const teams = entries.map(e => String(e.team || "").trim());
+
+    if (teams.some(t => !t)) {
+      return res.status(400).json({
+        error: "Every team must have a name"
+      });
+    }
+
+    const uniqueTeams = new Set(teams);
+
+    if (uniqueTeams.size !== 12) {
+      return res.status(400).json({
+        error: "Each team must be unique"
+      });
+    }
+
+    const save = db.transaction(() => {
+
+      const deleteOld = db.prepare(`
+        DELETE FROM match_results
+        WHERE lobby=? AND match_no=?
+      `);
+
+      deleteOld.run(lobby, match);
+
+      const insert = db.prepare(`
+        INSERT INTO match_results(
+          lobby,
+          match_no,
+          team,
+          position,
+          kills,
+          booyahs,
+          placement_points,
+          kill_points,
+          total_points,
+          created_at
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,?)
+      `);
+
+      for (const entry of entries) {
+        const position = Number(entry.position);
+        const kills = Math.max(0, Number(entry.kills) || 0);
+
+        const placementPoints =
+          PLACEMENT_POINTS[position] || 0;
+
+        const booyahs =
+          position === 1 ? 1 : 0;
+
+        const killPoints = kills;
+
+        const totalPoints =
+          placementPoints + killPoints;
+
+        insert.run(
+          lobby,
+          match,
+          String(entry.team).trim(),
+          position,
+          kills,
+          booyahs,
+          placementPoints,
+          killPoints,
+          totalPoints,
+          now()
+        );
+      }
+    });
+
+    save();
+
+    res.json({
+      ok: true,
+      message: `Match ${match} saved successfully`
+    });
+
+  } catch (err) {
+    console.error("SAVE MATCH ERROR:", err);
+
+    res.status(500).json({
+      error: "Could not save match"
+    });
+  }
+});
+
+
+/* =========================
+   GET OVERALL LEADERBOARD
+========================= */
+
+app.get("/api/leaderboard", (req, res) => {
+  try {
+    const lobby = String(req.query.lobby || "").trim();
+
+    if (!lobby) {
+      return res.status(400).json({
+        error: "Lobby is required"
+      });
+    }
+
+    const rows = db.prepare(`
+      SELECT
+        team,
+        SUM(booyahs) AS booyahs,
+        SUM(placement_points) AS placement_points,
+        SUM(kill_points) AS kill_points,
+        SUM(total_points) AS total_points,
+        COUNT(*) AS matches_played
+      FROM match_results
+      WHERE lobby=?
+      GROUP BY team
+      ORDER BY total_points DESC, kill_points DESC, booyahs DESC, team ASC
+    `).all(lobby);
+
+    const leaderboard = rows.map((r, index) => ({
+      position: index + 1,
+      team: r.team,
+      booyahs: Number(r.booyahs || 0),
+      placementPoints: Number(r.placement_points || 0),
+      killPoints: Number(r.kill_points || 0),
+      totalPoints: Number(r.total_points || 0),
+      matchesPlayed: Number(r.matches_played || 0)
+    }));
+
+    res.json(leaderboard);
+
+  } catch (err) {
+    console.error("LEADERBOARD ERROR:", err);
+
+    res.status(500).json({
+      error: "Could not load leaderboard"
+    });
+  }
+});
+
+
+/* =========================
+   GET INDIVIDUAL MATCH
+========================= */
+
+app.get("/api/leaderboard/match", (req, res) => {
+  try {
+    const lobby = String(req.query.lobby || "").trim();
+    const match = Number(req.query.match);
+
+    if (!lobby || !Number.isInteger(match) || match < 1 || match > 6) {
+      return res.status(400).json({
+        error: "Valid lobby and match number are required"
+      });
+    }
+
+    const rows = db.prepare(`
+      SELECT
+        team,
+        position,
+        kills,
+        booyahs,
+        placement_points,
+        kill_points,
+        total_points
+      FROM match_results
+      WHERE lobby=? AND match_no=?
+      ORDER BY position ASC
+    `).all(lobby, match);
+
+    res.json(rows);
+
+  } catch (err) {
+    console.error("MATCH LOAD ERROR:", err);
+
+    res.status(500).json({
+      error: "Could not load match"
+    });
+  }
+});
+
+
+/* =========================
+   PUBLIC LEADERBOARD
+========================= */
+
+app.get("/api/public-leaderboard", (req, res) => {
+  try {
+    const lobby = String(req.query.lobby || "").trim();
+
+    if (!lobby) {
+      return res.status(400).json({
+        error: "Lobby is required"
+      });
+    }
+
+    const rows = db.prepare(`
+      SELECT
+        team,
+        SUM(booyahs) AS booyahs,
+        SUM(placement_points) AS placement_points,
+        SUM(kill_points) AS kill_points,
+        SUM(total_points) AS total_points,
+        COUNT(*) AS matches_played
+      FROM match_results
+      WHERE lobby=?
+      GROUP BY team
+      ORDER BY total_points DESC, kill_points DESC, booyahs DESC, team ASC
+    `).all(lobby);
+
+    res.json(rows.map((r, index) => ({
+      position: index + 1,
+      team: r.team,
+      booyahs: Number(r.booyahs || 0),
+      placementPoints: Number(r.placement_points || 0),
+      killPoints: Number(r.kill_points || 0),
+      totalPoints: Number(r.total_points || 0),
+      matchesPlayed: Number(r.matches_played || 0)
+    })));
+
+  } catch (err) {
+    console.error("PUBLIC LEADERBOARD ERROR:", err);
+
+    res.status(500).json({
+      error: "Could not load public leaderboard"
+    });
+  }
 });
 
 
