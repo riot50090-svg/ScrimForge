@@ -1,62 +1,2277 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ScrimForge — V2</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#070b14;color:#f5f7fb;font-family:Arial,sans-serif}
-header{position:sticky;top:0;z-index:5;background:#0d1424;border-bottom:1px solid #273149;padding:14px 5%;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:24px;font-weight:900}.logo span{color:#62e5ff}nav a{color:#c4cedf;text-decoration:none;margin-left:18px;font-size:14px}
-.hero{padding:55px 5%;background:linear-gradient(135deg,#101c35,#070b14)}.pill,.tag{display:inline-block;background:#182943;color:#74eaff;border-radius:99px;padding:7px 11px;font-size:12px;font-weight:700}
-h1{font-size:44px;max-width:760px;margin:16px 0 12px}.hero p{max-width:720px;color:#aeb9cc;line-height:1.65}
-.btn{border:0;border-radius:9px;padding:11px 16px;background:#62e5ff;color:#051018;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}
-.btn.secondary{background:#202c43;color:#e8eef8}.btn.danger{background:#ef6b7a;color:white}.btn.small{padding:8px 11px;font-size:12px}
-.container{padding:32px 5%}.sub,.muted{color:#98a7be;font-size:14px}.timebar{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
-.time{border:1px solid #2b3852;background:#111a2d;color:#cbd5e1;padding:10px 14px;border-radius:9px;cursor:pointer}.time.active{background:#62e5ff;color:#051018}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}.card{background:#10182a;border:1px solid #293650;border-radius:15px;padding:18px}.card h3{margin:8px 0}
-.fee{font-size:25px;font-weight:900;margin:11px 0}.green{color:#72f0a7}.notice{background:#171d2b;border-left:4px solid #62e5ff;padding:13px;border-radius:7px;color:#c5cede;line-height:1.5}
-table{width:100%;border-collapse:collapse;background:#10182a;margin-top:16px}th,td{text-align:left;padding:12px;border-bottom:1px solid #293650;font-size:14px}th{color:#98a7be}
-footer{padding:30px 5%;border-top:1px solid #273149;color:#7e8ba0}.modal{display:none;position:fixed;inset:0;background:#000b;z-index:30;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}
-.box{background:#111a2d;border:1px solid #33415c;border-radius:16px;padding:23px;max-width:600px;width:100%;max-height:90vh;overflow:auto}.close{float:right;background:none;border:0;color:#fff;font-size:22px;cursor:pointer}
-input,select{width:100%;padding:11px;border-radius:9px;border:1px solid #33415c;background:#0b1220;color:#fff;margin:6px 0 12px}label{font-size:13px;color:#aeb9cc}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.status{padding:5px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#26334b}.status.pending{color:#ffd56a}.status.confirmed{color:#72f0a7}.status.rejected{color:#ff8997}
-.hidden{display:none!important}.adminbar{background:#0b1220;border-bottom:1px solid #293650;padding:10px 5%;display:none;justify-content:space-between;align-items:center}.adminbar.show{display:flex}
-.dash{display:none}.dash.show{display:block}.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.stat{background:#10182a;border:1px solid #293650;border-radius:13px;padding:16px}.stat b{display:block;font-size:26px;margin-top:6px}
-@media(max-width:700px){h1{font-size:34px}nav{display:none}.row{grid-template-columns:1fr}}
+*{box-sizing:border-box}
+body{margin:0;background:#070b14;color:#f5f7fb;font-family:Arial,sans-serif}
+
+header{
+  position:sticky;top:0;z-index:5;background:#0d1424;
+  border-bottom:1px solid #273149;padding:14px 5%;
+  display:flex;justify-content:space-between;align-items:center
+}
+
+.logo{font-size:24px;font-weight:900}
+.logo span{color:#62e5ff}
+nav a{color:#c4cedf;text-decoration:none;margin-left:18px;font-size:14px}
+
+.hero{
+  padding:55px 5%;
+  background:linear-gradient(135deg,#101c35,#070b14)
+}
+
+.pill,.tag{
+  display:inline-block;background:#182943;color:#74eaff;
+  border-radius:99px;padding:7px 11px;font-size:12px;font-weight:700
+}
+
+h1{font-size:44px;max-width:760px;margin:16px 0 12px}
+.hero p{max-width:720px;color:#aeb9cc;line-height:1.65}
+
+.btn{
+  border:0;border-radius:9px;padding:11px 16px;
+  background:#62e5ff;color:#051018;font-weight:900;
+  cursor:pointer;text-decoration:none;display:inline-block
+}
+
+.btn.secondary{background:#202c43;color:#e8eef8}
+.btn.danger{background:#ef6b7a;color:white}
+.btn.small{padding:8px 11px;font-size:12px}
+
+.container{padding:32px 5%}
+.sub,.muted{color:#98a7be;font-size:14px}
+
+.timebar{
+  display:flex;gap:9px;flex-wrap:wrap;margin:18px 0
+}
+
+.time{
+  border:1px solid #2b3852;background:#111a2d;color:#cbd5e1;
+  padding:10px 14px;border-radius:9px;cursor:pointer
+}
+
+.time.active{background:#62e5ff;color:#051018}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:15px
+}
+
+.card{
+  background:#10182a;border:1px solid #293650;
+  border-radius:15px;padding:18px
+}
+
+.card h3{margin:8px 0}
+.fee{font-size:25px;font-weight:900;margin:11px 0}
+.green{color:#72f0a7}
+
+.notice{
+  background:#171d2b;border-left:4px solid #62e5ff;
+  padding:13px;border-radius:7px;color:#c5cede;line-height:1.5
+}
+
+table{
+  width:100%;border-collapse:collapse;background:#10182a;margin-top:16px
+}
+
+th,td{
+  text-align:left;padding:12px;
+  border-bottom:1px solid #293650;font-size:14px
+}
+
+th{color:#98a7be}
+
+footer{
+  padding:30px 5%;border-top:1px solid #273149;color:#7e8ba0
+}
+
+.modal{
+  display:none;position:fixed;inset:0;background:#000b;
+  z-index:30;align-items:center;justify-content:center;padding:20px
+}
+
+.modal.show{display:flex}
+
+.box{
+  background:#111a2d;border:1px solid #33415c;border-radius:16px;
+  padding:23px;max-width:900px;width:100%;
+  max-height:90vh;overflow:auto
+}
+
+.close{
+  float:right;background:none;border:0;color:#fff;
+  font-size:22px;cursor:pointer
+}
+
+input,select{
+  width:100%;padding:11px;border-radius:9px;
+  border:1px solid #33415c;background:#0b1220;
+  color:#fff;margin:6px 0 12px
+}
+
+label{font-size:13px;color:#aeb9cc}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+.status{
+  padding:5px 8px;border-radius:99px;
+  font-size:11px;font-weight:700;background:#26334b
+}
+
+.status.pending{color:#ffd56a}
+.status.confirmed{color:#72f0a7}
+.status.rejected{color:#ff8997}
+
+.hidden{display:none!important}
+
+.adminbar{
+  background:#0b1220;border-bottom:1px solid #293650;
+  padding:10px 5%;display:none;
+  justify-content:space-between;align-items:center
+}
+
+.adminbar.show{display:flex}
+
+.dash{display:none}
+.dash.show{display:block}
+
+.statgrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px
+}
+
+.stat{
+  background:#10182a;border:1px solid #293650;
+  border-radius:13px;padding:16px
+}
+
+.stat b{
+  display:block;font-size:26px;margin-top:6px
+}
+
+.score-table{
+  overflow-x:auto;
+  margin-top:15px
+}
+
+.score-table table{
+  min-width:850px
+}
+
+.score-input{
+  width:90px;
+  margin:0;
+  padding:8px
+}
+
+.total-cell{
+  font-weight:900;
+  color:#72f0a7
+}
+
+.rank-cell{
+  font-weight:900
+}
+
+.leaderboard-table{
+  overflow-x:auto
+}
+
+.leaderboard-table table{
+  min-width:700px
+}
+
+.top-rank{
+  font-weight:900;
+}
+
+@media(max-width:700px){
+  h1{font-size:34px}
+  nav{display:none}
+  .row{grid-template-columns:1fr}
+}
 </style>
 </head>
+
 <body>
-<header><div class="logo">Scrim<span>Forge</span></div><nav><a href="#scrims">Daily Scrims</a><a href="#tournaments">Tournaments</a><a href="#results">Results</a><a href="#admin" onclick="openAdmin()">Admin</a></nav></header>
-<section class="hero"><span class="pill">LIVE V2</span><h1>Find your lobby. Register. Get connected.</h1><p>ScrimForge uses a shared server database, so registrations from customers appear in the admin dashboard on your device too.</p><a class="btn" href="#scrims">Browse Today's Scrims</a></section>
-<section class="container" id="scrims"><h2>🔥 Daily Scrims</h2><p class="sub">Every session: <b>12 teams · 6 matches · ~1.5–2 hours</b>.</p><div class="timebar" id="times"></div><div class="notice">Choose a lobby and register. Your registration is saved on the ScrimForge server as <b>Pending</b> until an admin confirms it.</div><div class="grid" id="lobbies"></div></section>
-<section class="container" id="tournaments"><h2>🏆 Tournaments</h2><p class="sub">Separate from daily scrims.</p><div class="grid"><div class="card"><span class="tag">128 SLOTS</span><h3>Open Cup</h3><p class="muted">Qualifiers → Finals</p></div><div class="card"><span class="tag">256 SLOTS</span><h3>Grand League</h3><p class="muted">Multi-stage competition</p></div></div></section>
-<section class="container" id="results"><h2>📊 Recent Scrim Results</h2><table><thead><tr><th>Lobby</th><th>Winner</th><th>Kills</th><th>Points</th></tr></thead><tbody id="resultsBody"></tbody></table></section>
-<div class="adminbar" id="adminbar"><span>🔐 <b id="adminName"></b> — Admin Mode</span><button class="btn small secondary" onclick="logout()">Log out</button></div>
-<section class="container dash" id="adminDash"><h2>Admin Dashboard</h2><p class="sub">Manage registrations and publish results from the server.</p><div class="statgrid"><div class="stat">Pending<b id="pendingCount">0</b></div><div class="stat">Confirmed<b id="confirmedCount">0</b></div><div class="stat">Active Lobbies<b>30</b></div></div><h3 style="margin-top:28px">Registrations</h3><div id="adminRegs"></div><h3 style="margin-top:28px">Add Result</h3><div class="card"><div class="row"><div><label>Lobby</label><input id="resLobby" placeholder="6 PM · ₹45"></div><div><label>Winner</label><input id="resWinner" placeholder="Team name"></div></div><div class="row"><div><label>Kills</label><input id="resKills" type="number"></div><div><label>Points</label><input id="resPoints" type="number"></div></div><button class="btn" onclick="addResult()">Publish Result</button></div></section>
-<footer><b>ScrimForge</b><br><span class="muted">V2 server-backed build.</span></footer>
-<div class="modal" id="modal"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+
+<header>
+  <div class="logo">Scrim<span>Forge</span></div>
+
+  <nav>
+    <a href="#scrims">Daily Scrims</a>
+    <a href="#tournaments">Tournaments</a>
+    <a href="#leaderboard">Leaderboard</a>
+    <a href="#admin" onclick="openAdmin()">Admin</a>
+  </nav>
+</header>
+
+
+<section class="hero">
+  <span class="pill">LIVE V2</span>
+
+  <h1>Find your lobby. Register. Get connected.</h1>
+
+  <p>
+    ScrimForge uses a shared server database, so registrations from
+    customers appear in the admin dashboard on your device too.
+  </p>
+
+  <a class="btn" href="#scrims">Browse Today's Scrims</a>
+</section>
+
+
+<!-- =========================
+     DAILY SCRIMS
+========================= -->
+
+<section class="container" id="scrims">
+
+  <h2>🔥 Daily Scrims</h2>
+
+  <p class="sub">
+    Every session: <b>12 teams · 6 matches · ~1.5–2 hours</b>.
+  </p>
+
+  <div class="timebar" id="times"></div>
+
+  <div class="notice">
+    Choose a lobby and register. Your registration is saved on the
+    ScrimForge server as <b>Pending</b> until an admin confirms it.
+  </div>
+
+  <div class="grid" id="lobbies"></div>
+
+</section>
+
+
+<!-- =========================
+     TOURNAMENTS
+========================= -->
+
+<section class="container" id="tournaments">
+
+  <h2>🏆 Tournaments</h2>
+
+  <p class="sub">Separate from daily scrims.</p>
+
+  <div class="grid">
+
+    <div class="card">
+      <span class="tag">128 SLOTS</span>
+      <h3>Open Cup</h3>
+      <p class="muted">Qualifiers → Finals</p>
+    </div>
+
+    <div class="card">
+      <span class="tag">256 SLOTS</span>
+      <h3>Grand League</h3>
+      <p class="muted">Multi-stage competition</p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     PUBLIC LEADERBOARD
+========================= -->
+
+<section class="container" id="leaderboard">
+
+  <h2>🏆 Live Scrim Leaderboard</h2>
+
+  <p class="sub">
+    Cumulative points are updated after every match.
+  </p>
+
+  <div class="row">
+
+    <div>
+      <label>Select Lobby</label>
+
+      <select id="publicLeaderboardLobby"
+              onchange="loadPublicLeaderboard()">
+      </select>
+    </div>
+
+    <div>
+      <label>Current Match</label>
+
+      <select id="publicMatchSelect"
+              onchange="loadPublicLeaderboard()">
+
+        <option value="1">Match 1</option>
+        <option value="2">Match 2</option>
+        <option value="3">Match 3</option>
+        <option value="4">Match 4</option>
+        <option value="5">Match 5</option>
+        <option value="6">Match 6</option>
+
+      </select>
+    </div>
+
+  </div>
+
+  <div class="leaderboard-table">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Team Name</th>
+          <th>Booyahs</th>
+          <th>Placement Points</th>
+          <th>Kill Points</th>
+          <th>Total Points</th>
+        </tr>
+      </thead>
+
+      <tbody id="publicLeaderboardBody">
+        <tr>
+          <td colspan="6">Select a lobby.</td>
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     ADMIN BAR
+========================= -->
+
+<div class="adminbar" id="adminbar">
+
+  <span>
+    🔐 <b id="adminName"></b> — Admin Mode
+  </span>
+
+  <button class="btn small secondary" onclick="logout()">
+    Log out
+  </button>
+
+</div>
+
+
+<!-- =========================
+     ADMIN DASHBOARD
+========================= -->
+
+<section class="container dash" id="adminDash">
+
+  <h2>Admin Dashboard</h2>
+
+  <p class="sub">
+    Manage registrations and control the live leaderboard.
+  </p>
+
+
+  <!-- STATS -->
+
+  <div class="statgrid">
+
+    <div class="stat">
+      Pending
+      <b id="pendingCount">0</b>
+    </div>
+
+    <div class="stat">
+      Confirmed
+      <b id="confirmedCount">0</b>
+    </div>
+
+    <div class="stat">
+      Active Lobbies
+      <b>30</b>
+    </div>
+
+  </div>
+
+
+  <!-- REGISTRATIONS -->
+
+  <h3 style="margin-top:28px">
+    Registrations
+  </h3>
+
+  <div id="adminRegs"></div>
+
+
+  <!-- =========================
+       MATCH SCORE ENTRY
+  ========================= -->
+
+  <h3 style="margin-top:35px">
+    🏆 Match Score Entry
+  </h3>
+
+  <div class="card">
+
+    <p class="sub">
+      Enter the result of all 12 teams for one match.
+      Placement points and total points are calculated automatically.
+    </p>
+
+
+    <div class="row">
+
+      <div>
+
+        <label>Lobby</label>
+
+        <select id="scoreLobby"
+                onchange="loadScoreTeams()">
+        </select>
+
+      </div>
+
+
+      <div>
+
+        <label>Match Number</label>
+
+        <select id="scoreMatch"
+                onchange="loadExistingMatch()">
+
+          <option value="1">Match 1</option>
+          <option value="2">Match 2</option>
+          <option value="3">Match 3</option>
+          <option value="4">Match 4</option>
+          <option value="5">Match 5</option>
+          <option value="6">Match 6</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <div class="notice" style="margin-top:12px">
+
+      <b>Scoring:</b><br>
+
+      1st = 12 points<br>
+      2nd = 9 points<br>
+      3rd = 8 points<br>
+      4th = 7 points<br>
+      5th = 6 points<br>
+      6th = 5 points<br>
+      7th = 4 points<br>
+      8th = 3 points<br>
+      9th = 2 points<br>
+      10th = 1 point<br>
+      11th = 0 points<br>
+      12th = 0 points<br><br>
+
+      <b>1 kill = 1 point.</b><br>
+      Position 1 automatically counts as 1 Booyah.
+
+    </div>
+
+
+    <div class="score-table">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Team</th>
+            <th>Position</th>
+            <th>Booyahs</th>
+            <th>Placement Points</th>
+            <th>Kill Points</th>
+            <th>Match Total</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="scoreEntryBody"></tbody>
+
+      </table>
+
+    </div>
+
+
+    <button
+      class="btn"
+      style="margin-top:18px"
+      onclick="saveMatch()">
+
+      💾 Save Match Result
+
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       ADMIN LIVE LEADERBOARD
+  ========================= -->
+
+  <h3 style="margin-top:35px">
+    📊 Current Leaderboard
+  </h3>
+
+  <div class="card">
+
+    <div class="row">
+
+      <div>
+
+        <label>Leaderboard Lobby</label>
+
+        <select id="adminLeaderboardLobby"
+                onchange="loadAdminLeaderboard()">
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <div class="leaderboard-table">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Position</th>
+            <th>Team Name</th>
+            <th>Booyahs</th>
+            <th>Placement Points</th>
+            <th>Kill Points</th>
+            <th>Total Points</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="adminLeaderboardBody">
+
+          <tr>
+            <td colspan="6">
+              Select a lobby.
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<footer>
+
+  <b>ScrimForge</b>
+  <br>
+
+  <span class="muted">
+    V2 server-backed build.
+  </span>
+
+</footer>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div class="modal" id="modal">
+
+  <div class="box">
+
+    <button class="close" onclick="closeModal()">×</button>
+
+    <div id="modalContent"></div>
+
+  </div>
+
+</div>
+
+
 <script>
-const fees=['25','30','45','50','75','100+'],times=['12 PM','3 PM','6 PM','9 PM','12 AM'];let current='12 PM',regs=[];
-const $=id=>document.getElementById(id);
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function renderTimes(){$('times').innerHTML=times.map(t=>`<button class="time ${t===current?'active':''}" onclick="setTime('${t}')">${t}</button>`).join('')}
-function setTime(t){current=t;renderTimes();render()}
-function render(){ $('lobbies').innerHTML=fees.map(fee=>{let filled=regs.filter(r=>r.time===current&&r.fee===fee&&r.status==='confirmed').length;let full=filled>=12;return `<div class="card"><span class="tag">${current}</span><h3>₹${fee} Scrim</h3><div class="fee">₹${fee}</div><p class="muted">12 teams · 6 matches · ~1.5–2 hours</p><p class="muted"><b>${filled}/12</b> teams confirmed</p><button class="btn" ${full?'disabled':''} onclick="registerLobby('${current}','${fee}')">${full?'FULL':'REGISTER'}</button></div>`}).join('')}
-function registerLobby(time,fee){$('modalContent').innerHTML=`<h2>Register for Scrim</h2><p class="sub">Lobby: <b>${time} · ₹${fee}</b></p><div class="row"><div><label>Team name</label><input id="rTeam"></div><div><label>Captain name</label><input id="rCaptain"></div></div><div class="row"><div><label>WhatsApp number</label><input id="rPhone"></div><div><label>Game UID</label><input id="rUid"></div></div><button class="btn" onclick="saveRegistration('${time}','${fee}')">Submit Registration</button>`;$('modal').classList.add('show')}
-async function saveRegistration(time,fee){let body={time,fee,team:$('rTeam').value.trim(),captain:$('rCaptain').value.trim(),phone:$('rPhone').value.trim(),uid:$('rUid').value.trim()};if(Object.values(body).some(v=>!v)){alert('Please fill all fields.');return}let r=await api('/api/registrations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok){alert(r.error||'Could not register');return}$('modalContent').innerHTML=`<h2>Registration received ✅</h2><p>Your registration is <b>Pending</b> admin confirmation.</p><p class="sub">Reference: <b>${esc(r.ref)}</b></p><button class="btn" onclick="closeModal()">Done</button>`;await loadPublic()}
-async function api(url,opt={}){let res=await fetch(url,opt);let data={};try{data=await res.json()}catch{};if(!res.ok)throw data;return data}
-async function loadPublic(){regs=await api('/api/public/lobbies').catch(()=>[]);render();let results=await api('/api/results').catch(()=>[]);$('resultsBody').innerHTML=results.map(r=>`<tr><td>${esc(r.lobby)}</td><td>${esc(r.winner)}</td><td>${r.kills}</td><td>${r.points}</td></tr>`).join('')}
-async function openAdmin(){try{let m=await api('/api/me');if(m.loggedIn){showDashboard(m.name);return}let e=await api('/api/admin-exists');e.exists?showLogin():showSetup()}catch(err){alert('Cannot connect to the ScrimForge server. Please open the website through the Node server, not as a local HTML file.')}}
-function showLogin(){$('modalContent').innerHTML=`<h2>Admin Login</h2><label>Email</label><input id="loginEmail" type="email" autocomplete="username"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password"><button class="btn" onclick="loginAdmin()">Log in</button>`;$('modal').classList.add('show')}
-function showSetup(){$('modalContent').innerHTML=`<h2>Create First Admin</h2><p class="sub">This appears only while no admin account exists. You can use the same email and password you used in your old V1 admin login.</p><label>Your name</label><input id="setupName"><label>Admin email</label><input id="setupEmail" type="email"><label>Password</label><input id="setupPass" type="password"><button class="btn" onclick="setupAdmin()">Create Admin</button>`;$('modal').classList.add('show')}
-async function setupAdmin(){try{let name=$('setupName').value.trim(),email=$('setupEmail').value.trim(),password=$('setupPass').value;if(!name||!email||password.length<6){alert('Enter your name, email and a password of at least 6 characters.');return}let r=await api('/api/setup-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});closeModal();showDashboard(r.name)}catch(e){alert(e.error||'Could not create admin')}}
-async function loginAdmin(){try{let email=$('loginEmail').value.trim(),password=$('loginPass').value;if(!email||!password){alert('Enter your admin email and password.');return}let r=await api('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});closeModal();await showDashboard(r.name)}catch(e){alert(e.error||'Incorrect admin email or password.')}}
-async function showDashboard(name){$('adminDash').classList.add('show');$('adminbar').classList.add('show');$('adminName').textContent=name;closeModal();await renderAdmin();setTimeout(()=>$('adminDash').scrollIntoView({behavior:'smooth',block:'start'}),50)}
-async function renderAdmin(){try{let s=await api('/api/stats');$('pendingCount').textContent=s.pending;$('confirmedCount').textContent=s.confirmed;regs=await api('/api/registrations');$('adminRegs').innerHTML=regs.length?regs.map(r=>`<div class="card" style="margin:10px 0"><div style="display:flex;justify-content:space-between"><b>${esc(r.team)}</b><span class="status ${r.status}">${r.status.toUpperCase()}</span></div><p class="muted">${esc(r.time)} · ₹${esc(r.fee)} · ${esc(r.captain)} · Ref ${esc(r.ref)}</p><p class="muted">WhatsApp: ${esc(r.phone)} · UID: ${esc(r.uid)}</p>${r.status==='pending'?`<button class="btn small" onclick="updateReg(${r.id},'confirmed')">Confirm</button> <button class="btn small danger" onclick="updateReg(${r.id},'rejected')">Reject</button>`:''}${r.status==='confirmed'?`<button class="btn small danger" onclick="updateReg(${r.id},'rejected')">Cancel</button>`:''}</div>`).join(''):'<div class="notice">No registrations yet.</div>';render()}catch(e){alert('Admin session expired.');logout()}}
-async function updateReg(id,status){try{await api('/api/registrations/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});await renderAdmin()}catch(e){alert(e.error||'Could not update')}}
-async function addResult(){try{await api('/api/results',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lobby:$('resLobby').value.trim(),winner:$('resWinner').value.trim(),kills:$('resKills').value,points:$('resPoints').value})});$('resLobby').value='';$('resWinner').value='';$('resKills').value='';$('resPoints').value='';await loadPublic();alert('Result published.')}catch(e){alert(e.error||'Could not publish result')}}
-async function logout(){await fetch('/api/logout',{method:'POST'});$('adminDash').classList.remove('show');$('adminbar').classList.remove('show');location.hash=''}
-function closeModal(){$('modal').classList.remove('show')}
-renderTimes();loadPublic();
+
+const fees = ['25','30','45','50','75','100+'];
+
+const times = [
+  '12 PM',
+  '3 PM',
+  '6 PM',
+  '9 PM',
+  '12 AM'
+];
+
+let current = '12 PM';
+
+let regs = [];
+
+const placementPoints = {
+  1:12,
+  2:9,
+  3:8,
+  4:7,
+  5:6,
+  6:5,
+  7:4,
+  8:3,
+  9:2,
+  10:1,
+  11:0,
+  12:0
+};
+
+
+const $ = id => document.getElementById(id);
+
+
+function esc(s){
+
+  return String(s).replace(
+    /[&<>"']/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[m])
+  );
+
+}
+
+
+/* =========================
+   LOBBY NAME
+========================= */
+
+function lobbyName(time,fee){
+
+  return `${time} · ₹${fee}`;
+
+}
+
+
+/* =========================
+   TIMES
+========================= */
+
+function renderTimes(){
+
+  $('times').innerHTML =
+    times.map(t => `
+
+      <button
+        class="time ${t===current?'active':''}"
+        onclick="setTime('${t}')">
+
+        ${t}
+
+      </button>
+
+    `).join('');
+
+}
+
+
+function setTime(t){
+
+  current = t;
+
+  renderTimes();
+
+  render();
+
+}
+
+
+/* =========================
+   PUBLIC SCRIMS
+========================= */
+
+function render(){
+
+  $('lobbies').innerHTML = fees.map(fee => {
+
+    let filled =
+      regs.filter(
+        r =>
+          r.time === current &&
+          r.fee === fee &&
+          r.status === 'confirmed'
+      ).length;
+
+    let full = filled >= 12;
+
+    return `
+
+      <div class="card">
+
+        <span class="tag">
+          ${current}
+        </span>
+
+        <h3>
+          ₹${fee} Scrim
+        </h3>
+
+        <div class="fee">
+          ₹${fee}
+        </div>
+
+        <p class="muted">
+          12 teams · 6 matches · ~1.5–2 hours
+        </p>
+
+        <p class="muted">
+          <b>${filled}/12</b>
+          teams confirmed
+        </p>
+
+        <button
+          class="btn"
+          ${full?'disabled':''}
+          onclick="registerLobby('${current}','${fee}')">
+
+          ${full?'FULL':'REGISTER'}
+
+        </button>
+
+      </div>
+
+    `;
+
+  }).join('');
+
+}
+
+
+/* =========================
+   REGISTRATION
+========================= */
+
+function registerLobby(time,fee){
+
+  $('modalContent').innerHTML = `
+
+    <h2>Register for Scrim</h2>
+
+    <p class="sub">
+      Lobby:
+      <b>${time} · ₹${fee}</b>
+    </p>
+
+    <div class="row">
+
+      <div>
+        <label>Team name</label>
+        <input id="rTeam">
+      </div>
+
+      <div>
+        <label>Captain name</label>
+        <input id="rCaptain">
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div>
+        <label>WhatsApp number</label>
+        <input id="rPhone">
+      </div>
+
+      <div>
+        <label>Game UID</label>
+        <input id="rUid">
+      </div>
+
+    </div>
+
+    <button
+      class="btn"
+      onclick="saveRegistration('${time}','${fee}')">
+
+      Submit Registration
+
+    </button>
+
+  `;
+
+  $('modal').classList.add('show');
+
+}
+
+
+async function saveRegistration(time,fee){
+
+  let body = {
+
+    time,
+    fee,
+
+    team:$('rTeam').value.trim(),
+
+    captain:$('rCaptain').value.trim(),
+
+    phone:$('rPhone').value.trim(),
+
+    uid:$('rUid').value.trim()
+
+  };
+
+
+  if(Object.values(body).some(v=>!v)){
+
+    alert('Please fill all fields.');
+
+    return;
+
+  }
+
+
+  try{
+
+    let r = await api(
+      '/api/registrations',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(body)
+      }
+    );
+
+
+    $('modalContent').innerHTML = `
+
+      <h2>
+        Registration received ✅
+      </h2>
+
+      <p>
+        Your registration is
+        <b>Pending</b> admin confirmation.
+      </p>
+
+      <p class="sub">
+        Reference:
+        <b>${esc(r.ref)}</b>
+      </p>
+
+      <button
+        class="btn"
+        onclick="closeModal()">
+
+        Done
+
+      </button>
+
+    `;
+
+
+    await loadPublic();
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Could not register'
+    );
+
+  }
+
+}
+
+
+/* =========================
+   API
+========================= */
+
+async function api(url,opt={}){
+
+  let res = await fetch(url,opt);
+
+  let data = {};
+
+  try{
+    data = await res.json();
+  }catch{}
+
+  if(!res.ok)
+    throw data;
+
+  return data;
+
+}
+
+
+/* =========================
+   PUBLIC DATA
+========================= */
+
+async function loadPublic(){
+
+  regs =
+    await api('/api/public/lobbies')
+      .catch(()=>[]);
+
+  render();
+
+  await populateLobbySelectors();
+
+  await loadPublicLeaderboard();
+
+}
+
+
+/* =========================
+   LOBBY SELECTORS
+========================= */
+
+async function populateLobbySelectors(){
+
+  let confirmed = [];
+
+  for(const time of times){
+
+    for(const fee of fees){
+
+      let count =
+        regs.filter(
+          r =>
+            r.time === time &&
+            r.fee === fee &&
+            Number(r.confirmed) > 0
+        ).length;
+
+      if(count){
+
+        confirmed.push(
+          lobbyName(time,fee)
+        );
+
+      }
+
+    }
+
+  }
+
+
+  let selectors = [
+
+    $('publicLeaderboardLobby'),
+
+    $('scoreLobby'),
+
+    $('adminLeaderboardLobby')
+
+  ];
+
+
+  selectors.forEach(select => {
+
+    if(!select)
+      return;
+
+    let old = select.value;
+
+    select.innerHTML = '';
+
+    if(!confirmed.length){
+
+      let option =
+        document.createElement('option');
+
+      option.textContent =
+        'No confirmed lobbies';
+
+      option.value = '';
+
+      select.appendChild(option);
+
+      return;
+
+    }
+
+
+    confirmed.forEach(lobby => {
+
+      let option =
+        document.createElement('option');
+
+      option.value = lobby;
+
+      option.textContent = lobby;
+
+      select.appendChild(option);
+
+    });
+
+
+    if(
+      confirmed.includes(old)
+    ){
+
+      select.value = old;
+
+    }
+
+  });
+
+}
+
+
+/* =========================
+   ADMIN OPEN
+========================= */
+
+async function openAdmin(){
+
+  try{
+
+    let m =
+      await api('/api/me');
+
+
+    if(m.loggedIn){
+
+      showDashboard(m.name);
+
+      return;
+
+    }
+
+
+    let e =
+      await api('/api/admin-exists');
+
+
+    e.exists
+      ? showLogin()
+      : showSetup();
+
+  }catch(err){
+
+    alert(
+      'Cannot connect to the ScrimForge server. ' +
+      'Please open the website through the Node server, not as a local HTML file.'
+    );
+
+  }
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+function showLogin(){
+
+  $('modalContent').innerHTML = `
+
+    <h2>Admin Login</h2>
+
+    <label>Email</label>
+
+    <input
+      id="loginEmail"
+      type="email"
+      autocomplete="username">
+
+    <label>Password</label>
+
+    <input
+      id="loginPass"
+      type="password"
+      autocomplete="current-password">
+
+    <button
+      class="btn"
+      onclick="loginAdmin()">
+
+      Log in
+
+    </button>
+
+  `;
+
+  $('modal').classList.add('show');
+
+}
+
+
+/* =========================
+   ADMIN SETUP
+========================= */
+
+function showSetup(){
+
+  $('modalContent').innerHTML = `
+
+    <h2>Create First Admin</h2>
+
+    <p class="sub">
+      This appears only while no admin account exists.
+    </p>
+
+    <label>Your name</label>
+
+    <input id="setupName">
+
+    <label>Admin email</label>
+
+    <input
+      id="setupEmail"
+      type="email">
+
+    <label>Password</label>
+
+    <input
+      id="setupPass"
+      type="password">
+
+    <button
+      class="btn"
+      onclick="setupAdmin()">
+
+      Create Admin
+
+    </button>
+
+  `;
+
+  $('modal').classList.add('show');
+
+}
+
+
+async function setupAdmin(){
+
+  try{
+
+    let name =
+      $('setupName').value.trim();
+
+    let email =
+      $('setupEmail').value.trim();
+
+    let password =
+      $('setupPass').value;
+
+
+    if(
+      !name ||
+      !email ||
+      password.length < 6
+    ){
+
+      alert(
+        'Enter your name, email and a password of at least 6 characters.'
+      );
+
+      return;
+
+    }
+
+
+    let r =
+      await api(
+        '/api/setup-admin',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            name,
+            email,
+            password
+          })
+        }
+      );
+
+
+    closeModal();
+
+    showDashboard(r.name);
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Could not create admin'
+    );
+
+  }
+
+}
+
+
+/* =========================
+   LOGIN ADMIN
+========================= */
+
+async function loginAdmin(){
+
+  try{
+
+    let email =
+      $('loginEmail').value.trim();
+
+    let password =
+      $('loginPass').value;
+
+
+    if(!email || !password){
+
+      alert(
+        'Enter your admin email and password.'
+      );
+
+      return;
+
+    }
+
+
+    let r =
+      await api(
+        '/api/login',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+
+    closeModal();
+
+    await showDashboard(r.name);
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Incorrect admin email or password.'
+    );
+
+  }
+
+}
+
+
+/* =========================
+   SHOW DASHBOARD
+========================= */
+
+async function showDashboard(name){
+
+  $('adminDash')
+    .classList
+    .add('show');
+
+  $('adminbar')
+    .classList
+    .add('show');
+
+  $('adminName')
+    .textContent = name;
+
+  closeModal();
+
+
+  await renderAdmin();
+
+
+  setTimeout(
+    () =>
+      $('adminDash')
+        .scrollIntoView({
+          behavior:'smooth',
+          block:'start'
+        }),
+    50
+  );
+
+}
+
+
+/* =========================
+   ADMIN DASHBOARD
+========================= */
+
+async function renderAdmin(){
+
+  try{
+
+    let s =
+      await api('/api/stats');
+
+
+    $('pendingCount')
+      .textContent = s.pending;
+
+    $('confirmedCount')
+      .textContent = s.confirmed;
+
+
+    regs =
+      await api('/api/registrations');
+
+
+    $('adminRegs').innerHTML =
+      regs.length
+
+      ?
+
+      regs.map(r => `
+
+        <div
+          class="card"
+          style="margin:10px 0">
+
+          <div
+            style="display:flex;justify-content:space-between">
+
+            <b>
+              ${esc(r.team)}
+            </b>
+
+            <span
+              class="status ${r.status}">
+
+              ${r.status.toUpperCase()}
+
+            </span>
+
+          </div>
+
+
+          <p class="muted">
+
+            ${esc(r.time)}
+            · ₹${esc(r.fee)}
+            · ${esc(r.captain)}
+            · Ref ${esc(r.ref)}
+
+          </p>
+
+
+          <p class="muted">
+
+            WhatsApp:
+            ${esc(r.phone)}
+
+            · UID:
+            ${esc(r.uid)}
+
+          </p>
+
+
+          ${
+            r.status === 'pending'
+
+            ?
+
+            `
+
+              <button
+                class="btn small"
+                onclick="updateReg(${r.id},'confirmed')">
+
+                Confirm
+
+              </button>
+
+              <button
+                class="btn small danger"
+                onclick="updateReg(${r.id},'rejected')">
+
+                Reject
+
+              </button>
+
+            `
+
+            :
+
+            ''
+
+          }
+
+
+          ${
+            r.status === 'confirmed'
+
+            ?
+
+            `
+
+              <button
+                class="btn small danger"
+                onclick="updateReg(${r.id},'rejected')">
+
+                Cancel
+
+              </button>
+
+            `
+
+            :
+
+            ''
+
+          }
+
+        </div>
+
+      `).join('')
+
+      :
+
+      '<div class="notice">No registrations yet.</div>';
+
+
+    render();
+
+
+    await populateLobbySelectors();
+
+
+    await loadScoreTeams();
+
+
+    await loadAdminLeaderboard();
+
+
+  }catch(e){
+
+    alert(
+      'Admin session expired.'
+    );
+
+    logout();
+
+  }
+
+}
+
+
+/* =========================
+   UPDATE REGISTRATION
+========================= */
+
+async function updateReg(id,status){
+
+  try{
+
+    await api(
+      '/api/registrations/'+id,
+      {
+        method:'PATCH',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({status})
+      }
+    );
+
+
+    await renderAdmin();
+
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Could not update'
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   LEADERBOARD — SCORE ENTRY
+===================================================== */
+
+
+/* =========================
+   LOAD CONFIRMED TEAMS
+========================= */
+
+async function loadScoreTeams(){
+
+  const lobby =
+    $('scoreLobby').value;
+
+
+  if(!lobby){
+
+    $('scoreEntryBody').innerHTML = `
+
+      <tr>
+        <td colspan="6">
+          No confirmed lobby selected.
+        </td>
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  try{
+
+    let teams =
+      await api(
+        '/api/leaderboard/teams?lobby='
+        + encodeURIComponent(lobby)
+      );
+
+
+    if(teams.length !== 12){
+
+      $('scoreEntryBody').innerHTML = `
+
+        <tr>
+
+          <td colspan="6">
+
+            <b>
+              ${teams.length}/12 confirmed teams.
+            </b>
+
+            <br><br>
+
+            You need exactly 12 confirmed teams
+            before entering a match.
+
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+
+    }
+
+
+    $('scoreEntryBody').innerHTML =
+      teams.map(
+        (team,index) => scoreRow(
+          index,
+          team.team
+        )
+      ).join('');
+
+
+    await loadExistingMatch();
+
+  }catch(e){
+
+    $('scoreEntryBody').innerHTML = `
+
+      <tr>
+
+        <td colspan="6">
+
+          Could not load teams.
+
+        </td>
+
+      </tr>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   SCORE ROW
+========================= */
+
+function scoreRow(index,team,position='',kills=''){
+
+  return `
+
+    <tr>
+
+      <td>
+        <b>
+          ${esc(team)}
+        </b>
+      </td>
+
+
+      <td>
+
+        <select
+          class="score-input position-input"
+          data-index="${index}"
+          onchange="calculateScoreRow(${index})">
+
+          <option value="">--</option>
+
+          ${Array.from(
+            {length:12},
+            (_,i) => {
+
+              let p=i+1;
+
+              return `
+
+                <option
+                  value="${p}"
+                  ${Number(position)===p?'selected':''}>
+
+                  ${p}
+
+                </option>
+
+              `;
+
+            }
+          ).join('')}
+
+        </select>
+
+      </td>
+
+
+      <td>
+
+        <input
+          class="score-input booyah-output"
+          id="booyah-${index}"
+          value="${Number(position)===1?1:0}"
+          readonly>
+
+      </td>
+
+
+      <td>
+
+        <input
+          class="score-input placement-output"
+          id="placement-${index}"
+          value="${positionPoints[position] || 0}"
+          readonly>
+
+      </td>
+
+
+      <td>
+
+        <input
+          class="score-input kill-input"
+          id="kills-${index}"
+          type="number"
+          min="0"
+          value="${kills || 0}"
+          onchange="calculateScoreRow(${index})"
+          oninput="calculateScoreRow(${index})">
+
+      </td>
+
+
+      <td
+        class="total-cell"
+        id="total-${index}">
+
+        ${
+          (placementPoints[position] || 0)
+          +
+          (Number(kills)||0)
+        }
+
+      </td>
+
+    </tr>
+
+  `;
+
+}
+
+
+/* =========================
+   CALCULATE ROW
+========================= */
+
+function calculateScoreRow(index){
+
+  let position =
+    Number(
+      document.querySelector(
+        `.position-input[data-index="${index}"]`
+      )?.value
+    );
+
+
+  let kills =
+    Number(
+      $(`kills-${index}`)?.value
+    ) || 0;
+
+
+  let placement =
+    placementPoints[position] || 0;
+
+
+  let booyah =
+    position === 1
+      ? 1
+      : 0;
+
+
+  let total =
+    placement + kills;
+
+
+  $(`booyah-${index}`)
+    .value = booyah;
+
+  $(`placement-${index}`)
+    .value = placement;
+
+  $(`total-${index}`)
+    .textContent = total;
+
+}
+
+
+/* =========================
+   LOAD EXISTING MATCH
+========================= */
+
+async function loadExistingMatch(){
+
+  const lobby =
+    $('scoreLobby').value;
+
+  const match =
+    Number($('scoreMatch').value);
+
+
+  if(!lobby)
+    return;
+
+
+  try{
+
+    let existing =
+      await api(
+        `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
+      );
+
+
+    if(!existing.length){
+
+      const teams =
+        await api(
+          '/api/leaderboard/teams?lobby='
+          + encodeURIComponent(lobby)
+        );
+
+
+      if(teams.length === 12){
+
+        $('scoreEntryBody').innerHTML =
+          teams.map(
+            (team,index) =>
+              scoreRow(
+                index,
+                team.team
+              )
+          ).join('');
+
+      }
+
+      return;
+
+    }
+
+
+    $('scoreEntryBody').innerHTML =
+      existing.map(
+        (entry,index) =>
+          scoreRow(
+            index,
+            entry.team,
+            entry.position,
+            entry.kills
+          )
+      ).join('');
+
+
+  }catch(e){
+
+    console.log(
+      'No previous match data.'
+    );
+
+  }
+
+}
+
+
+/* =========================
+   SAVE MATCH
+========================= */
+
+async function saveMatch(){
+
+  const lobby =
+    $('scoreLobby').value;
+
+  const matchNo =
+    Number($('scoreMatch').value);
+
+
+  if(!lobby){
+
+    alert(
+      'Please select a lobby.'
+    );
+
+    return;
+
+  }
+
+
+  let rows =
+    [...document.querySelectorAll(
+      '#scoreEntryBody tr'
+    )];
+
+
+  if(rows.length !== 12){
+
+    alert(
+      'There must be exactly 12 confirmed teams.'
+    );
+
+    return;
+
+  }
+
+
+  let entries = [];
+
+
+  for(let i=0;i<12;i++){
+
+    const position =
+      Number(
+        document.querySelector(
+          `.position-input[data-index="${i}"]`
+        )?.value
+      );
+
+
+    const kills =
+      Number(
+        $(`kills-${i}`)?.value
+      ) || 0;
+
+
+    if(
+      !position ||
+      position < 1 ||
+      position > 12
+    ){
+
+      alert(
+        `Please select a position for ${i+1}th team.`
+      );
+
+      return;
+
+    }
+
+
+    if(kills < 0){
+
+      alert(
+        'Kills cannot be negative.'
+      );
+
+      return;
+
+    }
+
+
+    entries.push({
+
+      team:
+        rows[i]
+          .querySelector('td:first-child')
+          .innerText
+          .trim(),
+
+      position,
+
+      kills
+
+    });
+
+  }
+
+
+  const positions =
+    entries.map(
+      e => e.position
+    );
+
+
+  if(
+    new Set(positions).size !== 12
+  ){
+
+    alert(
+      'Every position from 1 to 12 must be used exactly once.'
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await api(
+      '/api/leaderboard/match',
+      {
+        method:'POST',
+
+        headers:{
+          'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+          lobby,
+          matchNo,
+          entries
+        })
+
+      }
+    );
+
+
+    alert(
+      `Match ${matchNo} saved successfully!`
+    );
+
+
+    await loadExistingMatch();
+
+    await loadAdminLeaderboard();
+
+    await loadPublicLeaderboard();
+
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Could not save match.'
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   PUBLIC LEADERBOARD
+===================================================== */
+
+async function loadPublicLeaderboard(){
+
+  const lobby =
+    $('publicLeaderboardLobby')?.value;
+
+
+  if(!lobby){
+
+    $('publicLeaderboardBody').innerHTML = `
+
+      <tr>
+        <td colspan="6">
+          No leaderboard available yet.
+        </td>
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  try{
+
+    let rows =
+      await api(
+        '/api/public-leaderboard?lobby='
+        + encodeURIComponent(lobby)
+      );
+
+
+    renderLeaderboard(
+      'publicLeaderboardBody',
+      rows
+    );
+
+  }catch(e){
+
+    $('publicLeaderboardBody').innerHTML = `
+
+      <tr>
+        <td colspan="6">
+          Could not load leaderboard.
+        </td>
+      </tr>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+   ADMIN LEADERBOARD
+===================================================== */
+
+async function loadAdminLeaderboard(){
+
+  const lobby =
+    $('adminLeaderboardLobby')?.value;
+
+
+  if(!lobby){
+
+    $('adminLeaderboardBody').innerHTML = `
+
+      <tr>
+        <td colspan="6">
+          No leaderboard available yet.
+        </td>
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  try{
+
+    let rows =
+      await api(
+        '/api/leaderboard?lobby='
+        + encodeURIComponent(lobby)
+      );
+
+
+    renderLeaderboard(
+      'adminLeaderboardBody',
+      rows
+    );
+
+  }catch(e){
+
+    $('adminLeaderboardBody').innerHTML = `
+
+      <tr>
+        <td colspan="6">
+          Could not load leaderboard.
+        </td>
+      </tr>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   RENDER LEADERBOARD
+========================= */
+
+function renderLeaderboard(id,rows){
+
+  const body =
+    $(id);
+
+
+  if(!rows.length){
+
+    body.innerHTML = `
+
+      <tr>
+
+        <td colspan="6">
+
+          No match results have been entered yet.
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  body.innerHTML =
+    rows.map(r => `
+
+      <tr>
+
+        <td class="rank-cell">
+
+          ${r.position}
+
+        </td>
+
+
+        <td>
+
+          <b>
+            ${esc(r.team)}
+          </b>
+
+        </td>
+
+
+        <td>
+
+          ${r.booyahs}
+
+        </td>
+
+
+        <td>
+
+          ${r.placementPoints}
+
+        </td>
+
+
+        <td>
+
+          ${r.killPoints}
+
+        </td>
+
+
+        <td class="total-cell">
+
+          ${r.totalPoints}
+
+        </td>
+
+      </tr>
+
+    `).join('');
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+  await fetch(
+    '/api/logout',
+    {
+      method:'POST'
+    }
+  );
+
+
+  $('adminDash')
+    .classList
+    .remove('show');
+
+  $('adminbar')
+    .classList
+    .remove('show');
+
+
+  location.hash = '';
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+function closeModal(){
+
+  $('modal')
+    .classList
+    .remove('show');
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+renderTimes();
+
+loadPublic();
+
 </script>
-</body></html>
+
+</body>
+</html>
