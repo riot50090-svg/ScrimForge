@@ -1,2830 +1,2961 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ScrimForge — V2</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#070b14;color:#f5f7fb;font-family:Arial,sans-serif}
+  <title>ScrimForge</title>
 
-header{
-  position:sticky;top:0;z-index:5;background:#0d1424;
-  border-bottom:1px solid #273149;padding:14px 5%;
-  display:flex;justify-content:space-between;align-items:center
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.logo{font-size:24px;font-weight:900}
-.logo span{color:#62e5ff}
-nav a{color:#c4cedf;text-decoration:none;margin-left:18px;font-size:14px}
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b0f19;
+      color: #ffffff;
+      min-height: 100vh;
+    }
 
-.hero{
-  padding:55px 5%;
-  background:linear-gradient(135deg,#101c35,#070b14)
-}
+    button,
+    input,
+    select {
+      font: inherit;
+    }
 
-.pill,.tag{
-  display:inline-block;background:#182943;color:#74eaff;
-  border-radius:99px;padding:7px 11px;font-size:12px;font-weight:700
-}
+    button {
+      cursor: pointer;
+    }
 
-h1{font-size:44px;max-width:760px;margin:16px 0 12px}
-.hero p{max-width:720px;color:#aeb9cc;line-height:1.65}
+    .container {
+      width: min(1200px, 94%);
+      margin: auto;
+    }
 
-.btn{
-  border:0;border-radius:9px;padding:11px 16px;
-  background:#62e5ff;color:#051018;font-weight:900;
-  cursor:pointer;text-decoration:none;display:inline-block
-}
+    header {
+      background: #111827;
+      border-bottom: 1px solid #263044;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-.btn.secondary{background:#202c43;color:#e8eef8}
-.btn.danger{background:#ef6b7a;color:white}
-.btn.small{padding:8px 11px;font-size:12px}
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
 
-.container{padding:32px 5%}
-.sub,.muted{color:#98a7be;font-size:14px}
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      color: #7c3aed;
+    }
 
-.timebar{
-  display:flex;gap:9px;flex-wrap:wrap;margin:18px 0
-}
+    .logo span {
+      color: #ffffff;
+    }
 
-.time{
-  border:1px solid #2b3852;background:#111a2d;color:#cbd5e1;
-  padding:10px 14px;border-radius:9px;cursor:pointer
-}
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-.time.active{background:#62e5ff;color:#051018}
+    nav button {
+      border: 0;
+      background: transparent;
+      color: #cbd5e1;
+      padding: 10px 13px;
+      border-radius: 8px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-  gap:15px
-}
+    nav button:hover {
+      background: #1e293b;
+      color: #ffffff;
+    }
 
-.card{
-  background:#10182a;border:1px solid #293650;
-  border-radius:15px;padding:18px
-}
+    main {
+      padding: 35px 0 60px;
+    }
 
-.card h3{margin:8px 0}
-.fee{font-size:25px;font-weight:900;margin:11px 0}
-.green{color:#72f0a7}
+    .page {
+      display: none;
+    }
 
-.notice{
-  background:#171d2b;border-left:4px solid #62e5ff;
-  padding:13px;border-radius:7px;color:#c5cede;line-height:1.5
-}
+    .page.active {
+      display: block;
+    }
 
-table{
-  width:100%;border-collapse:collapse;background:#10182a;margin-top:16px
-}
+    .hero {
+      text-align: center;
+      padding: 50px 15px;
+    }
 
-th,td{
-  text-align:left;padding:12px;
-  border-bottom:1px solid #293650;font-size:14px
-}
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 70px);
+      margin-bottom: 15px;
+    }
 
-th{color:#98a7be}
+    .hero h1 span {
+      color: #8b5cf6;
+    }
 
-footer{
-  padding:30px 5%;border-top:1px solid #273149;color:#7e8ba0
-}
+    .hero p {
+      color: #94a3b8;
+      max-width: 650px;
+      margin: auto;
+      line-height: 1.7;
+    }
 
-.modal{
-  display:none;position:fixed;inset:0;background:#000b;
-  z-index:30;align-items:center;justify-content:center;padding:20px
-}
+    .hero-buttons {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-.modal.show{display:flex}
+    .btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-weight: 700;
+      background: #7c3aed;
+      color: white;
+    }
 
-.box{
-  background:#111a2d;border:1px solid #33415c;border-radius:16px;
-  padding:23px;max-width:900px;width:100%;
-  max-height:90vh;overflow:auto
-}
+    .btn:hover {
+      background: #6d28d9;
+    }
 
-.close{
-  float:right;background:none;border:0;color:#fff;
-  font-size:22px;cursor:pointer
-}
+    .btn.secondary {
+      background: #1e293b;
+    }
 
-input,select{
-  width:100%;padding:11px;border-radius:9px;
-  border:1px solid #33415c;background:#0b1220;
-  color:#fff;margin:6px 0 12px
-}
+    .btn.success {
+      background: #059669;
+    }
 
-label{font-size:13px;color:#aeb9cc}
+    .btn.danger {
+      background: #dc2626;
+    }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px
-}
+    .btn.small {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
 
-.status{
-  padding:5px 8px;border-radius:99px;
-  font-size:11px;font-weight:700;background:#26334b
-}
+    .section-title {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
 
-.status.pending{color:#ffd56a}
-.status.confirmed{color:#72f0a7}
-.status.rejected{color:#ff8997}
+    .muted {
+      color: #94a3b8;
+    }
 
-.hidden{display:none!important}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
 
-.adminbar{
-  background:#0b1220;border-bottom:1px solid #293650;
-  padding:10px 5%;display:none;
-  justify-content:space-between;align-items:center
-}
+    .card {
+      background: #111827;
+      border: 1px solid #263044;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
 
-.adminbar.show{display:flex}
+    .card h3 {
+      margin-bottom: 12px;
+    }
 
-.dash{display:none}
-.dash.show{display:block}
+    .card p {
+      color: #cbd5e1;
+      margin: 7px 0;
+    }
 
-.statgrid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:12px
-}
+    .lobby-card {
+      position: relative;
+    }
 
-.stat{
-  background:#10182a;border:1px solid #293650;
-  border-radius:13px;padding:16px
-}
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #334155;
+      margin-bottom: 10px;
+    }
 
-.stat b{
-  display:block;font-size:26px;margin-top:6px
-}
+    .badge.open {
+      background: #064e3b;
+      color: #6ee7b7;
+    }
 
-.score-table{
-  overflow-x:auto;
-  margin-top:15px
-}
+    .badge.closed {
+      background: #450a0a;
+      color: #fca5a5;
+    }
 
-.score-table table{
-  min-width:850px
-}
+    .form-group {
+      margin-bottom: 15px;
+    }
 
-.score-input{
-  width:90px;
-  margin:0;
-  padding:8px
-}
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
 
-.total-cell{
-  font-weight:900;
-  color:#72f0a7
-}
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: white;
+      outline: none;
+    }
 
-.rank-cell{
-  font-weight:900
-}
+    input:focus,
+    select:focus {
+      border-color: #8b5cf6;
+    }
 
-.leaderboard-table{
-  overflow-x:auto
-}
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
 
-.leaderboard-table table{
-  min-width:700px
-}
+    .full {
+      grid-column: 1 / -1;
+    }
 
-.top-rank{
-  font-weight:900;
-}
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin: 12px 0;
+      display: none;
+    }
 
-@media(max-width:700px){
-  h1{font-size:34px}
-  nav{display:none}
-  .row{grid-template-columns:1fr}
-}
-</style>
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #064e3b;
+      color: #a7f3d0;
+    }
+
+    .message.error {
+      background: #450a0a;
+      color: #fecaca;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat {
+      background: #111827;
+      border: 1px solid #263044;
+      padding: 22px;
+      border-radius: 13px;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 800;
+      margin-top: 5px;
+      color: #a78bfa;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #263044;
+      text-align: left;
+    }
+
+    th {
+      background: #172033;
+      color: #c4b5fd;
+    }
+
+    td {
+      color: #dbeafe;
+    }
+
+    .rank {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .admin-box {
+      max-width: 600px;
+      margin: 30px auto;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .match-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .match-tabs button {
+      border: 1px solid #334155;
+      background: #111827;
+      color: white;
+      padding: 9px 13px;
+      border-radius: 7px;
+    }
+
+    .match-tabs button.active {
+      background: #7c3aed;
+      border-color: #7c3aed;
+    }
+
+    .score-table input {
+      width: 90px;
+      padding: 8px;
+    }
+
+    footer {
+      border-top: 1px solid #263044;
+      padding: 25px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    @media (max-width: 700px) {
+      .nav {
+        padding: 12px 0;
+        flex-direction: column;
+      }
+
+      nav {
+        justify-content: center;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 30px 10px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
+  <div class="container nav">
 
-  <div class="logo">
-    Scrim<span>Forge</span>
+    <div class="logo">
+      Scrim<span>Forge</span>
+    </div>
+
+    <nav>
+      <button onclick="showPage('home')">Home</button>
+      <button onclick="showPage('scrims')">Scrims</button>
+      <button onclick="showPage('register')">Register</button>
+      <button onclick="showPage('status')">Check Status</button>
+      <button onclick="showPage('leaderboard')">Leaderboard</button>
+      <button onclick="showPage('admin')">Admin</button>
+    </nav>
+
   </div>
-
-  <nav>
-    <a href="#scrims">Daily Scrims</a>
-    <a href="#tournaments">Tournaments</a>
-    <a href="#leaderboard">Leaderboard</a>
-    <a href="#admin" onclick="openAdmin()">Admin</a>
-  </nav>
-
 </header>
 
 
-<section class="hero">
+<main>
 
-  <span class="pill">LIVE V2</span>
+  <!-- HOME -->
+  <section id="home" class="page active">
 
-  <h1>
-    Find your lobby. Register. Get connected.
-  </h1>
+    <div class="hero">
 
-  <p>
-    ScrimForge uses a shared server database, so registrations from
-    customers appear in the admin dashboard on your device too.
-  </p>
+      <h1>
+        Welcome to <span>ScrimForge</span>
+      </h1>
 
-  <a class="btn" href="#scrims">
-    Browse Today's Scrims
-  </a>
-
-</section>
-
-
-<!-- =========================
-     DAILY SCRIMS
-========================= -->
-
-<section class="container" id="scrims">
-
-  <h2>🔥 Daily Scrims</h2>
-
-  <p class="sub">
-    Every session:
-    <b>12 teams · 6 matches · ~1.5–2 hours</b>.
-  </p>
-
-  <div class="timebar" id="times"></div>
-
-  <div class="notice">
-
-    Choose a lobby and register.
-
-    Your registration is saved on the
-    ScrimForge server as <b>Pending</b>
-    until an admin confirms it.
-
-  </div>
-
-  <div class="grid" id="lobbies"></div>
-
-</section>
-
-
-<!-- =========================
-     TOURNAMENTS
-========================= -->
-
-<section class="container" id="tournaments">
-
-  <h2>🏆 Tournaments</h2>
-
-  <p class="sub">
-    Separate from daily scrims.
-  </p>
-
-  <div class="grid">
-
-    <div class="card">
-
-      <span class="tag">
-        128 SLOTS
-      </span>
-
-      <h3>
-        Open Cup
-      </h3>
-
-      <p class="muted">
-        Qualifiers → Finals
+      <p>
+        Free Fire scrims, competitive lobbies, registrations
+        and live leaderboards — all in one place.
       </p>
 
-    </div>
-
-
-    <div class="card">
-
-      <span class="tag">
-        256 SLOTS
-      </span>
-
-      <h3>
-        Grand League
-      </h3>
-
-      <p class="muted">
-        Multi-stage competition
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     PUBLIC LEADERBOARD
-========================= -->
-
-<section class="container" id="leaderboard">
-
-  <h2>
-    🏆 Live Scrim Leaderboard
-  </h2>
-
-  <p class="sub">
-    Cumulative points are updated after every match.
-  </p>
-
-  <div class="row">
-
-    <div>
-
-      <label>
-        Select Lobby
-      </label>
-
-      <select
-        id="publicLeaderboardLobby"
-        onchange="loadPublicLeaderboard()">
-      </select>
-
-    </div>
-
-
-    <div>
-
-      <label>
-        Current Match
-      </label>
-
-      <select
-        id="publicMatchSelect"
-        onchange="loadPublicLeaderboard()">
-
-        <option value="1">
-          Match 1
-        </option>
-
-        <option value="2">
-          Match 2
-        </option>
-
-        <option value="3">
-          Match 3
-        </option>
-
-        <option value="4">
-          Match 4
-        </option>
-
-        <option value="5">
-          Match 5
-        </option>
-
-        <option value="6">
-          Match 6
-        </option>
-
-      </select>
-
-    </div>
-
-  </div>
-
-
-  <div class="leaderboard-table">
-
-    <table>
-
-      <thead>
-
-        <tr>
-
-          <th>
-            Position
-          </th>
-
-          <th>
-            Team Name
-          </th>
-
-          <th>
-            Booyahs
-          </th>
-
-          <th>
-            Placement Points
-          </th>
-
-          <th>
-            Kill Points
-          </th>
-
-          <th>
-            Total Points
-          </th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody id="publicLeaderboardBody">
-
-        <tr>
-
-          <td colspan="6">
-            Select a lobby.
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     ADMIN BAR
-========================= -->
-
-<div
-  class="adminbar"
-  id="adminbar">
-
-  <span>
-
-    🔐
-    <b id="adminName"></b>
-    — Admin Mode
-
-  </span>
-
-
-  <button
-    class="btn small secondary"
-    onclick="logout()">
-
-    Log out
-
-  </button>
-
-</div>
-
-
-<!-- =========================
-     ADMIN DASHBOARD
-========================= -->
-
-<section
-  class="container dash"
-  id="adminDash">
-
-  <h2>
-    Admin Dashboard
-  </h2>
-
-  <p class="sub">
-    Manage registrations and control the live leaderboard.
-  </p>
-
-
-  <!-- STATS -->
-
-  <div class="statgrid">
-
-    <div class="stat">
-
-      Pending
-
-      <b id="pendingCount">
-        0
-      </b>
-
-    </div>
-
-
-    <div class="stat">
-
-      Confirmed
-
-      <b id="confirmedCount">
-        0
-      </b>
-
-    </div>
-
-
-    <div class="stat">
-
-      Active Lobbies
-
-      <b>
-        30
-      </b>
-
-    </div>
-
-  </div>
-
-
-  <!-- REGISTRATIONS -->
-
-  <h3 style="margin-top:28px">
-    Registrations
-  </h3>
-
-  <div id="adminRegs"></div>
-
-
-  <!-- =========================
-       MATCH SCORE ENTRY
-  ========================= -->
-
-  <h3 style="margin-top:35px">
-
-    🏆 Match Score Entry
-
-  </h3>
-
-
-  <div class="card">
-
-    <p class="sub">
-
-      Enter the result of all 12 teams for one match.
-      Placement points and total points are calculated automatically.
-
-    </p>
-
-
-    <div class="row">
-
-      <div>
-
-        <label>
-          Lobby
-        </label>
-
-        <select
-          id="scoreLobby"
-          onchange="loadScoreTeams()">
-        </select>
-
-      </div>
-
-
-      <div>
-
-        <label>
-          Match Number
-        </label>
-
-        <select
-          id="scoreMatch"
-          onchange="loadExistingMatch()">
-
-          <option value="1">
-            Match 1
-          </option>
-
-          <option value="2">
-            Match 2
-          </option>
-
-          <option value="3">
-            Match 3
-          </option>
-
-          <option value="4">
-            Match 4
-          </option>
-
-          <option value="5">
-            Match 5
-          </option>
-
-          <option value="6">
-            Match 6
-          </option>
-
-        </select>
-
+      <div class="hero-buttons">
+        <button class="btn" onclick="showPage('scrims')">
+          View Scrims
+        </button>
+
+        <button class="btn secondary" onclick="showPage('leaderboard')">
+          Leaderboard
+        </button>
       </div>
 
     </div>
 
+    <div class="container">
 
-    <div
-      class="notice"
-      style="margin-top:12px">
+      <h2 class="section-title">
+        Available Lobbies
+      </h2>
 
-      <b>Scoring:</b>
-      <br>
-
-      1st = 12 points
-      <br>
-
-      2nd = 9 points
-      <br>
-
-      3rd = 8 points
-      <br>
-
-      4th = 7 points
-      <br>
-
-      5th = 6 points
-      <br>
-
-      6th = 5 points
-      <br>
-
-      7th = 4 points
-      <br>
-
-      8th = 3 points
-      <br>
-
-      9th = 2 points
-      <br>
-
-      10th = 1 point
-      <br>
-
-      11th = 0 points
-      <br>
-
-      12th = 0 points
-      <br><br>
-
-      <b>
-        1 kill = 1 point.
-      </b>
-
-      <br>
-
-      Position 1 automatically counts as
-      1 Booyah.
+      <div id="homeLobbies" class="grid"></div>
 
     </div>
 
-
-    <div class="score-table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>
-              Team
-            </th>
-
-            <th>
-              Position
-            </th>
-
-            <th>
-              Booyahs
-            </th>
-
-            <th>
-              Placement Points
-            </th>
-
-            <th>
-              Kill Points
-            </th>
-
-            <th>
-              Match Total
-            </th>
-
-          </tr>
-
-        </thead>
+  </section>
 
 
-        <tbody id="scoreEntryBody"></tbody>
+  <!-- SCRIMS -->
+  <section id="scrims" class="page">
 
-      </table>
+    <div class="container">
 
-    </div>
+      <div class="top-actions">
+        <div>
+          <h2 class="section-title">Available Scrims</h2>
+          <p class="muted">
+            Choose a lobby and register your team.
+          </p>
+        </div>
 
-
-    <button
-      class="btn"
-      style="margin-top:18px"
-      onclick="saveMatch()">
-
-      💾 Save Match Result
-
-    </button>
-
-  </div>
-
-
-  <!-- =========================
-       ADMIN LIVE LEADERBOARD
-  ========================= -->
-
-  <h3 style="margin-top:35px">
-
-    📊 Current Leaderboard
-
-  </h3>
-
-
-  <div class="card">
-
-    <div class="row">
-
-      <div>
-
-        <label>
-          Leaderboard Lobby
-        </label>
-
-        <select
-          id="adminLeaderboardLobby"
-          onchange="loadAdminLeaderboard()">
-        </select>
-
+        <button class="btn" onclick="loadPublicLobbies()">
+          Refresh
+        </button>
       </div>
 
-    </div>
-
-
-    <div class="leaderboard-table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>
-              Position
-            </th>
-
-            <th>
-              Team Name
-            </th>
-
-            <th>
-              Booyahs
-            </th>
-
-            <th>
-              Placement Points
-            </th>
-
-            <th>
-              Kill Points
-            </th>
-
-            <th>
-              Total Points
-            </th>
-
-          </tr>
-
-        </thead>
-
-
-        <tbody id="adminLeaderboardBody">
-
-          <tr>
-
-            <td colspan="6">
-              Select a lobby.
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
+      <div id="scrimList" class="grid"></div>
 
     </div>
 
-  </div>
+  </section>
+
+
+  <!-- REGISTER -->
+  <section id="register" class="page">
+
+    <div class="container">
+
+      <div class="card">
+
+        <h2 class="section-title">
+          Scrim Registration
+        </h2>
+
+        <p class="muted">
+          Submit your team details. Registration will remain
+          pending until it is confirmed by the admin.
+        </p>
+
+        <div id="registerMessage" class="message"></div>
+
+        <form id="registrationForm">
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Scrim Time</label>
+              <input
+                type="text"
+                id="regTime"
+                placeholder="Example: 12 PM"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Entry Fee</label>
+              <input
+                type="text"
+                id="regFee"
+                placeholder="Example: ₹50"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Team Name</label>
+              <input
+                type="text"
+                id="regTeam"
+                placeholder="Your team name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Captain Name</label>
+              <input
+                type="text"
+                id="regCaptain"
+                placeholder="Captain name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>WhatsApp / Phone</label>
+              <input
+                type="text"
+                id="regPhone"
+                placeholder="Phone number"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Free Fire UID</label>
+              <input
+                type="text"
+                id="regUid"
+                placeholder="Captain UID"
+                required
+              />
+            </div>
 
-</section>
-
-
-<footer>
-
-  <b>
-    ScrimForge
-  </b>
-
-  <br>
-
-  <span class="muted">
-    V2 server-backed build.
-  </span>
-
-</footer>
-
-
-<!-- =========================
-     MODAL
-========================= -->
-
-<div
-  class="modal"
-  id="modal">
-
-  <div class="box">
-
-    <button
-      class="close"
-      onclick="closeModal()">
-
-      ×
-
-    </button>
-
-    <div id="modalContent"></div>
-
-  </div>
-
-</div>
-
-
-<script>
-
-const fees = [
-  '25',
-  '30',
-  '45',
-  '50',
-  '75',
-  '100+'
-];
-
-
-const times = [
-  '12 PM',
-  '3 PM',
-  '6 PM',
-  '9 PM',
-  '12 AM'
-];
-
-
-let current = '12 PM';
-
-let regs = [];
-
-
-/* =========================
-   CORRECT SCORING OBJECT
-========================= */
-
-const placementPoints = {
-
-  1:12,
-  2:9,
-  3:8,
-  4:7,
-  5:6,
-  6:5,
-  7:4,
-  8:3,
-  9:2,
-  10:1,
-  11:0,
-  12:0
-
-};
-
-
-const $ =
-  id =>
-    document.getElementById(id);
-
-
-/* =========================
-   ESCAPE HTML
-========================= */
-
-function esc(s){
-
-  return String(s).replace(
-    /[&<>"']/g,
-    m => ({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      '"':'&quot;',
-      "'":'&#039;'
-    }[m])
-  );
-
-}
-
-
-/* =========================
-   LOBBY NAME
-========================= */
-
-function lobbyName(time,fee){
-
-  return `${time} · ₹${fee}`;
-
-}
-
-
-/* =========================
-   TIMES
-========================= */
-
-function renderTimes(){
-
-  $('times').innerHTML =
-    times.map(t => `
-
-      <button
-        class="time ${t===current?'active':''}"
-        onclick="setTime('${t}')">
-
-        ${t}
-
-      </button>
-
-    `).join('');
-
-}
-
-
-function setTime(t){
-
-  current = t;
-
-  renderTimes();
-
-  render();
-
-}
-
-
-/* =========================
-   PUBLIC SCRIMS
-========================= */
-
-function render(){
-
-  $('lobbies').innerHTML =
-    fees.map(fee => {
-
-      let filled =
-        regs.filter(
-          r =>
-            r.time === current &&
-            r.fee === fee &&
-            r.status === 'confirmed'
-        ).length;
-
-
-      let full =
-        filled >= 12;
-
-
-      return `
-
-        <div class="card">
-
-          <span class="tag">
-            ${current}
-          </span>
-
-          <h3>
-            ₹${fee} Scrim
-          </h3>
-
-          <div class="fee">
-            ₹${fee}
           </div>
 
-          <p class="muted">
-            12 teams · 6 matches · ~1.5–2 hours
-          </p>
+          <button class="btn" type="submit">
+            Submit Registration
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- STATUS -->
+  <section id="status" class="page">
+
+    <div class="container">
+
+      <div class="card">
+
+        <h2 class="section-title">
+          Check Registration
+        </h2>
+
+        <div class="form-group">
+
+          <label>
+            Registration Reference
+          </label>
+
+          <input
+            id="statusRef"
+            placeholder="Example: SF-1234567890-1234"
+          />
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="checkStatus()"
+        >
+          Check Status
+        </button>
+
+        <div id="statusMessage" class="message"></div>
+
+        <div id="statusResult"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- LEADERBOARD -->
+  <section id="leaderboard" class="page">
+
+    <div class="container">
+
+      <div class="top-actions">
+
+        <div>
+          <h2 class="section-title">
+            Leaderboard
+          </h2>
 
           <p class="muted">
-
-            <b>
-              ${filled}/12
-            </b>
-
-            teams confirmed
-
+            View the live standings of a scrim lobby.
           </p>
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Select Lobby</label>
+
+            <select id="publicLobbySelect">
+              <option value="">
+                Select a lobby
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Select Match</label>
+
+            <select id="publicMatchSelect">
+              <option value="overall">
+                Overall
+              </option>
+
+              <option value="1">Match 1</option>
+              <option value="2">Match 2</option>
+              <option value="3">Match 3</option>
+              <option value="4">Match 4</option>
+              <option value="5">Match 5</option>
+              <option value="6">Match 6</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="loadPublicLeaderboard()"
+        >
+          View Leaderboard
+        </button>
+
+      </div>
+
+      <div id="publicLeaderboard"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ADMIN -->
+  <section id="admin" class="page">
+
+    <div class="container">
+
+      <!-- ADMIN LOGIN -->
+      <div id="adminLoginBox" class="card admin-box">
+
+        <h2 class="section-title">
+          Admin Login
+        </h2>
+
+        <div id="loginMessage" class="message"></div>
+
+        <form id="loginForm">
+
+          <div class="form-group">
+            <label>Email</label>
+
+            <input
+              type="email"
+              id="loginEmail"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+
+            <input
+              type="password"
+              id="loginPassword"
+              required
+            />
+          </div>
+
+          <button class="btn" type="submit">
+            Login
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <!-- ADMIN SETUP -->
+      <div id="adminSetupBox" class="card admin-box hidden">
+
+        <h2 class="section-title">
+          Create Admin
+        </h2>
+
+        <p class="muted">
+          No admin account exists yet. Create the first admin.
+        </p>
+
+        <br />
+
+        <div id="setupMessage" class="message"></div>
+
+        <form id="setupForm">
+
+          <div class="form-group">
+            <label>Name</label>
+
+            <input
+              id="setupName"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+
+            <input
+              type="email"
+              id="setupEmail"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+
+            <input
+              type="password"
+              id="setupPassword"
+              minlength="6"
+              required
+            />
+          </div>
+
+          <button class="btn" type="submit">
+            Create Admin
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <!-- ADMIN DASHBOARD -->
+      <div id="adminDashboard" class="hidden">
+
+        <div class="top-actions">
+
+          <div>
+            <h2 class="section-title">
+              Admin Dashboard
+            </h2>
+
+            <p class="muted">
+              Logged in as
+              <strong id="adminName"></strong>
+            </p>
+          </div>
 
           <button
-            class="btn"
-            ${full?'disabled':''}
-            onclick="registerLobby('${current}','${fee}')">
-
-            ${full?'FULL':'REGISTER'}
-
+            class="btn danger"
+            onclick="logout()"
+          >
+            Logout
           </button>
 
         </div>
 
-      `;
 
-    }).join('');
+        <!-- STATS -->
 
-}
+        <div class="stats">
 
-
-/* =========================
-   REGISTRATION
-========================= */
-
-function registerLobby(time,fee){
-
-  $('modalContent').innerHTML = `
-
-    <h2>
-      Register for Scrim
-    </h2>
-
-    <p class="sub">
-
-      Lobby:
-      <b>
-        ${time} · ₹${fee}
-      </b>
-
-    </p>
-
-
-    <div class="row">
-
-      <div>
-
-        <label>
-          Team name
-        </label>
-
-        <input id="rTeam">
-
-      </div>
-
-
-      <div>
-
-        <label>
-          Captain name
-        </label>
-
-        <input id="rCaptain">
-
-      </div>
-
-    </div>
-
-
-    <div class="row">
-
-      <div>
-
-        <label>
-          WhatsApp number
-        </label>
-
-        <input id="rPhone">
-
-      </div>
-
-
-      <div>
-
-        <label>
-          Game UID
-        </label>
-
-        <input id="rUid">
-
-      </div>
-
-    </div>
-
-
-    <button
-      class="btn"
-      onclick="saveRegistration('${time}','${fee}')">
-
-      Submit Registration
-
-    </button>
-
-  `;
-
-
-  $('modal')
-    .classList
-    .add('show');
-
-}
-
-
-async function saveRegistration(time,fee){
-
-  let body = {
-
-    time,
-
-    fee,
-
-    team:
-      $('rTeam').value.trim(),
-
-    captain:
-      $('rCaptain').value.trim(),
-
-    phone:
-      $('rPhone').value.trim(),
-
-    uid:
-      $('rUid').value.trim()
-
-  };
-
-
-  if(
-    Object.values(body).some(
-      v => !v
-    )
-  ){
-
-    alert(
-      'Please fill all fields.'
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    let r =
-      await api(
-        '/api/registrations',
-        {
-
-          method:'POST',
-
-          headers:{
-            'Content-Type':
-              'application/json'
-          },
-
-          body:
-            JSON.stringify(body)
-
-        }
-      );
-
-
-    $('modalContent').innerHTML = `
-
-      <h2>
-        Registration received ✅
-      </h2>
-
-      <p>
-        Your registration is
-        <b>Pending</b>
-        admin confirmation.
-      </p>
-
-      <p class="sub">
-
-        Reference:
-        <b>
-          ${esc(r.ref)}
-        </b>
-
-      </p>
-
-      <button
-        class="btn"
-        onclick="closeModal()">
-
-        Done
-
-      </button>
-
-    `;
-
-
-    await loadPublic();
-
-
-  }catch(e){
-
-    alert(
-      e.error ||
-      'Could not register'
-    );
-
-  }
-
-}
-
-
-/* =========================
-   API
-========================= */
-
-async function api(url,opt={}){
-
-  let res =
-    await fetch(
-      url,
-      opt
-    );
-
-
-  let data = {};
-
-
-  try{
-
-    data =
-      await res.json();
-
-  }catch{}
-
-
-  if(!res.ok)
-    throw data;
-
-
-  return data;
-
-}
-
-
-/* =========================
-   PUBLIC DATA
-========================= */
-
-async function loadPublic(){
-
-  regs =
-    await api(
-      '/api/public/lobbies'
-    )
-    .catch(
-      () => []
-    );
-
-
-  render();
-
-  await populateLobbySelectors();
-
-  await loadPublicLeaderboard();
-
-}
-
-
-/* =========================
-   LOBBY SELECTORS
-========================= */
-
-async function populateLobbySelectors(){
-
-  let confirmed = [];
-
-
-  for(
-    const time of times
-  ){
-
-    for(
-      const fee of fees
-    ){
-
-      let count =
-        regs.filter(
-          r =>
-            r.time === time &&
-            r.fee === fee &&
-            Number(r.confirmed) > 0
-        ).length;
-
-
-      if(count){
-
-        confirmed.push(
-          lobbyName(
-            time,
-            fee
-          )
-        );
-
-      }
-
-    }
-
-  }
-
-
-  let selectors = [
-
-    $('publicLeaderboardLobby'),
-
-    $('scoreLobby'),
-
-    $('adminLeaderboardLobby')
-
-  ];
-
-
-  selectors.forEach(
-    select => {
-
-      if(!select)
-        return;
-
-
-      let old =
-        select.value;
-
-
-      select.innerHTML =
-        '';
-
-
-      if(
-        !confirmed.length
-      ){
-
-        let option =
-          document.createElement(
-            'option'
-          );
-
-
-        option.textContent =
-          'No confirmed lobbies';
-
-
-        option.value =
-          '';
-
-
-        select.appendChild(
-          option
-        );
-
-
-        return;
-
-      }
-
-
-      confirmed.forEach(
-        lobby => {
-
-          let option =
-            document.createElement(
-              'option'
-            );
-
-
-          option.value =
-            lobby;
-
-
-          option.textContent =
-            lobby;
-
-
-          select.appendChild(
-            option
-          );
-
-        }
-      );
-
-
-      if(
-        confirmed.includes(old)
-      ){
-
-        select.value =
-          old;
-
-      }
-
-    }
-  );
-
-}
-
-
-/* =========================
-   ADMIN OPEN
-========================= */
-
-async function openAdmin(){
-
-  try{
-
-    let m =
-      await api(
-        '/api/me'
-      );
-
-
-    if(m.loggedIn){
-
-      showDashboard(
-        m.name
-      );
-
-      return;
-
-    }
-
-
-    let e =
-      await api(
-        '/api/admin-exists'
-      );
-
-
-    e.exists
-      ? showLogin()
-      : showSetup();
-
-
-  }catch(err){
-
-    alert(
-      'Cannot connect to the ScrimForge server. ' +
-      'Please open the website through the Node server, not as a local HTML file.'
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LOGIN
-========================= */
-
-function showLogin(){
-
-  $('modalContent').innerHTML = `
-
-    <h2>
-      Admin Login
-    </h2>
-
-    <label>
-      Email
-    </label>
-
-    <input
-      id="loginEmail"
-      type="email"
-      autocomplete="username">
-
-    <label>
-      Password
-    </label>
-
-    <input
-      id="loginPass"
-      type="password"
-      autocomplete="current-password">
-
-    <button
-      class="btn"
-      onclick="loginAdmin()">
-
-      Log in
-
-    </button>
-
-  `;
-
-
-  $('modal')
-    .classList
-    .add('show');
-
-}
-
-
-/* =========================
-   ADMIN SETUP
-========================= */
-
-function showSetup(){
-
-  $('modalContent').innerHTML = `
-
-    <h2>
-      Create First Admin
-    </h2>
-
-    <p class="sub">
-      This appears only while no admin account exists.
-    </p>
-
-    <label>
-      Your name
-    </label>
-
-    <input
-      id="setupName">
-
-    <label>
-      Admin email
-    </label>
-
-    <input
-      id="setupEmail"
-      type="email">
-
-    <label>
-      Password
-    </label>
-
-    <input
-      id="setupPass"
-      type="password">
-
-    <button
-      class="btn"
-      onclick="setupAdmin()">
-
-      Create Admin
-
-    </button>
-
-  `;
-
-
-  $('modal')
-    .classList
-    .add('show');
-
-}
-
-
-async function setupAdmin(){
-
-  try{
-
-    let name =
-      $('setupName')
-        .value
-        .trim();
-
-
-    let email =
-      $('setupEmail')
-        .value
-        .trim();
-
-
-    let password =
-      $('setupPass')
-        .value;
-
-
-    if(
-      !name ||
-      !email ||
-      password.length < 6
-    ){
-
-      alert(
-        'Enter your name, email and a password of at least 6 characters.'
-      );
-
-      return;
-
-    }
-
-
-    let r =
-      await api(
-        '/api/setup-admin',
-        {
-
-          method:'POST',
-
-          headers:{
-            'Content-Type':
-              'application/json'
-          },
-
-          body:
-            JSON.stringify({
-              name,
-              email,
-              password
-            })
-
-        }
-      );
-
-
-    closeModal();
-
-    showDashboard(
-      r.name
-    );
-
-
-  }catch(e){
-
-    alert(
-      e.error ||
-      'Could not create admin'
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LOGIN ADMIN
-========================= */
-
-async function loginAdmin(){
-
-  try{
-
-    let email =
-      $('loginEmail')
-        .value
-        .trim();
-
-
-    let password =
-      $('loginPass')
-        .value;
-
-
-    if(
-      !email ||
-      !password
-    ){
-
-      alert(
-        'Enter your admin email and password.'
-      );
-
-      return;
-
-    }
-
-
-    let r =
-      await api(
-        '/api/login',
-        {
-
-          method:'POST',
-
-          headers:{
-            'Content-Type':
-              'application/json'
-          },
-
-          body:
-            JSON.stringify({
-              email,
-              password
-            })
-
-        }
-      );
-
-
-    closeModal();
-
-    await showDashboard(
-      r.name
-    );
-
-
-  }catch(e){
-
-    alert(
-      e.error ||
-      'Incorrect admin email or password.'
-    );
-
-  }
-
-}
-
-
-/* =========================
-   SHOW DASHBOARD
-========================= */
-
-async function showDashboard(name){
-
-  $('adminDash')
-    .classList
-    .add('show');
-
-
-  $('adminbar')
-    .classList
-    .add('show');
-
-
-  $('adminName')
-    .textContent =
-      name;
-
-
-  closeModal();
-
-
-  await renderAdmin();
-
-
-  setTimeout(
-    () =>
-      $('adminDash')
-        .scrollIntoView({
-          behavior:'smooth',
-          block:'start'
-        }),
-    50
-  );
-
-}
-
-
-/* =========================
-   ADMIN DASHBOARD
-========================= */
-
-async function renderAdmin(){
-
-  try{
-
-    let s =
-      await api(
-        '/api/stats'
-      );
-
-
-    $('pendingCount')
-      .textContent =
-        s.pending;
-
-
-    $('confirmedCount')
-      .textContent =
-        s.confirmed;
-
-
-    regs =
-      await api(
-        '/api/registrations'
-      );
-
-
-    $('adminRegs').innerHTML =
-      regs.length
-
-      ?
-
-      regs.map(
-        r => `
-
-          <div
-            class="card"
-            style="margin:10px 0">
+          <div class="stat">
+            <div class="muted">
+              Pending Registrations
+            </div>
 
             <div
-              style="display:flex;justify-content:space-between">
+              class="stat-number"
+              id="pendingCount"
+            >
+              0
+            </div>
+          </div>
 
-              <b>
-                ${esc(r.team)}
-              </b>
+          <div class="stat">
+            <div class="muted">
+              Confirmed Registrations
+            </div>
 
-              <span
-                class="status ${r.status}">
+            <div
+              class="stat-number"
+              id="confirmedCount"
+            >
+              0
+            </div>
+          </div>
 
-                ${r.status.toUpperCase()}
+          <div class="stat">
+            <div class="muted">
+              Active Lobbies
+            </div>
 
-              </span>
+            <div
+              class="stat-number"
+              id="activeLobbyCount"
+            >
+              0
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- CREATE LOBBY -->
+
+        <div class="card">
+
+          <h3>Create New Lobby</h3>
+
+          <br />
+
+          <div id="lobbyMessage" class="message"></div>
+
+          <form id="lobbyForm">
+
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label>Lobby Name</label>
+
+                <input
+                  id="lobbyName"
+                  placeholder="Example: 12 PM ₹50"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Time</label>
+
+                <input
+                  id="lobbyTime"
+                  placeholder="Example: 12 PM"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Entry Fee</label>
+
+                <input
+                  id="lobbyFee"
+                  placeholder="Example: ₹50"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Maximum Teams</label>
+
+                <input
+                  type="number"
+                  id="lobbyMaxTeams"
+                  value="12"
+                  min="1"
+                  required
+                />
+              </div>
 
             </div>
 
+            <button class="btn" type="submit">
+              Create Lobby
+            </button>
 
-            <p class="muted">
+          </form>
 
-              ${esc(r.time)}
-              · ₹${esc(r.fee)}
-              · ${esc(r.captain)}
-              · Ref ${esc(r.ref)}
-
-            </p>
+        </div>
 
 
-            <p class="muted">
+        <!-- LOBBIES -->
 
-              WhatsApp:
-              ${esc(r.phone)}
+        <div class="card">
 
-              · UID:
-              ${esc(r.uid)}
+          <div class="top-actions">
 
-            </p>
+            <h3>Manage Lobbies</h3>
 
-
-            ${
-              r.status === 'pending'
-
-              ?
-
-              `
-
-                <button
-                  class="btn small"
-                  onclick="updateReg(${r.id},'confirmed')">
-
-                  Confirm
-
-                </button>
-
-
-                <button
-                  class="btn small danger"
-                  onclick="updateReg(${r.id},'rejected')">
-
-                  Reject
-
-                </button>
-
-              `
-
-              :
-
-              ''
-
-            }
-
-
-            ${
-              r.status === 'confirmed'
-
-              ?
-
-              `
-
-                <button
-                  class="btn small danger"
-                  onclick="updateReg(${r.id},'rejected')">
-
-                  Cancel
-
-                </button>
-
-              `
-
-              :
-
-              ''
-
-            }
+            <button
+              class="btn small"
+              onclick="loadAdminLobbies()"
+            >
+              Refresh
+            </button>
 
           </div>
 
-        `
-      ).join('')
+          <div
+            id="adminLobbies"
+            class="grid"
+          ></div>
 
-      :
-
-      '<div class="notice">No registrations yet.</div>';
-
-
-    render();
+        </div>
 
 
-    await populateLobbySelectors();
+        <!-- REGISTRATIONS -->
 
-    await loadScoreTeams();
+        <div class="card">
 
-    await loadAdminLeaderboard();
+          <div class="top-actions">
+
+            <h3>Registrations</h3>
+
+            <button
+              class="btn small"
+              onclick="loadRegistrations()"
+            >
+              Refresh
+            </button>
+
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>ID</th>
+                  <th>Reference</th>
+                  <th>Team</th>
+                  <th>Captain</th>
+                  <th>Fee</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Lobby</th>
+                  <th>Action</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="registrationTable"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
 
 
-  }catch(e){
+        <!-- SCORE ENTRY -->
 
-    alert(
-      'Admin session expired.'
-    );
+        <div class="card">
 
-    logout();
+          <h3>Match Score Entry</h3>
+
+          <p class="muted">
+            Enter the results for each match. A lobby has 6 matches
+            and 12 teams.
+          </p>
+
+          <br />
+
+          <div class="form-group">
+
+            <label>Select Lobby</label>
+
+            <select id="scoreLobby">
+              <option value="">
+                Select lobby
+              </option>
+            </select>
+
+          </div>
+
+          <div class="match-tabs">
+
+            <button
+              type="button"
+              class="active"
+              onclick="selectScoreMatch(1, this)"
+            >
+              Match 1
+            </button>
+
+            <button
+              type="button"
+              onclick="selectScoreMatch(2, this)"
+            >
+              Match 2
+            </button>
+
+            <button
+              type="button"
+              onclick="selectScoreMatch(3, this)"
+            >
+              Match 3
+            </button>
+
+            <button
+              type="button"
+              onclick="selectScoreMatch(4, this)"
+            >
+              Match 4
+            </button>
+
+            <button
+              type="button"
+              onclick="selectScoreMatch(5, this)"
+            >
+              Match 5
+            </button>
+
+            <button
+              type="button"
+              onclick="selectScoreMatch(6, this)"
+            >
+              Match 6
+            </button>
+
+          </div>
+
+          <div id="scoreEntryBody"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+  ScrimForge &copy; 2026
+</footer>
+
+
+<script>
+
+  /* =====================================================
+     GLOBAL
+  ===================================================== */
+
+  let currentScoreMatch = 1;
+
+
+  /* =====================================================
+     PAGE NAVIGATION
+  ===================================================== */
+
+  function showPage(pageId) {
+
+    document
+      .querySelectorAll(".page")
+      .forEach(page => {
+        page.classList.remove("active");
+      });
+
+    const page =
+      document.getElementById(pageId);
+
+    if (page) {
+      page.classList.add("active");
+    }
+
+    if (pageId === "home") {
+      loadPublicLobbies("homeLobbies");
+    }
+
+    if (pageId === "scrims") {
+      loadPublicLobbies("scrimList");
+    }
+
+    if (pageId === "leaderboard") {
+      loadLeaderboardLobbyOptions();
+    }
+
+    if (pageId === "admin") {
+      checkAdmin();
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  /* =====================================================
+     MESSAGE
+  ===================================================== */
+
+  function showMessage(
+    elementId,
+    text,
+    type = "success"
+  ) {
+
+    const element =
+      document.getElementById(elementId);
+
+    if (!element) return;
+
+    element.textContent = text;
+
+    element.className =
+      "message show " + type;
+  }
+
+
+  /* =====================================================
+     API HELPER
+  ===================================================== */
+
+  async function api(
+    url,
+    options = {}
+  ) {
+
+    const response =
+      await fetch(
+        url,
+        {
+          credentials: "same-origin",
+          ...options,
+          headers: {
+            "Content-Type":
+              "application/json",
+            ...(options.headers || {})
+          }
+        }
+      );
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch (e) {}
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Request failed"
+      );
+
+    }
+
+    return data;
+  }
+
+
+  /* =====================================================
+     PUBLIC LOBBIES
+  ===================================================== */
+
+  async function loadPublicLobbies(
+    targetId = "homeLobbies"
+  ) {
+
+    const target =
+      document.getElementById(targetId);
+
+    if (!target) return;
+
+    target.innerHTML =
+      `<p class="muted">Loading lobbies...</p>`;
+
+    try {
+
+      const lobbies =
+        await api(
+          "/api/public/lobbies"
+        );
+
+      if (!lobbies.length) {
+
+        target.innerHTML =
+          `<div class="card">
+            <p class="muted">
+              No lobbies available right now.
+            </p>
+          </div>`;
+
+        return;
+      }
+
+      target.innerHTML =
+        lobbies
+          .map(lobby => {
+
+            const full =
+              Number(lobby.confirmed) >=
+              Number(lobby.max_teams);
+
+            return `
+              <div class="card lobby-card">
+
+                <span class="badge ${
+                  lobby.status === "open"
+                    ? "open"
+                    : "closed"
+                }">
+                  ${
+                    lobby.status === "open"
+                      ? "OPEN"
+                      : "CLOSED"
+                  }
+                </span>
+
+                <h3>
+                  ${escapeHTML(lobby.name)}
+                </h3>
+
+                <p>
+                  <strong>Time:</strong>
+                  ${escapeHTML(lobby.time)}
+                </p>
+
+                <p>
+                  <strong>Entry:</strong>
+                  ${escapeHTML(lobby.fee)}
+                </p>
+
+                <p>
+                  <strong>Teams:</strong>
+                  ${lobby.confirmed}/${lobby.max_teams}
+                </p>
+
+                <br />
+
+                ${
+                  lobby.status === "open" && !full
+                  ? `
+                    <button
+                      class="btn small"
+                      onclick="useLobby(
+                        '${escapeAttribute(lobby.time)}',
+                        '${escapeAttribute(lobby.fee)}'
+                      )"
+                    >
+                      Register
+                    </button>
+                  `
+                  : `
+                    <button
+                      class="btn small secondary"
+                      disabled
+                    >
+                      ${
+                        full
+                          ? "FULL"
+                          : "CLOSED"
+                      }
+                    </button>
+                  `
+                }
+
+              </div>
+            `;
+
+          })
+          .join("");
+
+    } catch (error) {
+
+      target.innerHTML =
+        `<div class="card">
+          <p class="muted">
+            ${escapeHTML(error.message)}
+          </p>
+        </div>`;
+
+    }
 
   }
 
-}
+
+  function useLobby(
+    time,
+    fee
+  ) {
+
+    document.getElementById("regTime").value =
+      time;
+
+    document.getElementById("regFee").value =
+      fee;
+
+    showPage("register");
+  }
 
 
-/* =========================
-   UPDATE REGISTRATION
-========================= */
+  /* =====================================================
+     REGISTRATION
+  ===================================================== */
 
-async function updateReg(
-  id,
-  status
-){
+  document
+    .getElementById("registrationForm")
+    .addEventListener(
+      "submit",
+      async function(event) {
 
-  try{
+        event.preventDefault();
 
-    await api(
-      '/api/registrations/'+id,
-      {
+        try {
 
-        method:'PATCH',
+          const data =
+            await api(
+              "/api/registrations",
+              {
+                method: "POST",
 
-        headers:{
-          'Content-Type':
-            'application/json'
-        },
+                body:
+                  JSON.stringify({
 
-        body:
-          JSON.stringify({
-            status
-          })
+                    time:
+                      document
+                        .getElementById("regTime")
+                        .value,
+
+                    fee:
+                      document
+                        .getElementById("regFee")
+                        .value,
+
+                    team:
+                      document
+                        .getElementById("regTeam")
+                        .value,
+
+                    captain:
+                      document
+                        .getElementById("regCaptain")
+                        .value,
+
+                    phone:
+                      document
+                        .getElementById("regPhone")
+                        .value,
+
+                    uid:
+                      document
+                        .getElementById("regUid")
+                        .value
+
+                  })
+              }
+            );
+
+          showMessage(
+            "registerMessage",
+            `Registration submitted successfully. Your reference is ${data.ref}`,
+            "success"
+          );
+
+          document
+            .getElementById("registrationForm")
+            .reset();
+
+        } catch (error) {
+
+          showMessage(
+            "registerMessage",
+            error.message,
+            "error"
+          );
+
+        }
 
       }
     );
 
 
-    await renderAdmin();
+  /* =====================================================
+     STATUS
+  ===================================================== */
 
+  async function checkStatus() {
 
-  }catch(e){
+    const ref =
+      document
+        .getElementById("statusRef")
+        .value
+        .trim();
 
-    alert(
-      e.error ||
-      'Could not update'
-    );
+    if (!ref) {
 
-  }
-
-}
-
-
-/* =====================================================
-   LEADERBOARD — SCORE ENTRY
-===================================================== */
-
-
-/* =========================
-   LOAD CONFIRMED TEAMS
-========================= */
-
-async function loadScoreTeams(){
-
-  const lobby =
-    $('scoreLobby').value;
-
-
-  if(!lobby){
-
-    $('scoreEntryBody').innerHTML = `
-
-      <tr>
-
-        <td colspan="6">
-          No confirmed lobby selected.
-        </td>
-
-      </tr>
-
-    `;
-
-    return;
-
-  }
-
-
-  try{
-
-    let teams =
-      await api(
-        '/api/leaderboard/teams?lobby='
-        +
-        encodeURIComponent(lobby)
+      showMessage(
+        "statusMessage",
+        "Please enter your registration reference.",
+        "error"
       );
 
-
-    if(
-      teams.length !== 12
-    ){
-
-      $('scoreEntryBody').innerHTML = `
-
-        <tr>
-
-          <td colspan="6">
-
-            <b>
-              ${teams.length}/12 confirmed teams.
-            </b>
-
-            <br><br>
-
-            You need exactly 12 confirmed teams
-            before entering a match.
-
-          </td>
-
-        </tr>
-
-      `;
-
       return;
+    }
+
+    try {
+
+      const data =
+        await api(
+          `/api/registration-status/${encodeURIComponent(ref)}`
+        );
+
+      showMessage(
+        "statusMessage",
+        "Registration found.",
+        "success"
+      );
+
+      document
+        .getElementById("statusResult")
+        .innerHTML = `
+
+          <div class="card">
+
+            <h3>
+              ${escapeHTML(data.team)}
+            </h3>
+
+            <p>
+              <strong>Reference:</strong>
+              ${escapeHTML(data.ref)}
+            </p>
+
+            <p>
+              <strong>Time:</strong>
+              ${escapeHTML(data.time)}
+            </p>
+
+            <p>
+              <strong>Fee:</strong>
+              ${escapeHTML(data.fee)}
+            </p>
+
+            <p>
+              <strong>Status:</strong>
+              ${escapeHTML(data.status)}
+            </p>
+
+            <p>
+              <strong>Lobby:</strong>
+              ${
+                data.lobby_name
+                  ? escapeHTML(data.lobby_name)
+                  : "Not assigned yet"
+              }
+            </p>
+
+          </div>
+
+        `;
+
+    } catch (error) {
+
+      showMessage(
+        "statusMessage",
+        error.message,
+        "error"
+      );
+
+      document
+        .getElementById("statusResult")
+        .innerHTML = "";
 
     }
 
-
-    $('scoreEntryBody').innerHTML =
-      teams.map(
-        (team,index) =>
-          scoreRow(
-            index,
-            team.team
-          )
-      ).join('');
+  }
 
 
-    await loadExistingMatch();
+  /* =====================================================
+     ADMIN CHECK
+  ===================================================== */
 
+  async function checkAdmin() {
 
-  }catch(e){
+    try {
 
-    $('scoreEntryBody').innerHTML = `
+      const exists =
+        await api(
+          "/api/admin-exists"
+        );
 
-      <tr>
+      const me =
+        await api(
+          "/api/me"
+        );
 
-        <td colspan="6">
-          Could not load teams.
-        </td>
+      if (!exists.exists) {
 
-      </tr>
+        document
+          .getElementById("adminLoginBox")
+          .classList.add("hidden");
 
-    `;
+        document
+          .getElementById("adminSetupBox")
+          .classList.remove("hidden");
+
+        document
+          .getElementById("adminDashboard")
+          .classList.add("hidden");
+
+        return;
+      }
+
+      document
+        .getElementById("adminSetupBox")
+        .classList.add("hidden");
+
+      if (me.loggedIn) {
+
+        showAdminDashboard(
+          me.name
+        );
+
+      } else {
+
+        document
+          .getElementById("adminLoginBox")
+          .classList.remove("hidden");
+
+        document
+          .getElementById("adminDashboard")
+          .classList.add("hidden");
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
 
   }
 
-}
+
+  function showAdminDashboard(name) {
+
+    document
+      .getElementById("adminLoginBox")
+      .classList.add("hidden");
+
+    document
+      .getElementById("adminSetupBox")
+      .classList.add("hidden");
+
+    document
+      .getElementById("adminDashboard")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("adminName")
+      .textContent =
+      name || "Admin";
+
+    loadAdminData();
+  }
 
 
-/* =========================
-   SCORE ROW
-========================= */
+  /* =====================================================
+     ADMIN SETUP
+  ===================================================== */
 
-function scoreRow(
-  index,
-  team,
-  position='',
-  kills=''
-){
+  document
+    .getElementById("setupForm")
+    .addEventListener(
+      "submit",
+      async function(event) {
 
-  return `
+        event.preventDefault();
 
-    <tr>
+        try {
 
-      <td>
+          const data =
+            await api(
+              "/api/setup-admin",
+              {
+                method: "POST",
 
-        <b>
-          ${esc(team)}
-        </b>
+                body:
+                  JSON.stringify({
 
-      </td>
+                    name:
+                      document
+                        .getElementById("setupName")
+                        .value,
 
+                    email:
+                      document
+                        .getElementById("setupEmail")
+                        .value,
 
-      <td>
+                    password:
+                      document
+                        .getElementById("setupPassword")
+                        .value
 
-        <select
-          class="score-input position-input"
-          data-index="${index}"
-          onchange="calculateScoreRow(${index})">
+                  })
+              }
+            );
 
-          <option value="">
-            --
-          </option>
+          showAdminDashboard(
+            data.name
+          );
 
+        } catch (error) {
 
-          ${Array.from(
-            {length:12},
-            (_,i) => {
+          showMessage(
+            "setupMessage",
+            error.message,
+            "error"
+          );
 
-              let p =
-                i + 1;
-
-
-              return `
-
-                <option
-                  value="${p}"
-                  ${
-                    Number(position) === p
-                    ? 'selected'
-                    : ''
-                  }>
-
-                  ${p}
-
-                </option>
-
-              `;
-
-            }
-          ).join('')}
-
-        </select>
-
-      </td>
-
-
-      <td>
-
-        <input
-          class="score-input booyah-output"
-          id="booyah-${index}"
-          value="${
-            Number(position) === 1
-            ? 1
-            : 0
-          }"
-          readonly>
-
-      </td>
-
-
-      <td>
-
-        <input
-          class="score-input placement-output"
-          id="placement-${index}"
-          value="${
-            placementPoints[position] || 0
-          }"
-          readonly>
-
-      </td>
-
-
-      <td>
-
-        <input
-          class="score-input kill-input"
-          id="kills-${index}"
-          type="number"
-          min="0"
-          value="${kills || 0}"
-          onchange="calculateScoreRow(${index})"
-          oninput="calculateScoreRow(${index})">
-
-      </td>
-
-
-      <td
-        class="total-cell"
-        id="total-${index}">
-
-        ${
-          (placementPoints[position] || 0)
-          +
-          (Number(kills) || 0)
         }
 
-      </td>
-
-    </tr>
-
-  `;
-
-}
-
-
-/* =========================
-   CALCULATE ROW
-========================= */
-
-function calculateScoreRow(index){
-
-  let position =
-    Number(
-      document.querySelector(
-        `.position-input[data-index="${index}"]`
-      )?.value
+      }
     );
 
 
-  let kills =
-    Number(
-      $(`kills-${index}`)?.value
-    ) || 0;
+  /* =====================================================
+     LOGIN
+  ===================================================== */
 
+  document
+    .getElementById("loginForm")
+    .addEventListener(
+      "submit",
+      async function(event) {
 
-  let placement =
-    placementPoints[position] || 0;
+        event.preventDefault();
 
+        try {
 
-  let booyah =
-    position === 1
-      ? 1
-      : 0;
+          const data =
+            await api(
+              "/api/login",
+              {
+                method: "POST",
 
+                body:
+                  JSON.stringify({
 
-  let total =
-    placement + kills;
+                    email:
+                      document
+                        .getElementById("loginEmail")
+                        .value,
 
+                    password:
+                      document
+                        .getElementById("loginPassword")
+                        .value
 
-  $(`booyah-${index}`)
-    .value =
-      booyah;
+                  })
+              }
+            );
 
+          showAdminDashboard(
+            data.name
+          );
 
-  $(`placement-${index}`)
-    .value =
-      placement;
+        } catch (error) {
 
+          showMessage(
+            "loginMessage",
+            error.message,
+            "error"
+          );
 
-  $(`total-${index}`)
-    .textContent =
-      total;
+        }
 
-}
-
-
-/* =========================
-   LOAD EXISTING MATCH
-========================= */
-
-async function loadExistingMatch(){
-
-  const lobby =
-    $('scoreLobby').value;
-
-
-  const match =
-    Number(
-      $('scoreMatch').value
+      }
     );
 
 
-  if(!lobby)
-    return;
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
 
+  async function logout() {
 
-  try{
+    try {
 
-    let existing =
       await api(
-        `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
+        "/api/logout",
+        {
+          method: "POST"
+        }
       );
 
+      checkAdmin();
 
-    if(
-      !existing.length
-    ){
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ADMIN DATA
+  ===================================================== */
+
+  async function loadAdminData() {
+
+    await Promise.all([
+      loadStats(),
+      loadAdminLobbies(),
+      loadRegistrations()
+    ]);
+
+    await loadScoreLobbyOptions();
+
+  }
+
+
+  /* =====================================================
+     STATS
+  ===================================================== */
+
+  async function loadStats() {
+
+    try {
+
+      const stats =
+        await api(
+          "/api/stats"
+        );
+
+      document
+        .getElementById("pendingCount")
+        .textContent =
+        stats.pending;
+
+      document
+        .getElementById("confirmedCount")
+        .textContent =
+        stats.confirmed;
+
+      document
+        .getElementById("activeLobbyCount")
+        .textContent =
+        stats.activeLobbies;
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  /* =====================================================
+     CREATE LOBBY
+  ===================================================== */
+
+  document
+    .getElementById("lobbyForm")
+    .addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        try {
+
+          await api(
+            "/api/lobbies",
+            {
+              method: "POST",
+
+              body:
+                JSON.stringify({
+
+                  name:
+                    document
+                      .getElementById("lobbyName")
+                      .value,
+
+                  time:
+                    document
+                      .getElementById("lobbyTime")
+                      .value,
+
+                  fee:
+                    document
+                      .getElementById("lobbyFee")
+                      .value,
+
+                  maxTeams:
+                    Number(
+                      document
+                        .getElementById("lobbyMaxTeams")
+                        .value
+                    )
+
+                })
+            }
+          );
+
+          showMessage(
+            "lobbyMessage",
+            "Lobby created successfully.",
+            "success"
+          );
+
+          document
+            .getElementById("lobbyForm")
+            .reset();
+
+          document
+            .getElementById("lobbyMaxTeams")
+            .value = 12;
+
+          loadAdminLobbies();
+          loadStats();
+          loadScoreLobbyOptions();
+
+        } catch (error) {
+
+          showMessage(
+            "lobbyMessage",
+            error.message,
+            "error"
+          );
+
+        }
+
+      }
+    );
+
+
+  /* =====================================================
+     ADMIN LOBBIES
+  ===================================================== */
+
+  async function loadAdminLobbies() {
+
+    const target =
+      document.getElementById(
+        "adminLobbies"
+      );
+
+    try {
+
+      const lobbies =
+        await api(
+          "/api/lobbies"
+        );
+
+      if (!lobbies.length) {
+
+        target.innerHTML =
+          `<p class="muted">
+            No lobbies created yet.
+          </p>`;
+
+        return;
+      }
+
+      target.innerHTML =
+        lobbies
+          .map(lobby => `
+
+            <div class="card">
+
+              <span class="badge ${
+                lobby.status === "open"
+                  ? "open"
+                  : "closed"
+              }">
+                ${lobby.status.toUpperCase()}
+              </span>
+
+              <h3>
+                ${escapeHTML(lobby.name)}
+              </h3>
+
+              <p>
+                Time:
+                ${escapeHTML(lobby.time)}
+              </p>
+
+              <p>
+                Fee:
+                ${escapeHTML(lobby.fee)}
+              </p>
+
+              <p>
+                Teams:
+                ${lobby.confirmed}/${lobby.max_teams}
+              </p>
+
+              <br />
+
+              <button
+                class="btn small ${
+                  lobby.status === "open"
+                    ? "danger"
+                    : "success"
+                }"
+                onclick="toggleLobby(
+                  ${lobby.id},
+                  '${lobby.status}'
+                )"
+              >
+                ${
+                  lobby.status === "open"
+                    ? "Close Lobby"
+                    : "Open Lobby"
+                }
+              </button>
+
+            </div>
+
+          `)
+          .join("");
+
+    } catch (error) {
+
+      target.innerHTML =
+        `<p class="muted">
+          ${escapeHTML(error.message)}
+        </p>`;
+
+    }
+
+  }
+
+
+  async function toggleLobby(
+    id,
+    currentStatus
+  ) {
+
+    const newStatus =
+      currentStatus === "open"
+        ? "closed"
+        : "open";
+
+    try {
+
+      await api(
+        `/api/lobbies/${id}`,
+        {
+          method: "PATCH",
+
+          body:
+            JSON.stringify({
+              status: newStatus
+            })
+        }
+      );
+
+      loadAdminLobbies();
+      loadStats();
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  }
+
+
+  /* =====================================================
+     REGISTRATIONS
+  ===================================================== */
+
+  async function loadRegistrations() {
+
+    const tbody =
+      document.getElementById(
+        "registrationTable"
+      );
+
+    try {
+
+      const rows =
+        await api(
+          "/api/registrations"
+        );
+
+      if (!rows.length) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="9">
+              No registrations yet.
+            </td>
+          </tr>`;
+
+        return;
+      }
+
+      const lobbies =
+        await api(
+          "/api/lobbies"
+        );
+
+      tbody.innerHTML =
+        rows
+          .map(row => {
+
+            const lobbyOptions =
+              lobbies
+                .map(lobby => `
+                  <option
+                    value="${lobby.id}"
+                    ${
+                      Number(row.lobby_id) ===
+                      Number(lobby.id)
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    ${escapeHTML(lobby.name)}
+                  </option>
+                `)
+                .join("");
+
+            return `
+
+              <tr>
+
+                <td>
+                  ${row.id}
+                </td>
+
+                <td>
+                  ${escapeHTML(row.ref)}
+                </td>
+
+                <td>
+                  ${escapeHTML(row.team)}
+                </td>
+
+                <td>
+                  ${escapeHTML(row.captain)}
+                </td>
+
+                <td>
+                  ${escapeHTML(row.fee)}
+                </td>
+
+                <td>
+                  ${escapeHTML(row.time)}
+                </td>
+
+                <td>
+                  ${escapeHTML(row.status)}
+                </td>
+
+                <td>
+
+                  ${
+                    row.status === "confirmed"
+                    ? `
+                      <select
+                        onchange="assignLobby(
+                          ${row.id},
+                          this.value
+                        )"
+                      >
+
+                        <option value="">
+                          Select
+                        </option>
+
+                        ${lobbyOptions}
+
+                      </select>
+                    `
+                    : "Confirm first"
+                  }
+
+                </td>
+
+                <td>
+
+                  <div style="
+                    display:flex;
+                    gap:6px;
+                    flex-wrap:wrap;
+                  ">
+
+                    ${
+                      row.status !== "confirmed"
+                      ? `
+                        <button
+                          class="btn small success"
+                          onclick="updateRegistration(
+                            ${row.id},
+                            'confirmed'
+                          )"
+                        >
+                          Confirm
+                        </button>
+                      `
+                      : ""
+                    }
+
+                    ${
+                      row.status !== "rejected"
+                      ? `
+                        <button
+                          class="btn small danger"
+                          onclick="updateRegistration(
+                            ${row.id},
+                            'rejected'
+                          )"
+                        >
+                          Reject
+                        </button>
+                      `
+                      : ""
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            `;
+
+          })
+          .join("");
+
+    } catch (error) {
+
+      tbody.innerHTML =
+        `<tr>
+          <td colspan="9">
+            ${escapeHTML(error.message)}
+          </td>
+        </tr>`;
+
+    }
+
+  }
+
+
+  async function updateRegistration(
+    id,
+    status
+  ) {
+
+    try {
+
+      await api(
+        `/api/registrations/${id}`,
+        {
+          method: "PATCH",
+
+          body:
+            JSON.stringify({
+              status
+            })
+        }
+      );
+
+      loadRegistrations();
+      loadStats();
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  }
+
+
+  async function assignLobby(
+    registrationId,
+    lobbyId
+  ) {
+
+    if (!lobbyId) return;
+
+    try {
+
+      await api(
+        `/api/registrations/${registrationId}/lobby`,
+        {
+          method: "PATCH",
+
+          body:
+            JSON.stringify({
+              lobbyId:
+                Number(lobbyId)
+            })
+        }
+      );
+
+      loadRegistrations();
+
+    } catch (error) {
+
+      alert(error.message);
+      loadRegistrations();
+
+    }
+
+  }
+
+
+  /* =====================================================
+     SCORE LOBBIES
+  ===================================================== */
+
+  async function loadScoreLobbyOptions() {
+
+    const select =
+      document.getElementById(
+        "scoreLobby"
+      );
+
+    try {
+
+      const lobbies =
+        await api(
+          "/api/lobbies"
+        );
+
+      select.innerHTML =
+        `<option value="">
+          Select lobby
+        </option>` +
+        lobbies
+          .map(lobby => `
+            <option value="${escapeAttribute(lobby.name)}">
+              ${escapeHTML(lobby.name)}
+            </option>
+          `)
+          .join("");
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  /* =====================================================
+     SCORE MATCH
+  ===================================================== */
+
+  function selectScoreMatch(
+    match,
+    button
+  ) {
+
+    currentScoreMatch =
+      match;
+
+    document
+      .querySelectorAll(".match-tabs button")
+      .forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+    if (button) {
+      button.classList.add("active");
+    }
+
+    renderScoreEntry();
+
+  }
+
+
+  async function renderScoreEntry() {
+
+    const body =
+      document.getElementById(
+        "scoreEntryBody"
+      );
+
+    const lobby =
+      document
+        .getElementById("scoreLobby")
+        .value;
+
+    if (!lobby) {
+
+      body.innerHTML =
+        `<p class="muted">
+          Select a lobby first.
+        </p>`;
+
+      return;
+    }
+
+    body.innerHTML =
+      `<p class="muted">
+        Loading teams...
+      </p>`;
+
+    try {
 
       const teams =
         await api(
-          '/api/leaderboard/teams?lobby='
-          +
-          encodeURIComponent(lobby)
+          `/api/leaderboard/teams?lobby=${encodeURIComponent(lobby)}`
         );
 
+      if (teams.length !== 12) {
 
-      if(
-        teams.length === 12
-      ){
+        body.innerHTML =
+          `<div class="message show error">
+            This lobby currently has
+            ${teams.length}/12 confirmed teams.
+            Exactly 12 teams are required to enter match results.
+          </div>`;
 
-        $('scoreEntryBody').innerHTML =
-          teams.map(
-            (team,index) =>
-              scoreRow(
-                index,
-                team.team
-              )
-          ).join('');
-
+        return;
       }
 
-      return;
+      let existing = [];
+
+      try {
+
+        existing =
+          await api(
+            `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${currentScoreMatch}`
+          );
+
+      } catch (e) {}
+
+      const existingMap =
+        new Map(
+          existing.map(row => [
+            row.team,
+            row
+          ])
+        );
+
+      body.innerHTML = `
+
+        <div class="table-wrap">
+
+          <table class="score-table">
+
+            <thead>
+
+              <tr>
+
+                <th>Team</th>
+                <th>Position</th>
+                <th>Kills</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              ${teams
+                .map((team, index) => {
+
+                  const old =
+                    existingMap.get(
+                      team.team
+                    );
+
+                  return `
+
+                    <tr>
+
+                      <td>
+                        ${escapeHTML(team.team)}
+                      </td>
+
+                      <td>
+
+                        <input
+                          type="number"
+                          min="1"
+                          max="12"
+                          class="score-position"
+                          data-team="${escapeAttribute(team.team)}"
+                          value="${
+                            old
+                              ? old.position
+                              : index + 1
+                          }"
+                        />
+
+                      </td>
+
+                      <td>
+
+                        <input
+                          type="number"
+                          min="0"
+                          class="score-kills"
+                          data-team="${escapeAttribute(team.team)}"
+                          value="${
+                            old
+                              ? old.kills
+                              : 0
+                          }"
+                        />
+
+                      </td>
+
+                    </tr>
+
+                  `;
+
+                })
+                .join("")}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <br />
+
+        <button
+          class="btn success"
+          onclick="saveCurrentMatch()"
+        >
+          Save Match ${currentScoreMatch}
+        </button>
+
+      `;
+
+    } catch (error) {
+
+      body.innerHTML =
+        `<div class="message show error">
+          ${escapeHTML(error.message)}
+        </div>`;
 
     }
 
-
-    $('scoreEntryBody').innerHTML =
-      existing.map(
-        (entry,index) =>
-          scoreRow(
-            index,
-            entry.team,
-            entry.position,
-            entry.kills
-          )
-      ).join('');
-
-
-  }catch(e){
-
-    console.log(
-      'No previous match data.'
-    );
-
-  }
-
-}
-
-
-/* =========================
-   SAVE MATCH
-========================= */
-
-async function saveMatch(){
-
-  const lobby =
-    $('scoreLobby').value;
-
-
-  const matchNo =
-    Number(
-      $('scoreMatch').value
-    );
-
-
-  if(!lobby){
-
-    alert(
-      'Please select a lobby.'
-    );
-
-    return;
-
   }
 
 
-  let rows =
-    [
-      ...document.querySelectorAll(
-        '#scoreEntryBody tr'
-      )
-    ];
-
-
-  if(
-    rows.length !== 12
-  ){
-
-    alert(
-      'There must be exactly 12 confirmed teams.'
+  document
+    .getElementById("scoreLobby")
+    .addEventListener(
+      "change",
+      renderScoreEntry
     );
 
-    return;
 
-  }
+  async function saveCurrentMatch() {
 
+    const lobby =
+      document
+        .getElementById("scoreLobby")
+        .value;
 
-  let entries = [];
-
-
-  for(
-    let i = 0;
-    i < 12;
-    i++
-  ){
-
-    const position =
-      Number(
-        document.querySelector(
-          `.position-input[data-index="${i}"]`
-        )?.value
-      );
-
-
-    const kills =
-      Number(
-        $(`kills-${i}`)?.value
-      ) || 0;
-
-
-    if(
-      !position ||
-      position < 1 ||
-      position > 12
-    ){
+    if (!lobby) {
 
       alert(
-        `Please select a position for team ${i+1}.`
+        "Please select a lobby."
       );
 
       return;
-
     }
 
-
-    if(
-      kills < 0
-    ){
-
-      alert(
-        'Kills cannot be negative.'
+    const positionInputs =
+      document.querySelectorAll(
+        ".score-position"
       );
 
-      return;
+    const killInputs =
+      document.querySelectorAll(
+        ".score-kills"
+      );
 
-    }
+    const entries = [];
 
+    positionInputs.forEach(
+      input => {
 
-    entries.push({
+        const team =
+          input.dataset.team;
 
-      team:
-        rows[i]
-          .querySelector(
-            'td:first-child'
-          )
-          .innerText
-          .trim(),
+        const killInput =
+          document.querySelector(
+            `.score-kills[data-team="${CSS.escape(team)}"]`
+          );
 
-      position,
+        entries.push({
 
-      kills
+          team,
 
-    });
+          position:
+            Number(input.value),
 
-  }
+          kills:
+            Number(
+              killInput.value
+            ) || 0
 
-
-  const positions =
-    entries.map(
-      e =>
-        e.position
-    );
-
-
-  if(
-    new Set(positions).size !== 12
-  ){
-
-    alert(
-      'Every position from 1 to 12 must be used exactly once.'
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      '/api/leaderboard/match',
-      {
-
-        method:'POST',
-
-        headers:{
-          'Content-Type':
-            'application/json'
-        },
-
-        body:
-          JSON.stringify({
-
-            lobby,
-
-            matchNo,
-
-            entries
-
-          })
+        });
 
       }
     );
 
+    try {
 
-    alert(
-      `Match ${matchNo} saved successfully!`
-    );
-
-
-    await loadExistingMatch();
-
-    await loadAdminLeaderboard();
-
-    await loadPublicLeaderboard();
-
-
-  }catch(e){
-
-    alert(
-      e.error ||
-      'Could not save match.'
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   PUBLIC LEADERBOARD
-===================================================== */
-
-async function loadPublicLeaderboard(){
-
-  const lobby =
-    $('publicLeaderboardLobby')
-      ?.value;
-
-
-  if(!lobby){
-
-    $('publicLeaderboardBody').innerHTML = `
-
-      <tr>
-
-        <td colspan="6">
-          No leaderboard available yet.
-        </td>
-
-      </tr>
-
-    `;
-
-    return;
-
-  }
-
-
-  try{
-
-    let rows =
       await api(
-        '/api/public-leaderboard?lobby='
-        +
-        encodeURIComponent(lobby)
+        "/api/leaderboard/match",
+        {
+          method: "POST",
+
+          body:
+            JSON.stringify({
+
+              lobby,
+
+              matchNo:
+                currentScoreMatch,
+
+              entries
+
+            })
+        }
       );
 
-
-    renderLeaderboard(
-      'publicLeaderboardBody',
-      rows
-    );
-
-
-  }catch(e){
-
-    $('publicLeaderboardBody').innerHTML = `
-
-      <tr>
-
-        <td colspan="6">
-          Could not load leaderboard.
-        </td>
-
-      </tr>
-
-    `;
-
-  }
-
-}
-
-
-/* =====================================================
-   ADMIN LEADERBOARD
-===================================================== */
-
-async function loadAdminLeaderboard(){
-
-  const lobby =
-    $('adminLeaderboardLobby')
-      ?.value;
-
-
-  if(!lobby){
-
-    $('adminLeaderboardBody').innerHTML = `
-
-      <tr>
-
-        <td colspan="6">
-          No leaderboard available yet.
-        </td>
-
-      </tr>
-
-    `;
-
-    return;
-
-  }
-
-
-  try{
-
-    let rows =
-      await api(
-        '/api/leaderboard?lobby='
-        +
-        encodeURIComponent(lobby)
+      alert(
+        `Match ${currentScoreMatch} saved successfully.`
       );
 
+      renderScoreEntry();
 
-    renderLeaderboard(
-      'adminLeaderboardBody',
-      rows
-    );
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  }
 
 
-  }catch(e){
+  /* =====================================================
+     PUBLIC LEADERBOARD LOBBY OPTIONS
+  ===================================================== */
 
-    $('adminLeaderboardBody').innerHTML = `
+  async function loadLeaderboardLobbyOptions() {
 
-      <tr>
+    const select =
+      document.getElementById(
+        "publicLobbySelect"
+      );
 
-        <td colspan="6">
-          Could not load leaderboard.
-        </td>
+    try {
 
-      </tr>
+      const lobbies =
+        await api(
+          "/api/public/lobbies"
+        );
+
+      select.innerHTML =
+        `<option value="">
+          Select a lobby
+        </option>` +
+        lobbies
+          .map(lobby => `
+            <option value="${escapeAttribute(lobby.name)}">
+              ${escapeHTML(lobby.name)}
+            </option>
+          `)
+          .join("");
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  /* =====================================================
+     PUBLIC LEADERBOARD
+  ===================================================== */
+
+  async function loadPublicLeaderboard() {
+
+    const lobby =
+      document
+        .getElementById(
+          "publicLobbySelect"
+        )
+        .value;
+
+    const match =
+      document
+        .getElementById(
+          "publicMatchSelect"
+        )
+        .value;
+
+    const target =
+      document.getElementById(
+        "publicLeaderboard"
+      );
+
+    if (!lobby) {
+
+      target.innerHTML =
+        `<div class="message show error">
+          Please select a lobby.
+        </div>`;
+
+      return;
+    }
+
+    try {
+
+      let rows;
+
+      if (match === "overall") {
+
+        rows =
+          await api(
+            `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
+          );
+
+        renderOverallLeaderboard(
+          target,
+          rows
+        );
+
+      } else {
+
+        rows =
+          await api(
+            `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
+          );
+
+        renderMatchLeaderboard(
+          target,
+          rows,
+          match
+        );
+
+      }
+
+    } catch (error) {
+
+      target.innerHTML =
+        `<div class="message show error">
+          ${escapeHTML(error.message)}
+        </div>`;
+
+    }
+
+  }
+
+
+  function renderOverallLeaderboard(
+    target,
+    rows
+  ) {
+
+    if (!rows.length) {
+
+      target.innerHTML =
+        `<div class="card">
+          <p class="muted">
+            No match results have been entered yet.
+          </p>
+        </div>`;
+
+      return;
+    }
+
+    target.innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          Overall Leaderboard
+        </h3>
+
+        <br />
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Rank</th>
+                <th>Team</th>
+                <th>Matches</th>
+                <th>Booyahs</th>
+                <th>Placement</th>
+                <th>Kill Points</th>
+                <th>Total</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              ${rows
+                .map(row => `
+
+                  <tr>
+
+                    <td class="rank">
+                      #${row.position}
+                    </td>
+
+                    <td>
+                      <strong>
+                        ${escapeHTML(row.team)}
+                      </strong>
+                    </td>
+
+                    <td>
+                      ${row.matchesPlayed}
+                    </td>
+
+                    <td>
+                      ${row.booyahs}
+                    </td>
+
+                    <td>
+                      ${row.placementPoints}
+                    </td>
+
+                    <td>
+                      ${row.killPoints}
+                    </td>
+
+                    <td>
+                      <strong>
+                        ${row.totalPoints}
+                      </strong>
+                    </td>
+
+                  </tr>
+
+                `)
+                .join("")}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
 
     `;
 
   }
 
-}
 
+  function renderMatchLeaderboard(
+    target,
+    rows,
+    match
+  ) {
 
-/* =========================
-   RENDER LEADERBOARD
-========================= */
+    if (!rows.length) {
 
-function renderLeaderboard(
-  id,
-  rows
-){
+      target.innerHTML =
+        `<div class="card">
+          <p class="muted">
+            No results have been entered for Match ${match}.
+          </p>
+        </div>`;
 
-  const body =
-    $(id);
+      return;
+    }
 
+    target.innerHTML = `
 
-  if(
-    !rows.length
-  ){
+      <div class="card">
 
-    body.innerHTML = `
+        <h3>
+          Match ${match} Results
+        </h3>
 
-      <tr>
+        <br />
 
-        <td colspan="6">
+        <div class="table-wrap">
 
-          No match results have been entered yet.
+          <table>
 
-        </td>
+            <thead>
 
-      </tr>
+              <tr>
+                <th>Position</th>
+                <th>Team</th>
+                <th>Kills</th>
+                <th>Placement Points</th>
+                <th>Kill Points</th>
+                <th>Total</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              ${rows
+                .map(row => `
+
+                  <tr>
+
+                    <td class="rank">
+                      ${row.position}
+                    </td>
+
+                    <td>
+                      <strong>
+                        ${escapeHTML(row.team)}
+                      </strong>
+                    </td>
+
+                    <td>
+                      ${row.kills}
+                    </td>
+
+                    <td>
+                      ${row.placement_points}
+                    </td>
+
+                    <td>
+                      ${row.kill_points}
+                    </td>
+
+                    <td>
+                      <strong>
+                        ${row.total_points}
+                      </strong>
+                    </td>
+
+                  </tr>
+
+                `)
+                .join("")}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
 
     `;
-
-    return;
 
   }
 
 
-  body.innerHTML =
-    rows.map(
-      r => `
+  /* =====================================================
+     SECURITY / HTML ESCAPING
+  ===================================================== */
 
-        <tr>
+  function escapeHTML(value) {
 
-          <td class="rank-cell">
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
 
-            ${r.position}
-
-          </td>
-
-
-          <td>
-
-            <b>
-              ${esc(r.team)}
-            </b>
-
-          </td>
+  }
 
 
-          <td>
-            ${r.booyahs}
-          </td>
+  function escapeAttribute(value) {
+
+    return escapeHTML(value);
+
+  }
 
 
-          <td>
-            ${r.placementPoints}
-          </td>
+  /* =====================================================
+     INITIAL LOAD
+  ===================================================== */
 
+  document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-          <td>
-            ${r.killPoints}
-          </td>
+      loadPublicLobbies(
+        "homeLobbies"
+      );
 
-
-          <td class="total-cell">
-
-            ${r.totalPoints}
-
-          </td>
-
-        </tr>
-
-      `
-    ).join('');
-
-}
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-async function logout(){
-
-  await fetch(
-    '/api/logout',
-    {
-      method:'POST'
     }
   );
-
-
-  $('adminDash')
-    .classList
-    .remove('show');
-
-
-  $('adminbar')
-    .classList
-    .remove('show');
-
-
-  location.hash = '';
-
-}
-
-
-/* =========================
-   MODAL
-========================= */
-
-function closeModal(){
-
-  $('modal')
-    .classList
-    .remove('show');
-
-}
-
-
-/* =========================
-   START
-========================= */
-
-renderTimes();
-
-loadPublic();
 
 </script>
 
