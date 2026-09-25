@@ -6,11 +6,7 @@
   <title>ScrimForge</title>
 
   <style>
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0
-    }
+    *{box-sizing:border-box;margin:0;padding:0}
 
     body{
       font-family:Arial,Helvetica,sans-serif;
@@ -367,105 +363,13 @@
       color:#fca5a5!important
     }
 
-    .danger-outline:hover{
-      background:#450a0a!important;
-      color:#fff!important
-    }
-
-    /* STATUS VIEW */
-
-    .status-card{
-      max-width:750px;
-      margin:0 auto 20px
-    }
-
-    .status-result-card{
-      max-width:750px;
-      margin:20px auto
-    }
-
-    .status-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:15px;
-      flex-wrap:wrap;
-      margin-bottom:20px
-    }
-
-    .status-badge{
-      display:inline-block;
-      padding:7px 13px;
-      border-radius:999px;
-      font-size:13px;
-      font-weight:800
-    }
-
-    .status-pending{
-      background:#78350f;
-      color:#fde68a
-    }
-
-    .status-confirmed{
-      background:#064e3b;
-      color:#6ee7b7
-    }
-
-    .status-rejected{
-      background:#450a0a;
-      color:#fca5a5
-    }
-
-    .status-info{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-      margin-top:20px
-    }
-
-    .status-info-item{
-      background:#0f172a;
-      border:1px solid #263044;
-      border-radius:10px;
-      padding:14px
-    }
-
-    .status-info-item .label{
-      color:#64748b;
-      font-size:12px;
-      margin-bottom:5px
-    }
-
-    .status-info-item .value{
-      color:#fff;
-      font-weight:700;
-      word-break:break-word
-    }
-
-    .reference-box{
-      background:#0f172a;
-      border:1px dashed #7c3aed;
-      border-radius:10px;
-      padding:14px;
-      margin-top:15px
-    }
-
-    .reference-box strong{
-      color:#c4b5fd
-    }
-
-    .status-help{
-      background:#0f172a;
-      border:1px solid #263044;
-      border-radius:10px;
-      padding:14px;
-      margin-top:15px;
-      color:#94a3b8;
-      line-height:1.6
+    .registration-empty{
+      text-align:center;
+      padding:25px;
+      color:#94a3b8
     }
 
     @media(max-width:700px){
-
       .nav{
         padding:12px 0;
         flex-direction:column
@@ -490,15 +394,6 @@
       .hero{
         padding:30px 10px
       }
-
-      .status-info{
-        grid-template-columns:1fr
-      }
-
-      .status-header{
-        align-items:flex-start
-      }
-
     }
   </style>
 </head>
@@ -524,9 +419,12 @@
   </div>
 </header>
 
+
 <main>
 
-<!-- HOME -->
+<!-- =====================================================
+     HOME
+===================================================== -->
 
 <section id="home" class="page active">
 
@@ -538,22 +436,21 @@
 
     <p>
       Free Fire scrims, competitive lobbies,
-      registrations and live leaderboards — all in one place.
+      registrations and live leaderboards —
+      all in one place.
     </p>
 
     <div class="hero-buttons">
 
       <button
         class="btn"
-        onclick="showPage('scrims')"
-      >
+        onclick="showPage('scrims')">
         View Scrims
       </button>
 
       <button
         class="btn secondary"
-        onclick="showPage('leaderboard')"
-      >
+        onclick="showPage('leaderboard')">
         Leaderboard
       </button>
 
@@ -569,15 +466,17 @@
 
     <div
       id="homeLobbies"
-      class="grid"
-    ></div>
+      class="grid">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- SCRIMS -->
+<!-- =====================================================
+     SCRIMS
+===================================================== -->
 
 <section id="scrims" class="page">
 
@@ -599,8 +498,7 @@
 
       <button
         class="btn"
-        onclick="loadPublicLobbies('scrimList')"
-      >
+        onclick="loadPublicLobbies('scrimList')">
         Refresh
       </button>
 
@@ -608,15 +506,17 @@
 
     <div
       id="scrimList"
-      class="grid"
-    ></div>
+      class="grid">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- REGISTER -->
+<!-- =====================================================
+     REGISTRATION
+===================================================== -->
 
 <section id="register" class="page">
 
@@ -629,14 +529,15 @@
       </h2>
 
       <p class="muted">
-        Submit your team details. Registration will remain
-        pending until it is confirmed by the admin.
+        Submit your team details.
+        Registration will remain pending until
+        it is confirmed by the admin.
       </p>
 
       <div
         id="registerMessage"
-        class="message"
-      ></div>
+        class="message">
+      </div>
 
       <form id="registrationForm">
 
@@ -652,10 +553,10 @@
               type="text"
               id="regTime"
               placeholder="Example: 12 PM"
-              required
-            />
+              required>
 
           </div>
+
 
           <div class="form-group">
 
@@ -667,10 +568,10 @@
               type="text"
               id="regFee"
               placeholder="Example: ₹50"
-              required
-            />
+              required>
 
           </div>
+
 
           <div class="form-group">
 
@@ -682,10 +583,10 @@
               type="text"
               id="regTeam"
               placeholder="Your team name"
-              required
-            />
+              required>
 
           </div>
+
 
           <div class="form-group">
 
@@ -697,10 +598,10 @@
               type="text"
               id="regCaptain"
               placeholder="Captain name"
-              required
-            />
+              required>
 
           </div>
+
 
           <div class="form-group">
 
@@ -712,10 +613,10 @@
               type="text"
               id="regPhone"
               placeholder="Phone number"
-              required
-            />
+              required>
 
           </div>
+
 
           <div class="form-group">
 
@@ -727,8 +628,7 @@
               type="text"
               id="regUid"
               placeholder="Captain UID"
-              required
-            />
+              required>
 
           </div>
 
@@ -736,8 +636,7 @@
 
         <button
           class="btn"
-          type="submit"
-        >
+          type="submit">
           Submit Registration
         </button>
 
@@ -750,27 +649,19 @@
 </section>
 
 
-<!-- STATUS -->
+<!-- =====================================================
+     STATUS
+===================================================== -->
 
 <section id="status" class="page">
 
   <div class="container">
 
-    <div class="card status-card">
+    <div class="card">
 
       <h2 class="section-title">
-        Check Registration Status
+        Check Registration
       </h2>
-
-      <p class="muted">
-        Enter your registration reference to check
-        your registration and lobby details.
-      </p>
-
-      <div
-        id="statusMessage"
-        class="message"
-      ></div>
 
       <div class="form-group">
 
@@ -780,89 +671,35 @@
 
         <input
           id="statusRef"
-          placeholder="Example: SF-1234567890-1234"
-          autocomplete="off"
-        />
+          placeholder="Example: SF-1234567890-1234">
 
+      </div>
+
+      <button
+        class="btn"
+        onclick="checkStatus()">
+        Check Status
+      </button>
+
+      <div
+        id="statusMessage"
+        class="message">
       </div>
 
       <div
-        style="
-          display:flex;
-          gap:10px;
-          flex-wrap:wrap;
-        "
-      >
-
-        <button
-          class="btn"
-          onclick="checkStatus()"
-        >
-          Check Status
-        </button>
-
-        <button
-          id="copyRefBtn"
-          class="btn secondary hidden"
-          onclick="copyReference()"
-        >
-          Copy Reference
-        </button>
-
-      </div>
-
-      <div class="status-help">
-
-        <strong>Tip:</strong>
-        After registration, your reference is automatically
-        saved on this device. You can use
-        <strong>View My Status</strong> without typing it again.
-
+        id="statusResult">
       </div>
 
     </div>
-
-
-    <div
-      id="latestStatusCard"
-      class="card hidden"
-      style="max-width:750px;margin:0 auto 20px"
-    >
-
-      <div class="top-actions">
-
-        <div>
-
-          <h3>
-            Your Latest Registration
-          </h3>
-
-          <p class="muted">
-            Your most recently submitted registration.
-          </p>
-
-        </div>
-
-        <button
-          class="btn small"
-          onclick="loadSavedStatus()"
-        >
-          View Status
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <div id="statusResult"></div>
 
   </div>
 
 </section>
 
 
-<!-- LEADERBOARD -->
+<!-- =====================================================
+     LEADERBOARD
+===================================================== -->
 
 <section id="leaderboard" class="page">
 
@@ -918,12 +755,29 @@
               Overall
             </option>
 
-            <option value="1">Match 1</option>
-            <option value="2">Match 2</option>
-            <option value="3">Match 3</option>
-            <option value="4">Match 4</option>
-            <option value="5">Match 5</option>
-            <option value="6">Match 6</option>
+            <option value="1">
+              Match 1
+            </option>
+
+            <option value="2">
+              Match 2
+            </option>
+
+            <option value="3">
+              Match 3
+            </option>
+
+            <option value="4">
+              Match 4
+            </option>
+
+            <option value="5">
+              Match 5
+            </option>
+
+            <option value="6">
+              Match 6
+            </option>
 
           </select>
 
@@ -933,30 +787,36 @@
 
       <button
         class="btn"
-        onclick="loadPublicLeaderboard()"
-      >
+        onclick="loadPublicLeaderboard()">
         View Leaderboard
       </button>
 
     </div>
 
-    <div id="publicLeaderboard"></div>
+
+    <div
+      id="publicLeaderboard">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- ADMIN -->
+<!-- =====================================================
+     ADMIN
+===================================================== -->
 
 <section id="admin" class="page">
 
   <div class="container">
 
+
+    <!-- ADMIN LOGIN -->
+
     <div
       id="adminLoginBox"
-      class="card admin-box"
-    >
+      class="card admin-box">
 
       <h2 class="section-title">
         Admin Login
@@ -964,8 +824,8 @@
 
       <div
         id="loginMessage"
-        class="message"
-      ></div>
+        class="message">
+      </div>
 
       <form id="loginForm">
 
@@ -978,10 +838,10 @@
           <input
             type="email"
             id="loginEmail"
-            required
-          />
+            required>
 
         </div>
+
 
         <div class="form-group">
 
@@ -992,15 +852,13 @@
           <input
             type="password"
             id="loginPassword"
-            required
-          />
+            required>
 
         </div>
 
         <button
           class="btn"
-          type="submit"
-        >
+          type="submit">
           Login
         </button>
 
@@ -1009,25 +867,27 @@
     </div>
 
 
+    <!-- ADMIN SETUP -->
+
     <div
       id="adminSetupBox"
-      class="card admin-box hidden"
-    >
+      class="card admin-box hidden">
 
       <h2 class="section-title">
         Create Admin
       </h2>
 
       <p class="muted">
-        No admin account exists yet. Create the first admin.
+        No admin account exists yet.
+        Create the first admin.
       </p>
 
-      <br />
+      <br>
 
       <div
         id="setupMessage"
-        class="message"
-      ></div>
+        class="message">
+      </div>
 
       <form id="setupForm">
 
@@ -1039,10 +899,10 @@
 
           <input
             id="setupName"
-            required
-          />
+            required>
 
         </div>
+
 
         <div class="form-group">
 
@@ -1053,10 +913,10 @@
           <input
             type="email"
             id="setupEmail"
-            required
-          />
+            required>
 
         </div>
+
 
         <div class="form-group">
 
@@ -1068,15 +928,14 @@
             type="password"
             id="setupPassword"
             minlength="6"
-            required
-          />
+            required>
 
         </div>
 
+
         <button
           class="btn"
-          type="submit"
-        >
+          type="submit">
           Create Admin
         </button>
 
@@ -1085,10 +944,12 @@
     </div>
 
 
+    <!-- ADMIN DASHBOARD -->
+
     <div
       id="adminDashboard"
-      class="hidden"
-    >
+      class="hidden">
+
 
       <div class="top-actions">
 
@@ -1107,13 +968,14 @@
 
         <button
           class="btn danger"
-          onclick="logout()"
-        >
+          onclick="logout()">
           Logout
         </button>
 
       </div>
 
+
+      <!-- STATS -->
 
       <div class="stats">
 
@@ -1125,8 +987,7 @@
 
           <div
             class="stat-number"
-            id="pendingCount"
-          >
+            id="pendingCount">
             0
           </div>
 
@@ -1141,8 +1002,7 @@
 
           <div
             class="stat-number"
-            id="confirmedCount"
-          >
+            id="confirmedCount">
             0
           </div>
 
@@ -1157,8 +1017,7 @@
 
           <div
             class="stat-number"
-            id="activeLobbyCount"
-          >
+            id="activeLobbyCount">
             0
           </div>
 
@@ -1175,12 +1034,12 @@
           Create New Lobby
         </h3>
 
-        <br />
+        <br>
 
         <div
           id="lobbyMessage"
-          class="message"
-        ></div>
+          class="message">
+        </div>
 
         <form id="lobbyForm">
 
@@ -1195,8 +1054,7 @@
               <input
                 id="lobbyName"
                 placeholder="Example: 12 PM ₹50"
-                required
-              />
+                required>
 
             </div>
 
@@ -1210,8 +1068,7 @@
               <input
                 id="lobbyTime"
                 placeholder="Example: 12 PM"
-                required
-              />
+                required>
 
             </div>
 
@@ -1225,8 +1082,7 @@
               <input
                 id="lobbyFee"
                 placeholder="Example: ₹50"
-                required
-              />
+                required>
 
             </div>
 
@@ -1242,8 +1098,7 @@
                 id="lobbyMaxTeams"
                 value="12"
                 min="1"
-                required
-              />
+                required>
 
             </div>
 
@@ -1251,8 +1106,7 @@
 
           <button
             class="btn"
-            type="submit"
-          >
+            type="submit">
             Create Lobby
           </button>
 
@@ -1273,8 +1127,7 @@
 
           <button
             class="btn small"
-            onclick="loadAdminLobbies()"
-          >
+            onclick="loadAdminLobbies()">
             Refresh
           </button>
 
@@ -1282,38 +1135,50 @@
 
         <p
           class="muted"
-          style="margin-bottom:15px"
-        >
-          Delete removes the scrim and its associated
-          registration and score records permanently.
+          style="margin-bottom:15px">
+
+          Delete removes the scrim and its
+          associated registration/score records
+          permanently.
+
         </p>
 
         <div
           id="adminLobbies"
-          class="grid"
-        ></div>
+          class="grid">
+        </div>
 
       </div>
 
 
-      <!-- REGISTRATIONS -->
+      <!-- =================================================
+           PENDING REGISTRATIONS
+      ================================================== -->
 
       <div class="card">
 
         <div class="top-actions">
 
-          <h3>
-            Registrations
-          </h3>
+          <div>
+
+            <h3>
+              Pending Registrations
+            </h3>
+
+            <p class="muted">
+              New registrations waiting for admin action.
+            </p>
+
+          </div>
 
           <button
             class="btn small"
-            onclick="loadRegistrations()"
-          >
+            onclick="loadRegistrations()">
             Refresh
           </button>
 
         </div>
+
 
         <div class="table-wrap">
 
@@ -1323,23 +1188,42 @@
 
               <tr>
 
-                <th>ID</th>
-                <th>Reference</th>
-                <th>Team</th>
-                <th>Captain</th>
-                <th>Fee</th>
-                <th>Time</th>
-                <th>Status</th>
-                <th>Lobby</th>
-                <th>Action</th>
+                <th>
+                  ID
+                </th>
+
+                <th>
+                  Reference
+                </th>
+
+                <th>
+                  Team
+                </th>
+
+                <th>
+                  Captain
+                </th>
+
+                <th>
+                  Fee
+                </th>
+
+                <th>
+                  Time
+                </th>
+
+                <th>
+                  Action
+                </th>
 
               </tr>
 
             </thead>
 
+
             <tbody
-              id="registrationTable"
-            ></tbody>
+              id="registrationTable">
+            </tbody>
 
           </table>
 
@@ -1348,7 +1232,9 @@
       </div>
 
 
-      <!-- SCORE ENTRY -->
+      <!-- =================================================
+           MATCH SCORE ENTRY
+      ================================================== -->
 
       <div class="card">
 
@@ -1361,7 +1247,8 @@
           A lobby has 6 matches and 12 teams.
         </p>
 
-        <br />
+        <br>
+
 
         <div class="form-group">
 
@@ -1385,49 +1272,46 @@
           <button
             type="button"
             class="active"
-            onclick="selectScoreMatch(1,this)"
-          >
+            onclick="selectScoreMatch(1,this)">
             Match 1
           </button>
 
           <button
             type="button"
-            onclick="selectScoreMatch(2,this)"
-          >
+            onclick="selectScoreMatch(2,this)">
             Match 2
           </button>
 
           <button
             type="button"
-            onclick="selectScoreMatch(3,this)"
-          >
+            onclick="selectScoreMatch(3,this)">
             Match 3
           </button>
 
           <button
             type="button"
-            onclick="selectScoreMatch(4,this)"
-          >
+            onclick="selectScoreMatch(4,this)">
             Match 4
           </button>
 
           <button
             type="button"
-            onclick="selectScoreMatch(5,this)"
-          >
+            onclick="selectScoreMatch(5,this)">
             Match 5
           </button>
 
           <button
             type="button"
-            onclick="selectScoreMatch(6,this)"
-          >
+            onclick="selectScoreMatch(6,this)">
             Match 6
           </button>
 
         </div>
 
-        <div id="scoreEntryBody"></div>
+
+        <div
+          id="scoreEntryBody">
+        </div>
 
       </div>
 
@@ -1439,6 +1323,7 @@
 
 </main>
 
+
 <footer>
   ScrimForge &copy; 2026
 </footer>
@@ -1449,42 +1334,47 @@
 let currentScoreMatch = 1;
 
 
-/* PAGE NAVIGATION */
+/* =====================================================
+   PAGE NAVIGATION
+===================================================== */
 
 function showPage(pageId){
 
   document
     .querySelectorAll(".page")
-    .forEach(p =>
-      p.classList.remove("active")
+    .forEach(
+      p =>
+        p.classList.remove("active")
     );
 
   const page =
-    document.getElementById(pageId);
+    document.getElementById(
+      pageId
+    );
 
-  if(page){
+  if(page)
     page.classList.add("active");
-  }
 
-  if(pageId === "home"){
-    loadPublicLobbies("homeLobbies");
-  }
 
-  if(pageId === "scrims"){
-    loadPublicLobbies("scrimList");
-  }
+  if(pageId === "home")
+    loadPublicLobbies(
+      "homeLobbies"
+    );
 
-  if(pageId === "status"){
-    prepareStatusPage();
-  }
 
-  if(pageId === "leaderboard"){
+  if(pageId === "scrims")
+    loadPublicLobbies(
+      "scrimList"
+    );
+
+
+  if(pageId === "leaderboard")
     loadLeaderboardLobbyOptions();
-  }
 
-  if(pageId === "admin"){
+
+  if(pageId === "admin")
     checkAdmin();
-  }
+
 
   window.scrollTo({
     top:0,
@@ -1494,32 +1384,39 @@ function showPage(pageId){
 }
 
 
-/* MESSAGE */
+/* =====================================================
+   MESSAGES
+===================================================== */
 
 function showMessage(
   id,
   text,
-  type = "success"
+  type="success"
 ){
 
   const e =
     document.getElementById(id);
 
-  if(!e) return;
+  if(!e)
+    return;
 
-  e.textContent = text;
+  e.textContent =
+    text;
 
   e.className =
-    "message show " + type;
+    "message show " +
+    type;
 
 }
 
 
-/* API */
+/* =====================================================
+   API
+===================================================== */
 
 async function api(
   url,
-  options = {}
+  options={}
 ){
 
   const response =
@@ -1530,44 +1427,60 @@ async function api(
         ...options,
 
         headers:{
-          "Content-Type":"application/json",
+          "Content-Type":
+            "application/json",
+
           ...(options.headers || {})
         }
       }
     );
 
+
   let data = {};
 
   try{
-    data = await response.json();
+
+    data =
+      await response.json();
+
   }catch(e){}
+
 
   if(!response.ok){
 
     throw new Error(
-      data.error || "Request failed"
+      data.error ||
+      "Request failed"
     );
 
   }
+
 
   return data;
 
 }
 
 
-/* PUBLIC LOBBIES */
+/* =====================================================
+   PUBLIC LOBBIES
+===================================================== */
 
 async function loadPublicLobbies(
-  targetId = "homeLobbies"
+  targetId="homeLobbies"
 ){
 
   const target =
-    document.getElementById(targetId);
+    document.getElementById(
+      targetId
+    );
 
-  if(!target) return;
+  if(!target)
+    return;
+
 
   target.innerHTML =
     '<p class="muted">Loading lobbies...</p>';
+
 
   try{
 
@@ -1576,137 +1489,177 @@ async function loadPublicLobbies(
         "/api/public/lobbies"
       );
 
+
     if(!lobbies.length){
 
       target.innerHTML =
-        `<div class="card">
-          <p class="muted">
-            No lobbies available right now.
-          </p>
-        </div>`;
+        '<div class="card"><p class="muted">No lobbies available right now.</p></div>';
 
       return;
 
     }
 
+
     target.innerHTML =
       lobbies
-        .map(lobby => {
+        .map(
+          lobby => {
 
-          const full =
-            Number(lobby.confirmed) >=
-            Number(lobby.max_teams);
+            const full =
+              Number(
+                lobby.confirmed
+              ) >=
+              Number(
+                lobby.max_teams
+              );
 
-          return `
-            <div class="card lobby-card">
 
-              <span class="badge ${
-                lobby.status === "open"
-                  ? "open"
-                  : "closed"
-              }">
+            return `
+
+              <div class="card lobby-card">
+
+                <span class="badge ${
+                  lobby.status === "open"
+                    ? "open"
+                    : "closed"
+                }">
+
+                  ${
+                    lobby.status === "open"
+                      ? "OPEN"
+                      : "CLOSED"
+                  }
+
+                </span>
+
+
+                <h3>
+                  ${escapeHTML(lobby.name)}
+                </h3>
+
+
+                <p>
+                  <strong>Time:</strong>
+                  ${escapeHTML(lobby.time)}
+                </p>
+
+
+                <p>
+                  <strong>Entry:</strong>
+                  ${escapeHTML(lobby.fee)}
+                </p>
+
+
+                <p>
+                  <strong>Teams:</strong>
+                  ${lobby.confirmed}/${lobby.max_teams}
+                </p>
+
+
+                <br>
+
 
                 ${
-                  lobby.status === "open"
-                    ? "OPEN"
-                    : "CLOSED"
+                  lobby.status === "open" &&
+                  !full
+
+                    ? `
+
+                      <button
+                        class="btn small"
+                        onclick="useLobby(
+                          '${escapeAttribute(lobby.time)}',
+                          '${escapeAttribute(lobby.fee)}'
+                        )">
+
+                        Register
+
+                      </button>
+
+                    `
+
+                    : `
+
+                      <button
+                        class="btn small secondary"
+                        disabled>
+
+                        ${
+                          full
+                            ? "FULL"
+                            : "CLOSED"
+                        }
+
+                      </button>
+
+                    `
                 }
 
-              </span>
+              </div>
 
-              <h3>
-                ${escapeHTML(lobby.name)}
-              </h3>
+            `;
 
-              <p>
-                <strong>Time:</strong>
-                ${escapeHTML(lobby.time)}
-              </p>
-
-              <p>
-                <strong>Entry:</strong>
-                ${escapeHTML(lobby.fee)}
-              </p>
-
-              <p>
-                <strong>Teams:</strong>
-                ${lobby.confirmed}/${lobby.max_teams}
-              </p>
-
-              <br />
-
-              ${
-                lobby.status === "open" && !full
-
-                ? `
-                  <button
-                    class="btn small"
-                    onclick="useLobby(
-                      '${escapeAttribute(lobby.time)}',
-                      '${escapeAttribute(lobby.fee)}'
-                    )"
-                  >
-                    Register
-                  </button>
-                `
-
-                : `
-                  <button
-                    class="btn small secondary"
-                    disabled
-                  >
-                    ${full ? "FULL" : "CLOSED"}
-                  </button>
-                `
-              }
-
-            </div>
-          `;
-
-        })
+          }
+        )
         .join("");
+
 
   }catch(error){
 
     target.innerHTML =
-      `<div class="card">
-        <p class="muted">
-          ${escapeHTML(error.message)}
-        </p>
-      </div>`;
+      `
+        <div class="card">
+          <p class="muted">
+            ${escapeHTML(error.message)}
+          </p>
+        </div>
+      `;
 
   }
 
 }
 
 
+/* =====================================================
+   USE LOBBY
+===================================================== */
+
 function useLobby(
   time,
   fee
 ){
 
-  document
-    .getElementById("regTime")
-    .value = time;
+  document.getElementById(
+    "regTime"
+  ).value =
+    time;
 
-  document
-    .getElementById("regFee")
-    .value = fee;
+  document.getElementById(
+    "regFee"
+  ).value =
+    fee;
 
-  showPage("register");
+  showPage(
+    "register"
+  );
 
 }
 
 
-/* REGISTRATION */
+/* =====================================================
+   REGISTRATION SUBMIT
+===================================================== */
 
 document
-  .getElementById("registrationForm")
+  .getElementById(
+    "registrationForm"
+  )
   .addEventListener(
     "submit",
-    async function(event){
+    async e => {
 
-      event.preventDefault();
+      e.preventDefault();
+
 
       try{
 
@@ -1721,93 +1674,59 @@ document
 
                   time:
                     document
-                      .getElementById("regTime")
+                      .getElementById(
+                        "regTime"
+                      )
                       .value,
 
                   fee:
                     document
-                      .getElementById("regFee")
+                      .getElementById(
+                        "regFee"
+                      )
                       .value,
 
                   team:
                     document
-                      .getElementById("regTeam")
+                      .getElementById(
+                        "regTeam"
+                      )
                       .value,
 
                   captain:
                     document
-                      .getElementById("regCaptain")
+                      .getElementById(
+                        "regCaptain"
+                      )
                       .value,
 
                   phone:
                     document
-                      .getElementById("regPhone")
+                      .getElementById(
+                        "regPhone"
+                      )
                       .value,
 
                   uid:
                     document
-                      .getElementById("regUid")
+                      .getElementById(
+                        "regUid"
+                      )
                       .value
 
                 })
+
             }
           );
 
 
-        /* Save latest registration reference */
-
-        localStorage.setItem(
-          "scrimforge_latest_ref",
-          data.ref
-        );
-
-
         showMessage(
           "registerMessage",
-          "Registration submitted successfully.",
-          "success"
+          `Registration submitted successfully. Your reference is ${data.ref}`
         );
 
 
-        const message =
-          document.getElementById(
-            "registerMessage"
-          );
-
-
-        message.innerHTML = `
-
-          <div>
-            Registration submitted successfully.
-          </div>
-
-          <div class="reference-box">
-
-            <strong>
-              Your Registration Reference:
-            </strong>
-
-            <br>
-
-            ${escapeHTML(data.ref)}
-
-          </div>
-
-          <br>
-
-          <button
-            class="btn small"
-            onclick="openLatestStatus()"
-          >
-            View My Status
-          </button>
-
-        `;
-
-
-        document
-          .getElementById("registrationForm")
-          .reset();
+        e.target.reset();
 
 
       }catch(error){
@@ -1824,102 +1743,20 @@ document
   );
 
 
-/* STATUS PAGE */
-
-function prepareStatusPage(){
-
-  const ref =
-    localStorage.getItem(
-      "scrimforge_latest_ref"
-    );
-
-  const latestCard =
-    document.getElementById(
-      "latestStatusCard"
-    );
-
-  if(ref){
-
-    latestCard.classList.remove(
-      "hidden"
-    );
-
-  }else{
-
-    latestCard.classList.add(
-      "hidden"
-    );
-
-  }
-
-}
-
-
-/* OPEN LATEST STATUS */
-
-function openLatestStatus(){
-
-  showPage("status");
-
-  const ref =
-    localStorage.getItem(
-      "scrimforge_latest_ref"
-    );
-
-  if(!ref){
-
-    return;
-
-  }
-
-  document
-    .getElementById("statusRef")
-    .value = ref;
-
-  fetchRegistrationStatus(ref);
-
-}
-
-
-/* LOAD SAVED STATUS */
-
-function loadSavedStatus(){
-
-  const ref =
-    localStorage.getItem(
-      "scrimforge_latest_ref"
-    );
-
-  if(!ref){
-
-    showMessage(
-      "statusMessage",
-      "No saved registration was found on this device.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  document
-    .getElementById("statusRef")
-    .value = ref;
-
-  fetchRegistrationStatus(ref);
-
-}
-
-
-/* CHECK STATUS */
+/* =====================================================
+   CHECK REGISTRATION STATUS
+===================================================== */
 
 async function checkStatus(){
 
   const ref =
     document
-      .getElementById("statusRef")
+      .getElementById(
+        "statusRef"
+      )
       .value
       .trim();
+
 
   if(!ref){
 
@@ -1933,23 +1770,8 @@ async function checkStatus(){
 
   }
 
-  await fetchRegistrationStatus(ref);
-
-}
-
-
-/* FETCH REGISTRATION STATUS */
-
-async function fetchRegistrationStatus(ref){
 
   try{
-
-    showMessage(
-      "statusMessage",
-      "Checking registration...",
-      "success"
-    );
-
 
     const data =
       await api(
@@ -1957,259 +1779,54 @@ async function fetchRegistrationStatus(ref){
       );
 
 
-    /* Save this reference */
-
-    localStorage.setItem(
-      "scrimforge_latest_ref",
-      data.ref
-    );
-
-
     showMessage(
       "statusMessage",
-      "Registration found.",
-      "success"
+      "Registration found."
     );
 
 
-    const status =
-      String(data.status || "")
-        .toLowerCase();
-
-
-    let statusClass =
-      "status-pending";
-
-    let statusText =
-      "PENDING";
-
-
-    if(status === "confirmed"){
-
-      statusClass =
-        "status-confirmed";
-
-      statusText =
-        "CONFIRMED";
-
-    }
-
-
-    if(status === "rejected"){
-
-      statusClass =
-        "status-rejected";
-
-      statusText =
-        "REJECTED";
-
-    }
-
-
-    document
-      .getElementById("statusResult")
-      .innerHTML = `
-
-        <div class="card status-result-card">
-
-          <div class="status-header">
-
-            <div>
-
-              <h3>
-                ${escapeHTML(data.team)}
-              </h3>
-
-              <p class="muted">
-                Registration Details
-              </p>
-
-            </div>
-
-            <span class="
-              status-badge
-              ${statusClass}
-            ">
-              ${statusText}
-            </span>
-
-          </div>
-
-
-          <div class="status-info">
-
-
-            <div class="status-info-item">
-
-              <div class="label">
-                Registration Reference
-              </div>
-
-              <div class="value">
-                ${escapeHTML(data.ref)}
-              </div>
-
-            </div>
-
-
-            <div class="status-info-item">
-
-              <div class="label">
-                Team
-              </div>
-
-              <div class="value">
-                ${escapeHTML(data.team)}
-              </div>
-
-            </div>
-
-
-            <div class="status-info-item">
-
-              <div class="label">
-                Scrim Time
-              </div>
-
-              <div class="value">
-                ${escapeHTML(data.time)}
-              </div>
-
-            </div>
-
-
-            <div class="status-info-item">
-
-              <div class="label">
-                Entry Fee
-              </div>
-
-              <div class="value">
-                ${escapeHTML(data.fee)}
-              </div>
-
-            </div>
-
-
-            <div class="status-info-item">
-
-              <div class="label">
-                Registration Status
-              </div>
-
-              <div class="value">
-                ${escapeHTML(data.status)}
-              </div>
-
-            </div>
-
-
-            <div class="status-info-item">
-
-              <div class="label">
-                Assigned Lobby
-              </div>
-
-              <div class="value">
-
-                ${
-                  data.lobby_name
-                    ? escapeHTML(data.lobby_name)
-                    : "Not assigned yet"
-                }
-
-              </div>
-
-            </div>
-
-
-          </div>
-
-
-          <div class="reference-box">
-
-            <strong>
-              Registration Reference
-            </strong>
-
-            <br>
-
-            ${escapeHTML(data.ref)}
-
-            <br><br>
-
-            <button
-              class="btn small secondary"
-              onclick="copyReference()"
-            >
-              Copy Reference
-            </button>
-
-          </div>
-
-
+    document.getElementById(
+      "statusResult"
+    ).innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          ${escapeHTML(data.team)}
+        </h3>
+
+        <p>
+          <strong>Reference:</strong>
+          ${escapeHTML(data.ref)}
+        </p>
+
+        <p>
+          <strong>Time:</strong>
+          ${escapeHTML(data.time)}
+        </p>
+
+        <p>
+          <strong>Fee:</strong>
+          ${escapeHTML(data.fee)}
+        </p>
+
+        <p>
+          <strong>Status:</strong>
+          ${escapeHTML(data.status)}
+        </p>
+
+        <p>
+          <strong>Lobby:</strong>
           ${
-            status === "pending"
-
-            ? `
-              <div
-                class="message show"
-                style="margin-top:18px"
-              >
-                Your registration is pending admin
-                confirmation. Check again later for
-                the latest status.
-              </div>
-            `
-
-            : ""
+            data.lobby_name
+              ? escapeHTML(data.lobby_name)
+              : "Not assigned yet"
           }
+        </p>
 
+      </div>
 
-          ${
-            status === "confirmed"
-
-            ? `
-              <div
-                class="message show success"
-                style="margin-top:18px"
-              >
-                Your registration has been confirmed.
-                Check your assigned lobby details above.
-              </div>
-            `
-
-            : ""
-          }
-
-
-          ${
-            status === "rejected"
-
-            ? `
-              <div
-                class="message show error"
-                style="margin-top:18px"
-              >
-                This registration has been rejected.
-                Please contact the ScrimForge admin if
-                you need clarification.
-              </div>
-            `
-
-            : ""
-          }
-
-
-        </div>
-
-      `;
-
-
-    document
-      .getElementById("copyRefBtn")
-      .classList
-      .remove("hidden");
+    `;
 
 
   }catch(error){
@@ -2220,73 +1837,18 @@ async function fetchRegistrationStatus(ref){
       "error"
     );
 
-
-    document
-      .getElementById("statusResult")
-      .innerHTML = "";
-
-  }
-
-}
-
-
-/* COPY REFERENCE */
-
-async function copyReference(){
-
-  const ref =
-    document
-      .getElementById("statusRef")
-      .value
-      .trim();
-
-
-  if(!ref){
-
-    showMessage(
-      "statusMessage",
-      "No registration reference available to copy.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    await navigator.clipboard.writeText(ref);
-
-    showMessage(
-      "statusMessage",
-      "Registration reference copied.",
-      "success"
-    );
-
-  }catch(error){
-
-    const input =
-      document.getElementById(
-        "statusRef"
-      );
-
-    input.select();
-
-    document.execCommand("copy");
-
-    showMessage(
-      "statusMessage",
-      "Registration reference copied.",
-      "success"
-    );
+    document.getElementById(
+      "statusResult"
+    ).innerHTML = "";
 
   }
 
 }
 
 
-/* ADMIN CHECK */
+/* =====================================================
+   ADMIN CHECK
+===================================================== */
 
 async function checkAdmin(){
 
@@ -2304,16 +1866,21 @@ async function checkAdmin(){
 
 
     document
-      .getElementById("adminLoginBox")
+      .getElementById(
+        "adminLoginBox"
+      )
       .classList
       .toggle(
         "hidden",
-        !exists.exists || me.loggedIn
+        !exists.exists ||
+        me.loggedIn
       );
 
 
     document
-      .getElementById("adminSetupBox")
+      .getElementById(
+        "adminSetupBox"
+      )
       .classList
       .toggle(
         "hidden",
@@ -2322,7 +1889,9 @@ async function checkAdmin(){
 
 
     document
-      .getElementById("adminDashboard")
+      .getElementById(
+        "adminDashboard"
+      )
       .classList
       .toggle(
         "hidden",
@@ -2330,16 +1899,15 @@ async function checkAdmin(){
       );
 
 
-    if(!exists.exists) return;
+    if(!exists.exists)
+      return;
 
 
-    if(me.loggedIn){
-
+    if(me.loggedIn)
       showAdminDashboard(
         me.name
       );
 
-    }
 
   }catch(error){
 
@@ -2350,46 +1918,70 @@ async function checkAdmin(){
 }
 
 
-function showAdminDashboard(name){
+/* =====================================================
+   ADMIN DASHBOARD
+===================================================== */
+
+function showAdminDashboard(
+  name
+){
 
   document
-    .getElementById("adminLoginBox")
+    .getElementById(
+      "adminLoginBox"
+    )
     .classList
     .add("hidden");
 
+
   document
-    .getElementById("adminSetupBox")
+    .getElementById(
+      "adminSetupBox"
+    )
     .classList
     .add("hidden");
 
+
   document
-    .getElementById("adminDashboard")
+    .getElementById(
+      "adminDashboard"
+    )
     .classList
     .remove("hidden");
 
+
   document
-    .getElementById("adminName")
+    .getElementById(
+      "adminName"
+    )
     .textContent =
-    name || "Admin";
+      name ||
+      "Admin";
+
 
   loadAdminData();
 
 }
 
 
-/* ADMIN SETUP */
+/* =====================================================
+   ADMIN SETUP
+===================================================== */
 
 document
-  .getElementById("setupForm")
+  .getElementById(
+    "setupForm"
+  )
   .addEventListener(
     "submit",
-    async function(event){
+    async e => {
 
-      event.preventDefault();
+      e.preventDefault();
+
 
       try{
 
-        const data =
+        const d =
           await api(
             "/api/setup-admin",
             {
@@ -2399,35 +1991,30 @@ document
                 JSON.stringify({
 
                   name:
-                    document
-                      .getElementById("setupName")
-                      .value,
+                    setupName.value,
 
                   email:
-                    document
-                      .getElementById("setupEmail")
-                      .value,
+                    setupEmail.value,
 
                   password:
-                    document
-                      .getElementById("setupPassword")
-                      .value
+                    setupPassword.value
 
                 })
+
             }
           );
 
 
         showAdminDashboard(
-          data.name
+          d.name
         );
 
 
-      }catch(error){
+      }catch(x){
 
         showMessage(
           "setupMessage",
-          error.message,
+          x.message,
           "error"
         );
 
@@ -2437,19 +2024,24 @@ document
   );
 
 
-/* LOGIN */
+/* =====================================================
+   LOGIN
+===================================================== */
 
 document
-  .getElementById("loginForm")
+  .getElementById(
+    "loginForm"
+  )
   .addEventListener(
     "submit",
-    async function(event){
+    async e => {
 
-      event.preventDefault();
+      e.preventDefault();
+
 
       try{
 
-        const data =
+        const d =
           await api(
             "/api/login",
             {
@@ -2459,30 +2051,27 @@ document
                 JSON.stringify({
 
                   email:
-                    document
-                      .getElementById("loginEmail")
-                      .value,
+                    loginEmail.value,
 
                   password:
-                    document
-                      .getElementById("loginPassword")
-                      .value
+                    loginPassword.value
 
                 })
+
             }
           );
 
 
         showAdminDashboard(
-          data.name
+          d.name
         );
 
 
-      }catch(error){
+      }catch(x){
 
         showMessage(
           "loginMessage",
-          error.message,
+          x.message,
           "error"
         );
 
@@ -2492,7 +2081,9 @@ document
   );
 
 
-/* LOGOUT */
+/* =====================================================
+   LOGOUT
+===================================================== */
 
 async function logout(){
 
@@ -2505,80 +2096,92 @@ async function logout(){
       }
     );
 
+
     checkAdmin();
 
-  }catch(error){
 
-    alert(error.message);
+  }catch(e){
+
+    alert(
+      e.message
+    );
 
   }
 
 }
 
 
-/* ADMIN DATA */
+/* =====================================================
+   LOAD ADMIN DATA
+===================================================== */
 
 async function loadAdminData(){
 
   await Promise.all([
+
     loadStats(),
+
     loadAdminLobbies(),
+
     loadRegistrations()
+
   ]);
+
 
   await loadScoreLobbyOptions();
 
 }
 
 
-/* STATS */
+/* =====================================================
+   STATS
+===================================================== */
 
 async function loadStats(){
 
   try{
 
-    const stats =
+    const s =
       await api(
         "/api/stats"
       );
 
 
-    document
-      .getElementById("pendingCount")
-      .textContent =
-      stats.pending;
+    pendingCount.textContent =
+      s.pending;
 
 
-    document
-      .getElementById("confirmedCount")
-      .textContent =
-      stats.confirmed;
+    confirmedCount.textContent =
+      s.confirmed;
 
 
-    document
-      .getElementById("activeLobbyCount")
-      .textContent =
-      stats.activeLobbies;
+    activeLobbyCount.textContent =
+      s.activeLobbies;
 
 
-  }catch(error){
+  }catch(e){
 
-    console.error(error);
+    console.error(e);
 
   }
 
 }
 
 
-/* CREATE LOBBY */
+/* =====================================================
+   CREATE LOBBY
+===================================================== */
 
 document
-  .getElementById("lobbyForm")
+  .getElementById(
+    "lobbyForm"
+  )
   .addEventListener(
     "submit",
-    async function(event){
+    async e => {
 
-      event.preventDefault();
+      e.preventDefault();
+
 
       try{
 
@@ -2591,59 +2194,50 @@ document
               JSON.stringify({
 
                 name:
-                  document
-                    .getElementById("lobbyName")
-                    .value,
+                  lobbyName.value,
 
                 time:
-                  document
-                    .getElementById("lobbyTime")
-                    .value,
+                  lobbyTime.value,
 
                 fee:
-                  document
-                    .getElementById("lobbyFee")
-                    .value,
+                  lobbyFee.value,
 
                 maxTeams:
                   Number(
-                    document
-                      .getElementById("lobbyMaxTeams")
-                      .value
+                    lobbyMaxTeams.value
                   )
 
               })
+
           }
         );
 
 
         showMessage(
           "lobbyMessage",
-          "Lobby created successfully.",
-          "success"
+          "Lobby created successfully."
         );
 
 
-        document
-          .getElementById("lobbyForm")
-          .reset();
+        e.target.reset();
 
 
-        document
-          .getElementById("lobbyMaxTeams")
-          .value = 12;
+        lobbyMaxTeams.value =
+          12;
 
 
         loadAdminLobbies();
+
         loadStats();
+
         loadScoreLobbyOptions();
 
 
-      }catch(error){
+      }catch(x){
 
         showMessage(
           "lobbyMessage",
-          error.message,
+          x.message,
           "error"
         );
 
@@ -2653,7 +2247,9 @@ document
   );
 
 
-/* ADMIN LOBBIES */
+/* =====================================================
+   ADMIN LOBBIES
+===================================================== */
 
 async function loadAdminLobbies(){
 
@@ -2674,9 +2270,7 @@ async function loadAdminLobbies(){
     if(!lobbies.length){
 
       target.innerHTML =
-        `<p class="muted">
-          No lobbies created yet.
-        </p>`;
+        '<p class="muted">No lobbies created yet.</p>';
 
       return;
 
@@ -2685,107 +2279,116 @@ async function loadAdminLobbies(){
 
     target.innerHTML =
       lobbies
-        .map(lobby => `
+        .map(
+          lobby => `
 
-          <div class="card">
+            <div class="card">
 
-            <span class="badge ${
-              lobby.status === "open"
-                ? "open"
-                : "closed"
-            }">
+              <span class="badge ${
+                lobby.status === "open"
+                  ? "open"
+                  : "closed"
+              }">
 
-              ${lobby.status.toUpperCase()}
+                ${lobby.status.toUpperCase()}
 
-            </span>
-
-
-            <h3>
-              ${escapeHTML(lobby.name)}
-            </h3>
+              </span>
 
 
-            <p>
-              Time:
-              ${escapeHTML(lobby.time)}
-            </p>
+              <h3>
+                ${escapeHTML(lobby.name)}
+              </h3>
 
 
-            <p>
-              Fee:
-              ${escapeHTML(lobby.fee)}
-            </p>
+              <p>
+                Time:
+                ${escapeHTML(lobby.time)}
+              </p>
 
 
-            <p>
-              Teams:
-              ${lobby.confirmed}/${lobby.max_teams}
-            </p>
+              <p>
+                Fee:
+                ${escapeHTML(lobby.fee)}
+              </p>
 
 
-            <br />
+              <p>
+                Teams:
+                ${lobby.confirmed}/${lobby.max_teams}
+              </p>
 
 
-            <div style="
-              display:flex;
-              gap:8px;
-              flex-wrap:wrap;
-            ">
+              <br>
 
 
-              <button
-                class="btn small ${
-                  lobby.status === "open"
-                    ? "danger"
-                    : "success"
-                }"
-                onclick="toggleLobby(
-                  ${lobby.id},
-                  '${lobby.status}'
-                )"
-              >
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  flex-wrap:wrap
+                ">
 
-                ${
-                  lobby.status === "open"
-                    ? "Close Lobby"
-                    : "Open Lobby"
-                }
+                <button
+                  class="btn small ${
+                    lobby.status === "open"
+                      ? "danger"
+                      : "success"
+                  }"
+                  onclick="
+                    toggleLobby(
+                      ${lobby.id},
+                      '${lobby.status}'
+                    )
+                  ">
 
-              </button>
+                  ${
+                    lobby.status === "open"
+                      ? "Close Lobby"
+                      : "Open Lobby"
+                  }
+
+                </button>
 
 
-              <button
-                class="btn small danger-outline"
-                onclick="deleteLobby(
-                  ${lobby.id},
-                  '${escapeAttribute(lobby.name)}'
-                )"
-              >
-                Delete Scrim
-              </button>
+                <button
+                  class="btn small danger-outline"
+                  onclick="
+                    deleteLobby(
+                      ${lobby.id},
+                      '${escapeAttribute(lobby.name)}'
+                    )
+                  ">
 
+                  Delete Scrim
+
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
-
-        `)
+          `
+        )
         .join("");
 
 
-  }catch(error){
+  }catch(e){
 
     target.innerHTML =
-      `<p class="muted">
-        ${escapeHTML(error.message)}
-      </p>`;
+      `
+        <p class="muted">
+          ${escapeHTML(e.message)}
+        </p>
+      `;
 
   }
 
 }
 
 
-/* OPEN / CLOSE LOBBY */
+/* =====================================================
+   TOGGLE LOBBY
+===================================================== */
 
 async function toggleLobby(
   id,
@@ -2808,52 +2411,52 @@ async function toggleLobby(
                 : "open"
 
           })
+
       }
     );
 
 
-    await loadAdminLobbies();
-    await loadStats();
+    loadAdminLobbies();
 
+    loadStats();
 
-    await loadPublicLobbies(
+    loadPublicLobbies(
       "homeLobbies"
     );
 
-
-    await loadPublicLobbies(
+    loadPublicLobbies(
       "scrimList"
     );
 
 
-  }catch(error){
+  }catch(e){
 
-    alert(error.message);
+    alert(
+      e.message
+    );
 
   }
 
 }
 
 
-/* DELETE SCRIM */
+/* =====================================================
+   DELETE SCRIM
+===================================================== */
 
 async function deleteLobby(
   id,
   name
 ){
 
-  const confirmed =
+  const ok =
     confirm(
-      `Delete "${name}" permanently?\n\n` +
-      `This will delete the scrim and its linked ` +
-      `registrations and match scores.\n\n` +
-      `This cannot be undone.`
+      `Delete "${name}" permanently?\n\nThis will delete the scrim and its linked registrations and match scores. This cannot be undone.`
     );
 
 
-  if(!confirmed){
+  if(!ok)
     return;
-  }
 
 
   try{
@@ -2872,34 +2475,38 @@ async function deleteLobby(
 
 
     await loadAdminLobbies();
-    await loadRegistrations();
-    await loadStats();
-    await loadScoreLobbyOptions();
 
+    await loadRegistrations();
+
+    await loadStats();
+
+    await loadScoreLobbyOptions();
 
     await loadPublicLobbies(
       "homeLobbies"
     );
 
-
     await loadPublicLobbies(
       "scrimList"
     );
 
-
     await loadLeaderboardLobbyOptions();
 
 
-  }catch(error){
+  }catch(e){
 
-    alert(error.message);
+    alert(
+      e.message
+    );
 
   }
 
 }
 
 
-/* REGISTRATIONS */
+/* =====================================================
+   PENDING REGISTRATIONS
+===================================================== */
 
 async function loadRegistrations(){
 
@@ -2917,51 +2524,52 @@ async function loadRegistrations(){
       );
 
 
-    if(!rows.length){
+    /*
+      IMPORTANT:
 
-      tbody.innerHTML =
-        `<tr>
-          <td colspan="9">
-            No registrations yet.
+      The registration panel only shows
+      PENDING registrations.
+
+      Confirmed and rejected registrations
+      remain stored in the backend but are
+      removed from this admin queue.
+    */
+
+    const pendingRows =
+      rows.filter(
+        row =>
+          row.status ===
+          "pending"
+      );
+
+
+    if(!pendingRows.length){
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="7"
+            class="registration-empty">
+
+            No pending registrations.
+
           </td>
-        </tr>`;
+
+        </tr>
+
+      `;
 
       return;
 
     }
 
 
-    const lobbies =
-      await api(
-        "/api/lobbies"
-      );
-
-
     tbody.innerHTML =
-      rows
-        .map(row => {
-
-          const lobbyOptions =
-            lobbies
-              .map(lobby => `
-
-                <option
-                  value="${lobby.id}"
-                  ${
-                    Number(row.lobby_id) ===
-                    Number(lobby.id)
-                      ? "selected"
-                      : ""
-                  }
-                >
-                  ${escapeHTML(lobby.name)}
-                </option>
-
-              `)
-              .join("");
-
-
-          return `
+      pendingRows
+        .map(
+          row => `
 
             <tr>
 
@@ -2976,7 +2584,9 @@ async function loadRegistrations(){
 
 
               <td>
-                ${escapeHTML(row.team)}
+                <strong>
+                  ${escapeHTML(row.team)}
+                </strong>
               </td>
 
 
@@ -2996,90 +2606,40 @@ async function loadRegistrations(){
 
 
               <td>
-                ${escapeHTML(row.status)}
-              </td>
 
+                <div
+                  style="
+                    display:flex;
+                    gap:6px;
+                    flex-wrap:wrap
+                  ">
 
-              <td>
-
-                ${
-                  row.status === "confirmed"
-
-                  ? `
-
-                    <select
-                      onchange="assignLobby(
+                  <button
+                    class="btn small success"
+                    onclick="
+                      updateRegistration(
                         ${row.id},
-                        this.value
-                      )"
-                    >
+                        'confirmed'
+                      )
+                    ">
 
-                      <option value="">
-                        Select
-                      </option>
+                    Confirm
 
-                      ${lobbyOptions}
-
-                    </select>
-
-                  `
-
-                  : "Confirm first"
-                }
-
-              </td>
+                  </button>
 
 
-              <td>
+                  <button
+                    class="btn small danger"
+                    onclick="
+                      updateRegistration(
+                        ${row.id},
+                        'rejected'
+                      )
+                    ">
 
-                <div style="
-                  display:flex;
-                  gap:6px;
-                  flex-wrap:wrap;
-                ">
+                    Reject
 
-
-                  ${
-                    row.status !== "confirmed"
-
-                    ? `
-
-                      <button
-                        class="btn small success"
-                        onclick="updateRegistration(
-                          ${row.id},
-                          'confirmed'
-                        )"
-                      >
-                        Confirm
-                      </button>
-
-                    `
-
-                    : ""
-                  }
-
-
-                  ${
-                    row.status !== "rejected"
-
-                    ? `
-
-                      <button
-                        class="btn small danger"
-                        onclick="updateRegistration(
-                          ${row.id},
-                          'rejected'
-                        )"
-                      >
-                        Reject
-                      </button>
-
-                    `
-
-                    : ""
-                  }
-
+                  </button>
 
                 </div>
 
@@ -3087,27 +2647,37 @@ async function loadRegistrations(){
 
             </tr>
 
-          `;
-
-        })
+          `
+        )
         .join("");
 
 
-  }catch(error){
+  }catch(e){
 
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="9">
-          ${escapeHTML(error.message)}
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="7"
+          class="registration-empty">
+
+          ${escapeHTML(e.message)}
+
         </td>
-      </tr>`;
+
+      </tr>
+
+    `;
 
   }
 
 }
 
 
-/* UPDATE REGISTRATION */
+/* =====================================================
+   CONFIRM / REJECT REGISTRATION
+===================================================== */
 
 async function updateRegistration(
   id,
@@ -3125,63 +2695,40 @@ async function updateRegistration(
           JSON.stringify({
             status
           })
+
       }
     );
 
 
+    /*
+      Immediately reload the pending
+      registration queue.
+
+      Because loadRegistrations()
+      only displays pending rows,
+      the confirmed/rejected row
+      disappears automatically.
+    */
+
     await loadRegistrations();
+
     await loadStats();
 
 
-  }catch(error){
+  }catch(e){
 
-    alert(error.message);
-
-  }
-
-}
-
-
-/* ASSIGN LOBBY */
-
-async function assignLobby(
-  registrationId,
-  lobbyId
-){
-
-  if(!lobbyId) return;
-
-
-  try{
-
-    await api(
-      `/api/registrations/${registrationId}/lobby`,
-      {
-        method:"PATCH",
-
-        body:
-          JSON.stringify({
-            lobbyId:Number(lobbyId)
-          })
-      }
+    alert(
+      e.message
     );
 
-
-    await loadRegistrations();
-
-
-  }catch(error){
-
-    alert(error.message);
-
-    await loadRegistrations();
-
   }
 
 }
 
 
-/* SCORE LOBBIES */
+/* =====================================================
+   SCORE LOBBY OPTIONS
+===================================================== */
 
 async function loadScoreLobbyOptions(){
 
@@ -3193,40 +2740,42 @@ async function loadScoreLobbyOptions(){
 
   try{
 
-    const lobbies =
+    const l =
       await api(
         "/api/lobbies"
       );
 
 
     select.innerHTML =
-      `<option value="">
-        Select lobby
-      </option>` +
+      '<option value="">Select lobby</option>' +
 
-      lobbies
-        .map(lobby => `
+      l
+        .map(
+          x =>
+            `
+              <option
+                value="${escapeAttribute(x.name)}">
 
-          <option
-            value="${escapeAttribute(lobby.name)}"
-          >
-            ${escapeHTML(lobby.name)}
-          </option>
+                ${escapeHTML(x.name)}
 
-        `)
+              </option>
+            `
+        )
         .join("");
 
 
-  }catch(error){
+  }catch(e){
 
-    console.error(error);
+    console.error(e);
 
   }
 
 }
 
 
-/* SCORE MATCH */
+/* =====================================================
+   SCORE MATCH SELECT
+===================================================== */
 
 function selectScoreMatch(
   match,
@@ -3241,14 +2790,18 @@ function selectScoreMatch(
     .querySelectorAll(
       ".match-tabs button"
     )
-    .forEach(btn =>
-      btn.classList.remove("active")
+    .forEach(
+      b =>
+        b.classList.remove(
+          "active"
+        )
     );
 
 
-  if(button){
-    button.classList.add("active");
-  }
+  if(button)
+    button.classList.add(
+      "active"
+    );
 
 
   renderScoreEntry();
@@ -3256,7 +2809,9 @@ function selectScoreMatch(
 }
 
 
-/* RENDER SCORE ENTRY */
+/* =====================================================
+   SCORE ENTRY
+===================================================== */
 
 async function renderScoreEntry(){
 
@@ -3267,19 +2822,15 @@ async function renderScoreEntry(){
 
 
   const lobby =
-    document
-      .getElementById(
-        "scoreLobby"
-      )
-      .value;
+    document.getElementById(
+      "scoreLobby"
+    ).value;
 
 
   if(!lobby){
 
     body.innerHTML =
-      `<p class="muted">
-        Select a lobby first.
-      </p>`;
+      '<p class="muted">Select a lobby first.</p>';
 
     return;
 
@@ -3287,9 +2838,7 @@ async function renderScoreEntry(){
 
 
   body.innerHTML =
-    `<p class="muted">
-      Loading teams...
-    </p>`;
+    '<p class="muted">Loading teams...</p>';
 
 
   try{
@@ -3303,15 +2852,17 @@ async function renderScoreEntry(){
     if(teams.length !== 12){
 
       body.innerHTML =
-        `<div class="message show error">
+        `
+          <div class="message show error">
 
-          This lobby currently has
-          ${teams.length}/12 confirmed teams.
+            This lobby currently has
+            ${teams.length}/12 confirmed teams.
 
-          Exactly 12 teams are required
-          to enter match results.
+            Exactly 12 teams are required
+            to enter match results.
 
-        </div>`;
+          </div>
+        `;
 
       return;
 
@@ -3331,12 +2882,15 @@ async function renderScoreEntry(){
     }catch(e){}
 
 
-    const existingMap =
+    const map =
       new Map(
-        existing.map(row => [
-          row.team,
-          row
-        ])
+        existing.map(
+          r =>
+            [
+              r.team,
+              r
+            ]
+        )
       );
 
 
@@ -3366,67 +2920,70 @@ async function renderScoreEntry(){
 
           </thead>
 
+
           <tbody>
 
             ${
+
               teams
-                .map((team,index) => {
+                .map(
+                  (t,i) => {
 
-                  const old =
-                    existingMap.get(
-                      team.team
-                    );
-
-
-                  return `
-
-                    <tr>
-
-                      <td>
-                        ${escapeHTML(team.team)}
-                      </td>
+                    const old =
+                      map.get(
+                        t.team
+                      );
 
 
-                      <td>
+                    return `
 
-                        <input
-                          type="number"
-                          min="1"
-                          max="12"
-                          class="score-position"
-                          data-team="${escapeAttribute(team.team)}"
-                          value="${
-                            old
-                              ? old.position
-                              : index + 1
-                          }"
-                        />
+                      <tr>
 
-                      </td>
+                        <td>
+                          ${escapeHTML(t.team)}
+                        </td>
 
 
-                      <td>
+                        <td>
 
-                        <input
-                          type="number"
-                          min="0"
-                          class="score-kills"
-                          data-team="${escapeAttribute(team.team)}"
-                          value="${
-                            old
-                              ? old.kills
-                              : 0
-                          }"
-                        />
+                          <input
+                            type="number"
+                            min="1"
+                            max="12"
+                            class="score-position"
+                            data-team="${escapeAttribute(t.team)}"
+                            value="${
+                              old
+                                ? old.position
+                                : i + 1
+                            }">
 
-                      </td>
+                        </td>
 
-                    </tr>
 
-                  `;
+                        <td>
 
-                })
+                          <input
+                            type="number"
+                            min="0"
+                            class="score-kills"
+                            data-team="${escapeAttribute(t.team)}"
+                            value="${
+                              old
+                                ? old.kills
+                                : 0
+                            }">
+
+                        </td>
+
+                      </tr>
+
+                    `;
+
+                  }
+                )
                 .join("")
+
             }
 
           </tbody>
@@ -3436,47 +2993,58 @@ async function renderScoreEntry(){
       </div>
 
 
-      <br />
+      <br>
 
 
       <button
         class="btn success"
-        onclick="saveCurrentMatch()"
-      >
+        onclick="saveCurrentMatch()">
+
         Save Match ${currentScoreMatch}
+
       </button>
 
     `;
 
 
-  }catch(error){
+  }catch(e){
 
     body.innerHTML =
-      `<div class="message show error">
-        ${escapeHTML(error.message)}
-      </div>`;
+      `
+        <div class="message show error">
+          ${escapeHTML(e.message)}
+        </div>
+      `;
 
   }
 
 }
 
 
+/* =====================================================
+   SCORE LOBBY CHANGE
+===================================================== */
+
 document
-  .getElementById("scoreLobby")
+  .getElementById(
+    "scoreLobby"
+  )
   .addEventListener(
     "change",
     renderScoreEntry
   );
 
 
-/* SAVE MATCH */
+/* =====================================================
+   SAVE MATCH
+===================================================== */
 
 async function saveCurrentMatch(){
 
   const lobby =
-    document
-      .getElementById("scoreLobby")
-      .value;
+    document.getElementById(
+      "scoreLobby"
+    ).value;
 
 
   if(!lobby){
@@ -3490,44 +3058,44 @@ async function saveCurrentMatch(){
   }
 
 
-  const positionInputs =
-    document.querySelectorAll(
-      ".score-position"
-    );
-
-
   const entries = [];
 
 
-  positionInputs.forEach(
-    input => {
+  document
+    .querySelectorAll(
+      ".score-position"
+    )
+    .forEach(
+      input => {
 
-      const team =
-        input.dataset.team;
-
-
-      const killInput =
-        document.querySelector(
-          `.score-kills[data-team="${CSS.escape(team)}"]`
-        );
+        const team =
+          input.dataset.team;
 
 
-      entries.push({
+        const k =
+          document.querySelector(
+            `.score-kills[data-team="${CSS.escape(team)}"]`
+          );
 
-        team,
 
-        position:
-          Number(input.value),
+        entries.push({
 
-        kills:
-          Number(
-            killInput.value
-          ) || 0
+          team,
 
-      });
+          position:
+            Number(
+              input.value
+            ),
 
-    }
-  );
+          kills:
+            Number(
+              k.value
+            ) || 0
+
+        });
+
+      }
+    );
 
 
   try{
@@ -3548,6 +3116,7 @@ async function saveCurrentMatch(){
             entries
 
           })
+
       }
     );
 
@@ -3560,16 +3129,20 @@ async function saveCurrentMatch(){
     renderScoreEntry();
 
 
-  }catch(error){
+  }catch(e){
 
-    alert(error.message);
+    alert(
+      e.message
+    );
 
   }
 
 }
 
 
-/* PUBLIC LEADERBOARD OPTIONS */
+/* =====================================================
+   PUBLIC LEADERBOARD LOBBY OPTIONS
+===================================================== */
 
 async function loadLeaderboardLobbyOptions(){
 
@@ -3581,57 +3154,55 @@ async function loadLeaderboardLobbyOptions(){
 
   try{
 
-    const lobbies =
+    const l =
       await api(
         "/api/public/lobbies"
       );
 
 
     select.innerHTML =
-      `<option value="">
-        Select a lobby
-      </option>` +
+      '<option value="">Select a lobby</option>' +
 
-      lobbies
-        .map(lobby => `
+      l
+        .map(
+          x =>
+            `
+              <option
+                value="${escapeAttribute(x.name)}">
 
-          <option
-            value="${escapeAttribute(lobby.name)}"
-          >
-            ${escapeHTML(lobby.name)}
-          </option>
+                ${escapeHTML(x.name)}
 
-        `)
+              </option>
+            `
+        )
         .join("");
 
 
-  }catch(error){
+  }catch(e){
 
-    console.error(error);
+    console.error(e);
 
   }
 
 }
 
 
-/* PUBLIC LEADERBOARD */
+/* =====================================================
+   PUBLIC LEADERBOARD
+===================================================== */
 
 async function loadPublicLeaderboard(){
 
   const lobby =
-    document
-      .getElementById(
-        "publicLobbySelect"
-      )
-      .value;
+    document.getElementById(
+      "publicLobbySelect"
+    ).value;
 
 
   const match =
-    document
-      .getElementById(
-        "publicMatchSelect"
-      )
-      .value;
+    document.getElementById(
+      "publicMatchSelect"
+    ).value;
 
 
   const target =
@@ -3643,9 +3214,11 @@ async function loadPublicLeaderboard(){
   if(!lobby){
 
     target.innerHTML =
-      `<div class="message show error">
-        Please select a lobby.
-      </div>`;
+      `
+        <div class="message show error">
+          Please select a lobby.
+        </div>
+      `;
 
     return;
 
@@ -3654,30 +3227,24 @@ async function loadPublicLeaderboard(){
 
   try{
 
-    let rows;
+    const rows =
+      await api(
+        match === "overall"
+
+          ? `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
+
+          : `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
+      );
 
 
     if(match === "overall"){
-
-      rows =
-        await api(
-          `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
-        );
-
 
       renderOverallLeaderboard(
         target,
         rows
       );
 
-
     }else{
-
-      rows =
-        await api(
-          `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
-        );
-
 
       renderMatchLeaderboard(
         target,
@@ -3688,19 +3255,25 @@ async function loadPublicLeaderboard(){
     }
 
 
-  }catch(error){
+  }catch(e){
 
     target.innerHTML =
-      `<div class="message show error">
-        ${escapeHTML(error.message)}
-      </div>`;
+      `
+        <div class="message show error">
+
+          ${escapeHTML(e.message)}
+
+        </div>
+      `;
 
   }
 
 }
 
 
-/* OVERALL LEADERBOARD */
+/* =====================================================
+   OVERALL LEADERBOARD
+===================================================== */
 
 function renderOverallLeaderboard(
   target,
@@ -3710,11 +3283,15 @@ function renderOverallLeaderboard(
   if(!rows.length){
 
     target.innerHTML =
-      `<div class="card">
-        <p class="muted">
-          No match results have been entered yet.
-        </p>
-      </div>`;
+      `
+        <div class="card">
+
+          <p class="muted">
+            No match results have been entered yet.
+          </p>
+
+        </div>
+      `;
 
     return;
 
@@ -3729,7 +3306,8 @@ function renderOverallLeaderboard(
         Overall Leaderboard
       </h3>
 
-      <br />
+      <br>
+
 
       <div class="table-wrap">
 
@@ -3771,50 +3349,55 @@ function renderOverallLeaderboard(
 
           </thead>
 
+
           <tbody>
 
             ${
+
               rows
-                .map(row => `
+                .map(
+                  r => `
 
-                  <tr>
+                    <tr>
 
-                    <td class="rank">
-                      #${row.position}
-                    </td>
+                      <td class="rank">
+                        #${r.position}
+                      </td>
 
-                    <td>
-                      <strong>
-                        ${escapeHTML(row.team)}
-                      </strong>
-                    </td>
+                      <td>
+                        <strong>
+                          ${escapeHTML(r.team)}
+                        </strong>
+                      </td>
 
-                    <td>
-                      ${row.matchesPlayed}
-                    </td>
+                      <td>
+                        ${r.matchesPlayed}
+                      </td>
 
-                    <td>
-                      ${row.booyahs}
-                    </td>
+                      <td>
+                        ${r.booyahs}
+                      </td>
 
-                    <td>
-                      ${row.placementPoints}
-                    </td>
+                      <td>
+                        ${r.placementPoints}
+                      </td>
 
-                    <td>
-                      ${row.killPoints}
-                    </td>
+                      <td>
+                        ${r.killPoints}
+                      </td>
 
-                    <td>
-                      <strong>
-                        ${row.totalPoints}
-                      </strong>
-                    </td>
+                      <td>
+                        <strong>
+                          ${r.totalPoints}
+                        </strong>
+                      </td>
 
-                  </tr>
+                    </tr>
 
-                `)
+                  `
+                )
                 .join("")
+
             }
 
           </tbody>
@@ -3830,7 +3413,9 @@ function renderOverallLeaderboard(
 }
 
 
-/* MATCH LEADERBOARD */
+/* =====================================================
+   MATCH LEADERBOARD
+===================================================== */
 
 function renderMatchLeaderboard(
   target,
@@ -3841,12 +3426,18 @@ function renderMatchLeaderboard(
   if(!rows.length){
 
     target.innerHTML =
-      `<div class="card">
-        <p class="muted">
-          No results have been entered
-          for Match ${match}.
-        </p>
-      </div>`;
+      `
+        <div class="card">
+
+          <p class="muted">
+
+            No results have been entered
+            for Match ${match}.
+
+          </p>
+
+        </div>
+      `;
 
     return;
 
@@ -3861,7 +3452,8 @@ function renderMatchLeaderboard(
         Match ${match} Results
       </h3>
 
-      <br />
+      <br>
+
 
       <div class="table-wrap">
 
@@ -3903,43 +3495,47 @@ function renderMatchLeaderboard(
           <tbody>
 
             ${
+
               rows
-                .map(row => `
+                .map(
+                  r => `
 
-                  <tr>
+                    <tr>
 
-                    <td class="rank">
-                      ${row.position}
-                    </td>
+                      <td class="rank">
+                        ${r.position}
+                      </td>
 
-                    <td>
-                      <strong>
-                        ${escapeHTML(row.team)}
-                      </strong>
-                    </td>
+                      <td>
+                        <strong>
+                          ${escapeHTML(r.team)}
+                        </strong>
+                      </td>
 
-                    <td>
-                      ${row.kills}
-                    </td>
+                      <td>
+                        ${r.kills}
+                      </td>
 
-                    <td>
-                      ${row.placement_points}
-                    </td>
+                      <td>
+                        ${r.placement_points}
+                      </td>
 
-                    <td>
-                      ${row.kill_points}
-                    </td>
+                      <td>
+                        ${r.kill_points}
+                      </td>
 
-                    <td>
-                      <strong>
-                        ${row.total_points}
-                      </strong>
-                    </td>
+                      <td>
+                        <strong>
+                          ${r.total_points}
+                        </strong>
+                      </td>
 
-                  </tr>
+                    </tr>
 
-                `)
+                  `
+                )
                 .join("")
+
             }
 
           </tbody>
@@ -3955,40 +3551,56 @@ function renderMatchLeaderboard(
 }
 
 
-/* SECURITY */
+/* =====================================================
+   SECURITY / ESCAPING
+===================================================== */
 
-function escapeHTML(value){
+function escapeHTML(v){
 
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  return String(
+    v ?? ""
+  )
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
 
-function escapeAttribute(value){
+function escapeAttribute(v){
 
-  return escapeHTML(value);
+  return escapeHTML(v);
 
 }
 
 
-/* INITIAL LOAD */
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
 
 document.addEventListener(
   "DOMContentLoaded",
-  () => {
-
+  () =>
     loadPublicLobbies(
       "homeLobbies"
-    );
-
-    prepareStatusPage();
-
-  }
+    )
 );
 
 </script>
