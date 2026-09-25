@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0">
+
 <title>ScrimForge</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0
+}
 
 body{
 font-family:Arial,Helvetica,sans-serif;
@@ -15,8 +26,13 @@ color:#fff;
 min-height:100vh
 }
 
-button,input,select{font:inherit}
-button{cursor:pointer}
+button,input,select{
+font:inherit
+}
+
+button{
+cursor:pointer
+}
 
 .container{
 width:min(1200px,94%);
@@ -45,7 +61,9 @@ font-weight:800;
 color:#7c3aed
 }
 
-.logo span{color:#fff}
+.logo span{
+color:#fff
+}
 
 nav{
 display:flex;
@@ -66,10 +84,17 @@ background:#1e293b;
 color:#fff
 }
 
-main{padding:35px 0 60px}
+main{
+padding:35px 0 60px
+}
 
-.page{display:none}
-.page.active{display:block}
+.page{
+display:none
+}
+
+.page.active{
+display:block
+}
 
 .hero{
 text-align:center;
@@ -81,7 +106,9 @@ font-size:clamp(36px,7vw,70px);
 margin-bottom:15px
 }
 
-.hero h1 span{color:#8b5cf6}
+.hero h1 span{
+color:#8b5cf6
+}
 
 .hero p{
 color:#94a3b8;
@@ -107,11 +134,21 @@ background:#7c3aed;
 color:#fff
 }
 
-.btn:hover{background:#6d28d9}
+.btn:hover{
+background:#6d28d9
+}
 
-.btn.secondary{background:#1e293b}
-.btn.success{background:#059669}
-.btn.danger{background:#dc2626}
+.btn.secondary{
+background:#1e293b
+}
+
+.btn.success{
+background:#059669
+}
+
+.btn.danger{
+background:#dc2626
+}
 
 .btn.small{
 padding:8px 12px;
@@ -123,11 +160,14 @@ margin-bottom:20px;
 font-size:28px
 }
 
-.muted{color:#94a3b8}
+.muted{
+color:#94a3b8
+}
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
 gap:18px
 }
 
@@ -139,14 +179,18 @@ padding:20px;
 margin-bottom:18px
 }
 
-.card h3{margin-bottom:12px}
+.card h3{
+margin-bottom:12px
+}
 
 .card p{
 color:#cbd5e1;
 margin:7px 0
 }
 
-.lobby-card{position:relative}
+.lobby-card{
+position:relative
+}
 
 .badge{
 display:inline-block;
@@ -168,22 +212,9 @@ background:#450a0a;
 color:#fca5a5
 }
 
-.badge.pending{
-background:#78350f;
-color:#fde68a
+.form-group{
+margin-bottom:15px
 }
-
-.badge.confirmed{
-background:#064e3b;
-color:#6ee7b7
-}
-
-.badge.rejected{
-background:#450a0a;
-color:#fca5a5
-}
-
-.form-group{margin-bottom:15px}
 
 label{
 display:block;
@@ -216,11 +247,14 @@ background:#111827
 
 .form-grid{
 display:grid;
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:
+repeat(2,1fr);
 gap:15px
 }
 
-.full{grid-column:1/-1}
+.full{
+grid-column:1/-1
+}
 
 .message{
 padding:12px;
@@ -229,7 +263,9 @@ margin:12px 0;
 display:none
 }
 
-.message.show{display:block}
+.message.show{
+display:block
+}
 
 .message.success{
 background:#064e3b;
@@ -243,7 +279,8 @@ color:#fecaca
 
 .stats{
 display:grid;
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:
+repeat(3,1fr);
 gap:15px;
 margin-bottom:25px
 }
@@ -262,7 +299,9 @@ margin-top:5px;
 color:#a78bfa
 }
 
-.table-wrap{overflow-x:auto}
+.table-wrap{
+overflow-x:auto
+}
 
 table{
 width:100%;
@@ -281,7 +320,9 @@ background:#172033;
 color:#c4b5fd
 }
 
-td{color:#dbeafe}
+td{
+color:#dbeafe
+}
 
 .rank{
 font-weight:800;
@@ -293,7 +334,9 @@ max-width:600px;
 margin:30px auto
 }
 
-.hidden{display:none!important}
+.hidden{
+display:none!important
+}
 
 .top-actions{
 display:flex;
@@ -371,36 +414,80 @@ padding:13px;
 margin-bottom:15px
 }
 
-.info-box strong{color:#c4b5fd}
+.info-box strong{
+color:#c4b5fd
+}
 
 .status-card{
 margin-top:20px
 }
 
-.status-row{
+.status-pending{
+color:#fbbf24;
+font-weight:800
+}
+
+.status-confirmed{
+color:#6ee7b7;
+font-weight:800
+}
+
+.status-rejected{
+color:#fca5a5;
+font-weight:800
+}
+
+.live-dot{
+display:inline-block;
+width:9px;
+height:9px;
+border-radius:50%;
+background:#22c55e;
+margin-right:7px
+}
+
+.leaderboard-header{
 display:flex;
 justify-content:space-between;
-gap:20px;
-padding:13px 0;
-border-bottom:1px solid #263044
+align-items:center;
+gap:15px;
+flex-wrap:wrap
 }
 
-.status-row:last-child{
-border-bottom:0
+.live-text{
+color:#6ee7b7;
+font-size:13px;
+font-weight:700
 }
 
-.status-label{
-color:#94a3b8
+.public-leaderboard-table{
+min-width:700px
 }
 
-.status-value{
-font-weight:700;
-text-align:right
+.public-leaderboard-table th,
+.public-leaderboard-table td{
+text-align:center
 }
 
-.status-big{
-font-size:18px;
-margin-bottom:15px
+.public-leaderboard-table th:nth-child(2),
+.public-leaderboard-table td:nth-child(2){
+text-align:left
+}
+
+.public-rank{
+font-weight:900;
+font-size:18px
+}
+
+.total-points{
+font-weight:900;
+color:#c4b5fd
+}
+
+.live-update{
+margin-top:10px;
+font-size:12px;
+color:#64748b
 }
 
 @media(max-width:700px){
@@ -410,31 +497,38 @@ padding:12px 0;
 flex-direction:column
 }
 
-nav{justify-content:center}
-
-.form-grid{grid-template-columns:1fr}
-
-.full{grid-column:auto}
-
-.stats{grid-template-columns:1fr}
-
-.hero{padding:30px 10px}
-
-.status-row{
-flex-direction:column;
-gap:5px
+nav{
+justify-content:center
 }
 
-.status-value{
-text-align:left
+.form-grid{
+grid-template-columns:1fr
 }
+
+.full{
+grid-column:auto
 }
+
+.stats{
+grid-template-columns:1fr
+}
+
+.hero{
+padding:30px 10px
+}
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
+
 <div class="container nav">
 
 <div class="logo">
@@ -442,23 +536,49 @@ Scrim<span>Forge</span>
 </div>
 
 <nav>
-<button onclick="showPage('home')">Home</button>
-<button onclick="showPage('scrims')">Scrims</button>
-<button onclick="showPage('register')">Register</button>
-<button onclick="showPage('status')">Check Status</button>
-<button onclick="showPage('leaderboard')">Leaderboard</button>
-<button onclick="showPage('admin')">Admin</button>
+
+<button onclick="showPage('home')">
+Home
+</button>
+
+<button onclick="showPage('scrims')">
+Scrims
+</button>
+
+<button onclick="showPage('register')">
+Register
+</button>
+
+<button onclick="showPage('status')">
+Check Status
+</button>
+
+<button onclick="showPage('leaderboard')">
+Leaderboard
+</button>
+
+<button onclick="showPage('admin')">
+Admin
+</button>
+
 </nav>
 
 </div>
+
 </header>
 
 
 <main>
 
-<!-- HOME -->
 
-<section id="home" class="page active">
+<!-- =================================================
+HOME
+================================================= -->
+
+<section
+id="home"
+class="page active"
+>
 
 <div class="hero">
 
@@ -474,13 +594,17 @@ all in one place.
 
 <div class="hero-buttons">
 
-<button class="btn"
-onclick="showPage('scrims')">
+<button
+class="btn"
+onclick="showPage('scrims')"
+>
 View Scrims
 </button>
 
-<button class="btn secondary"
-onclick="showPage('leaderboard')">
+<button
+class="btn secondary"
+onclick="showPage('leaderboard')"
+>
 Leaderboard
 </button>
 
@@ -488,22 +612,32 @@ Leaderboard
 
 </div>
 
+
 <div class="container">
 
 <h2 class="section-title">
 Available Lobbies
 </h2>
 
-<div id="homeLobbies" class="grid"></div>
+<div
+id="homeLobbies"
+class="grid"
+></div>
 
 </div>
 
 </section>
 
 
-<!-- SCRIMS -->
 
-<section id="scrims" class="page">
+<!-- =================================================
+SCRIMS
+================================================= -->
+
+<section
+id="scrims"
+class="page"
+>
 
 <div class="container">
 
@@ -521,23 +655,34 @@ Choose the scrim category you want to play.
 
 </div>
 
-<button class="btn"
-onclick="loadPublicLobbies('scrimList')">
+<button
+class="btn"
+onclick="loadPublicLobbies('scrimList')"
+>
 Refresh
 </button>
 
 </div>
 
-<div id="scrimList" class="grid"></div>
+<div
+id="scrimList"
+class="grid"
+></div>
 
 </div>
 
 </section>
 
 
-<!-- REGISTRATION -->
 
-<section id="register" class="page">
+<!-- =================================================
+REGISTER
+================================================= -->
+
+<section
+id="register"
+class="page"
+>
 
 <div class="container">
 
@@ -548,23 +693,33 @@ Scrim Registration
 </h2>
 
 <p class="muted">
-Select a scrim category. Time and entry fee are automatically fixed for that category.
+Select a scrim. Time and entry fee are fixed
+automatically by the selected scrim.
 </p>
 
-<div id="registerMessage" class="message"></div>
+
+<div
+id="registerMessage"
+class="message"
+></div>
+
 
 <form id="registrationForm">
+
 
 <div class="form-group">
 
 <label>
-Select Scrim Category
+Select Scrim
 </label>
 
-<select id="regLobby" required>
+<select
+id="regLobby"
+required
+>
 
 <option value="">
-Select a scrim category
+Select a scrim
 </option>
 
 </select>
@@ -572,27 +727,8 @@ Select a scrim category
 </div>
 
 
-<div class="info-box">
-
-<p>
-<strong>Selected Scrim:</strong>
-<span id="selectedLobbyName">Not selected</span>
-</p>
-
-<p>
-<strong>Time:</strong>
-<span id="selectedLobbyTime">—</span>
-</p>
-
-<p>
-<strong>Entry Fee:</strong>
-<span id="selectedLobbyFee">—</span>
-</p>
-
-</div>
-
-
 <div class="form-grid">
+
 
 <div class="form-group">
 
@@ -604,7 +740,8 @@ Scrim Time
 type="text"
 id="regTime"
 readonly
-placeholder="Automatically selected">
+placeholder="Automatically selected"
+>
 
 </div>
 
@@ -619,7 +756,8 @@ Entry Fee
 type="text"
 id="regFee"
 readonly
-placeholder="Automatically selected">
+placeholder="Automatically selected"
+>
 
 </div>
 
@@ -634,7 +772,8 @@ Team Name
 type="text"
 id="regTeam"
 placeholder="Your team name"
-required>
+required
+>
 
 </div>
 
@@ -649,7 +788,8 @@ Captain Name
 type="text"
 id="regCaptain"
 placeholder="Captain name"
-required>
+required
+>
 
 </div>
 
@@ -664,7 +804,8 @@ WhatsApp / Phone
 type="text"
 id="regPhone"
 placeholder="Phone number"
-required>
+required
+>
 
 </div>
 
@@ -679,15 +820,22 @@ Free Fire UID
 type="text"
 id="regUid"
 placeholder="Captain UID"
-required>
+required
+>
 
 </div>
 
+
 </div>
 
-<button class="btn" type="submit">
+
+<button
+class="btn"
+type="submit"
+>
 Submit Registration
 </button>
+
 
 </form>
 
@@ -698,9 +846,15 @@ Submit Registration
 </section>
 
 
-<!-- STATUS -->
 
-<section id="status" class="page">
+<!-- =================================================
+STATUS
+================================================= -->
+
+<section
+id="status"
+class="page"
+>
 
 <div class="container">
 
@@ -711,10 +865,12 @@ Check Registration Status
 </h2>
 
 <p class="muted">
-Enter your registration reference to instantly see your current registration status and assigned scrim.
+Enter your registration reference to instantly
+see your current registration status and lobby.
 </p>
 
 <br>
+
 
 <div class="form-group">
 
@@ -725,19 +881,29 @@ Registration Reference
 <input
 id="statusRef"
 placeholder="Example: SF-1234567890-1234"
-autocomplete="off">
+>
 
 </div>
 
+
 <button
 class="btn"
-onclick="checkStatus()">
-Check My Status
+onclick="checkStatus()"
+>
+Check Status
 </button>
 
-<div id="statusMessage" class="message"></div>
 
-<div id="statusResult"></div>
+<div
+id="statusMessage"
+class="message"
+></div>
+
+
+<div
+id="statusResult"
+></div>
+
 
 </div>
 
@@ -746,128 +912,154 @@ Check My Status
 </section>
 
 
-<!-- LEADERBOARD -->
 
-<section id="leaderboard" class="page">
+<!-- =================================================
+LEADERBOARD
+================================================= -->
+
+<section
+id="leaderboard"
+class="page"
+>
 
 <div class="container">
+
 
 <div class="top-actions">
 
 <div>
 
 <h2 class="section-title">
-Leaderboard
+Live Leaderboard
 </h2>
 
 <p class="muted">
-View the live standings of a scrim lobby.
+Standings are automatically updated when the admin
+saves match results.
 </p>
 
 </div>
 
+<div class="live-text">
+<span class="live-dot"></span>
+LIVE
 </div>
+
+</div>
+
 
 <div class="card">
 
-<div class="form-grid">
-
 <div class="form-group">
 
 <label>
-Select Lobby
+Select Scrim
 </label>
 
-<select id="publicLobbySelect">
+<select
+id="publicLobbySelect"
+>
 
 <option value="">
-Select a lobby
+Select a scrim
 </option>
 
 </select>
 
 </div>
 
-
-<div class="form-group">
-
-<label>
-Select Match
-</label>
-
-<select id="publicMatchSelect">
-
-<option value="overall">
-Overall
-</option>
-
-<option value="1">Match 1</option>
-<option value="2">Match 2</option>
-<option value="3">Match 3</option>
-<option value="4">Match 4</option>
-<option value="5">Match 5</option>
-<option value="6">Match 6</option>
-
-</select>
-
-</div>
-
-</div>
 
 <button
 class="btn"
-onclick="loadPublicLeaderboard()">
+onclick="loadPublicLeaderboard()"
+>
 View Leaderboard
 </button>
 
-</div>
 
-<div id="publicLeaderboard"></div>
+<div
+id="publicLeaderboard"
+style="margin-top:20px"
+></div>
+
+
+<div
+id="liveUpdateText"
+class="live-update"
+></div>
+
+</div>
 
 </div>
 
 </section>
 
 
-<!-- ADMIN -->
 
-<section id="admin" class="page">
+<!-- =================================================
+ADMIN
+================================================= -->
+
+<section
+id="admin"
+class="page"
+>
 
 <div class="container">
 
-<div id="adminLoginBox" class="card admin-box">
+
+<!-- LOGIN -->
+
+<div
+id="adminLoginBox"
+class="card admin-box"
+>
 
 <h2 class="section-title">
 Admin Login
 </h2>
 
-<div id="loginMessage" class="message"></div>
+<div
+id="loginMessage"
+class="message"
+></div>
 
 <form id="loginForm">
 
 <div class="form-group">
 
-<label>Email</label>
+<label>
+Email
+</label>
 
 <input
 type="email"
 id="loginEmail"
-required>
+required
+>
 
 </div>
 
+
 <div class="form-group">
 
-<label>Password</label>
+<label>
+Password
+</label>
 
 <input
 type="password"
 id="loginPassword"
-required>
+required
+>
 
 </div>
 
-<button class="btn" type="submit">
+
+<button
+class="btn"
+type="submit"
+>
 Login
 </button>
 
@@ -876,7 +1068,13 @@ Login
 </div>
 
 
-<div id="adminSetupBox" class="card admin-box hidden">
+
+<!-- SETUP -->
+
+<div
+id="adminSetupBox"
+class="card admin-box hidden"
+>
 
 <h2 class="section-title">
 Create Admin
@@ -889,42 +1087,62 @@ Create the first admin.
 
 <br>
 
-<div id="setupMessage" class="message"></div>
+<div
+id="setupMessage"
+class="message"
+></div>
 
 <form id="setupForm">
 
 <div class="form-group">
 
-<label>Name</label>
+<label>
+Name
+</label>
 
-<input id="setupName" required>
+<input
+id="setupName"
+required
+>
 
 </div>
 
+
 <div class="form-group">
 
-<label>Email</label>
+<label>
+Email
+</label>
 
 <input
 type="email"
 id="setupEmail"
-required>
+required
+>
 
 </div>
 
+
 <div class="form-group">
 
-<label>Password</label>
+<label>
+Password
+</label>
 
 <input
 type="password"
 id="setupPassword"
 minlength="6"
-required>
+required
+>
 
 </div>
 
-<button class="btn" type="submit">
+
+<button
+class="btn"
+type="submit"
+>
 Create Admin
 </button>
 
@@ -933,7 +1151,14 @@ Create Admin
 </div>
 
 
-<div id="adminDashboard" class="hidden">
+
+<!-- DASHBOARD -->
+
+<div
+id="adminDashboard"
+class="hidden"
+>
+
 
 <div class="top-actions">
 
@@ -950,16 +1175,22 @@ Logged in as
 
 </div>
 
+
 <button
 class="btn danger"
-onclick="logout()">
+onclick="logout()"
+>
 Logout
 </button>
 
 </div>
 
 
+
+<!-- STATS -->
+
 <div class="stats">
+
 
 <div class="stat">
 
@@ -967,12 +1198,15 @@ Logout
 Pending Registrations
 </div>
 
-<div class="stat-number"
-id="pendingCount">
+<div
+class="stat-number"
+id="pendingCount"
+>
 0
 </div>
 
 </div>
+
 
 <div class="stat">
 
@@ -980,12 +1214,15 @@ id="pendingCount">
 Confirmed Registrations
 </div>
 
-<div class="stat-number"
-id="confirmedCount">
+<div
+class="stat-number"
+id="confirmedCount"
+>
 0
 </div>
 
 </div>
+
 
 <div class="stat">
 
@@ -993,14 +1230,18 @@ id="confirmedCount">
 Active Lobbies
 </div>
 
-<div class="stat-number"
-id="activeLobbyCount">
+<div
+class="stat-number"
+id="activeLobbyCount"
+>
 0
 </div>
 
 </div>
 
+
 </div>
+
 
 
 <!-- CREATE LOBBY -->
@@ -1013,11 +1254,16 @@ Create New Lobby
 
 <br>
 
-<div id="lobbyMessage" class="message"></div>
+<div
+id="lobbyMessage"
+class="message"
+></div>
+
 
 <form id="lobbyForm">
 
 <div class="form-grid">
+
 
 <div class="form-group">
 
@@ -1028,22 +1274,26 @@ Lobby Name
 <input
 id="lobbyName"
 placeholder="Example: Alpha Lobby"
-required>
+required
+>
 
 </div>
+
 
 <div class="form-group">
 
 <label>
-Time Slot
+Time
 </label>
 
 <input
 id="lobbyTime"
 placeholder="Example: 12 PM"
-required>
+required
+>
 
 </div>
+
 
 <div class="form-group">
 
@@ -1054,9 +1304,11 @@ Entry Fee
 <input
 id="lobbyFee"
 placeholder="Example: ₹50"
-required>
+required
+>
 
 </div>
+
 
 <div class="form-group">
 
@@ -1069,19 +1321,26 @@ type="number"
 id="lobbyMaxTeams"
 value="12"
 min="1"
-required>
+required
+>
 
 </div>
 
+
 </div>
 
-<button class="btn" type="submit">
+
+<button
+class="btn"
+type="submit"
+>
 Create Lobby
 </button>
 
 </form>
 
 </div>
+
 
 
 <!-- MANAGE LOBBIES -->
@@ -1096,19 +1355,21 @@ Manage Lobbies
 
 <button
 class="btn small"
-onclick="loadAdminLobbies()">
+onclick="loadAdminLobbies()"
+>
 Refresh
 </button>
 
 </div>
 
-<p class="muted" style="margin-bottom:15px">
-Each lobby has its own fixed time and fee. Users cannot change these during registration.
-</p>
 
-<div id="adminLobbies" class="grid"></div>
+<div
+id="adminLobbies"
+class="grid"
+></div>
 
 </div>
+
 
 
 <!-- REGISTRATIONS -->
@@ -1124,14 +1385,16 @@ Registrations
 </h3>
 
 <p class="muted">
-Select the lobby already chosen by the user, then accept or reject the registration.
+Select the lobby and accept or reject registrations.
 </p>
 
 </div>
 
+
 <button
 class="btn small"
-onclick="loadRegistrations()">
+onclick="loadRegistrations()"
+>
 Refresh
 </button>
 
@@ -1150,21 +1413,25 @@ Refresh
 <th>Reference</th>
 <th>Team</th>
 <th>Captain</th>
-<th>Selected Scrim</th>
-<th>Status</th>
+<th>Scrim</th>
+<th>Assign Lobby</th>
 <th>Action</th>
 
 </tr>
 
 </thead>
 
-<tbody id="registrationTable"></tbody>
+
+<tbody
+id="registrationTable"
+></tbody>
 
 </table>
 
 </div>
 
 </div>
+
 
 
 <!-- SCORE ENTRY -->
@@ -1176,11 +1443,13 @@ Match Score Entry
 </h3>
 
 <p class="muted">
-Enter results for each match.
-A lobby has 6 matches and 12 teams.
+Enter the position and kills of each team.
+Booyah, placement points, kill points and total
+points are calculated automatically.
 </p>
 
 <br>
+
 
 <div class="form-group">
 
@@ -1188,7 +1457,9 @@ A lobby has 6 matches and 12 teams.
 Select Lobby
 </label>
 
-<select id="scoreLobby">
+<select
+id="scoreLobby"
+>
 
 <option value="">
 Select lobby
@@ -1198,44 +1469,68 @@ Select lobby
 
 </div>
 
+
 <div class="match-tabs">
 
-<button type="button"
+
+<button
+type="button"
 class="active"
-onclick="selectScoreMatch(1,this)">
+onclick="selectScoreMatch(1,this)"
+>
 Match 1
 </button>
 
-<button type="button"
-onclick="selectScoreMatch(2,this)">
+
+<button
+type="button"
+onclick="selectScoreMatch(2,this)"
+>
 Match 2
 </button>
 
-<button type="button"
-onclick="selectScoreMatch(3,this)">
+
+<button
+type="button"
+onclick="selectScoreMatch(3,this)"
+>
 Match 3
 </button>
 
-<button type="button"
-onclick="selectScoreMatch(4,this)">
+
+<button
+type="button"
+onclick="selectScoreMatch(4,this)"
+>
 Match 4
 </button>
 
-<button type="button"
-onclick="selectScoreMatch(5,this)">
+
+<button
+type="button"
+onclick="selectScoreMatch(5,this)"
+>
 Match 5
 </button>
 
-<button type="button"
-onclick="selectScoreMatch(6,this)">
+
+<button
+type="button"
+onclick="selectScoreMatch(6,this)"
+>
 Match 6
 </button>
 
-</div>
-
-<div id="scoreEntryBody"></div>
 
 </div>
+
+
+<div
+id="scoreEntryBody"
+></div>
+
+</div>
+
 
 </div>
 
@@ -1246,15 +1541,21 @@ Match 6
 </main>
 
 
+
 <footer>
 ScrimForge &copy; 2026
 </footer>
 
 
+
 <script>
 
-let currentScoreMatch=1;
-let cachedLobbies=[];
+
+let currentScoreMatch = 1;
+
+let cachedLobbies = [];
+
+let leaderboardRefreshTimer = null;
 
 
 /* =====================================================
@@ -1265,27 +1566,47 @@ function showPage(pageId){
 
 document
 .querySelectorAll(".page")
-.forEach(p=>p.classList.remove("active"));
+.forEach(
+p =>
+p.classList.remove("active")
+);
 
-const page=document.getElementById(pageId);
+const page =
+document.getElementById(pageId);
 
 if(page)
 page.classList.add("active");
 
+
 if(pageId==="home")
-loadPublicLobbies("homeLobbies");
+loadPublicLobbies(
+"homeLobbies"
+);
 
 if(pageId==="scrims")
-loadPublicLobbies("scrimList");
+loadPublicLobbies(
+"scrimList"
+);
 
 if(pageId==="register")
 loadRegistrationCategories();
 
-if(pageId==="leaderboard")
+if(pageId==="leaderboard"){
+
 loadLeaderboardLobbyOptions();
+
+startLeaderboardAutoRefresh();
+
+}
 
 if(pageId==="admin")
 checkAdmin();
+
+
+if(pageId!=="leaderboard"){
+stopLeaderboardAutoRefresh();
+}
+
 
 window.scrollTo({
 top:0,
@@ -1299,15 +1620,22 @@ behavior:"smooth"
 MESSAGES
 ===================================================== */
 
-function showMessage(id,text,type="success"){
+function showMessage(
+id,
+text,
+type="success"
+){
 
-const e=document.getElementById(id);
+const e =
+document.getElementById(id);
 
 if(!e)return;
 
-e.textContent=text;
+e.textContent =
+text;
 
-e.className="message show "+type;
+e.className =
+"message show " + type;
 
 }
 
@@ -1316,48 +1644,79 @@ e.className="message show "+type;
 API
 ===================================================== */
 
-async function api(url,options={}){
+async function api(
+url,
+options={}
+){
 
-const response=await fetch(url,{
-credentials:"same-origin",
+const response =
+await fetch(
+url,
+{
+credentials:
+"same-origin",
+
 ...options,
+
 headers:{
-"Content-Type":"application/json",
+"Content-Type":
+"application/json",
+
 ...(options.headers||{})
 }
-});
 
-let data={};
+}
+);
 
-const contentType=
-response.headers.get("content-type")||"";
 
-if(contentType.includes("application/json")){
+let data = {};
+
+const contentType =
+response.headers.get(
+"content-type"
+) || "";
+
+
+if(
+contentType.includes(
+"application/json"
+)
+){
 
 try{
-data=await response.json();
-}catch(e){
+
+data =
+await response.json();
+
+}catch{
+
 data={};
+
 }
 
 }else{
 
-const text=await response.text();
+const text =
+await response.text();
 
 if(text)
-data={error:text};
+data={
+error:text
+};
 
 }
+
 
 if(!response.ok){
 
 throw new Error(
-data.error||
-data.message||
+data.error ||
+data.message ||
 `Request failed (${response.status})`
 );
 
 }
+
 
 return data;
 
@@ -1368,27 +1727,38 @@ return data;
 PUBLIC LOBBIES
 ===================================================== */
 
-async function loadPublicLobbies(targetId="homeLobbies"){
+async function loadPublicLobbies(
+targetId="homeLobbies"
+){
 
-const target=document.getElementById(targetId);
+const target =
+document.getElementById(
+targetId
+);
 
 if(!target)return;
 
-target.innerHTML=
+
+target.innerHTML =
 '<p class="muted">Loading lobbies...</p>';
+
 
 try{
 
-const lobbies=await api(
+const lobbies =
+await api(
 "/api/public/lobbies"
 );
 
-cachedLobbies=
-Array.isArray(lobbies)?lobbies:[];
+cachedLobbies =
+Array.isArray(lobbies)
+? lobbies
+: [];
+
 
 if(!cachedLobbies.length){
 
-target.innerHTML=
+target.innerHTML =
 `
 <div class="card">
 <p class="muted">
@@ -1401,49 +1771,69 @@ return;
 
 }
 
-target.innerHTML=
-cachedLobbies.map(lobby=>{
 
-const full=
-Number(lobby.confirmed||0)>=
-Number(lobby.max_teams||0);
+target.innerHTML =
+cachedLobbies
+.map(lobby=>{
 
-const open=
+const full =
+Number(
+lobby.confirmed||0
+) >=
+Number(
+lobby.max_teams||0
+);
+
+const open =
 lobby.status==="open";
 
-return`
+
+return `
 
 <div class="card lobby-card">
 
 <span class="badge ${
-open&&!full?"open":"closed"
+open&&!full
+?"open"
+:"closed"
 }">
 
-${open&&!full?"OPEN":"CLOSED"}
+${
+open&&!full
+?"OPEN"
+:"CLOSED"
+}
 
 </span>
+
 
 <h3>
 ${escapeHTML(lobby.name)}
 </h3>
+
 
 <p>
 <strong>Time:</strong>
 ${escapeHTML(lobby.time)}
 </p>
 
+
 <p>
 <strong>Entry:</strong>
 ${escapeHTML(lobby.fee)}
 </p>
 
+
 <p>
 <strong>Teams:</strong>
-${Number(lobby.confirmed||0)}/
+${Number(lobby.confirmed||0)}
+/
 ${Number(lobby.max_teams||0)}
 </p>
 
+
 <br>
+
 
 ${
 open&&!full
@@ -1451,7 +1841,8 @@ open&&!full
 `
 <button
 class="btn small"
-onclick="useLobby(${Number(lobby.id)})">
+onclick="useLobby(${Number(lobby.id)})"
+>
 Register
 </button>
 `
@@ -1459,7 +1850,8 @@ Register
 `
 <button
 class="btn small secondary"
-disabled>
+disabled
+>
 ${full?"FULL":"CLOSED"}
 </button>
 `
@@ -1469,11 +1861,13 @@ ${full?"FULL":"CLOSED"}
 
 `;
 
-}).join("");
+})
+.join("");
+
 
 }catch(error){
 
-target.innerHTML=
+target.innerHTML =
 `
 <div class="card">
 <p class="muted">
@@ -1491,61 +1885,98 @@ ${escapeHTML(error.message)}
 REGISTRATION CATEGORIES
 ===================================================== */
 
-async function loadRegistrationCategories(selectedId=""){
+async function loadRegistrationCategories(
+selectedId=""
+){
 
-const select=
-document.getElementById("regLobby");
+const select =
+document.getElementById(
+"regLobby"
+);
 
 if(!select)return;
 
+
 try{
 
-const lobbies=
-await api("/api/public/lobbies");
+const lobbies =
+await api(
+"/api/public/lobbies"
+);
 
-cachedLobbies=
-Array.isArray(lobbies)?lobbies:[];
+cachedLobbies =
+Array.isArray(lobbies)
+? lobbies
+: [];
 
-select.innerHTML=
+
+select.innerHTML =
 `
 <option value="">
-Select a scrim category
+Select a scrim
 </option>
 `;
 
-cachedLobbies.forEach(lobby=>{
 
-const full=
-Number(lobby.confirmed||0)>=
-Number(lobby.max_teams||0);
+cachedLobbies.forEach(
+lobby=>{
 
-const disabled=
-lobby.status!=="open"||full;
+const full =
+Number(
+lobby.confirmed||0
+) >=
+Number(
+lobby.max_teams||0
+);
 
-const option=
-document.createElement("option");
+const disabled =
+lobby.status!=="open" ||
+full;
 
-option.value=
+
+const option =
+document.createElement(
+"option"
+);
+
+
+option.value =
 String(lobby.id);
 
-option.textContent=
-`${lobby.name}${full?" — FULL":""}`;
 
-option.disabled=
+/*
+IMPORTANT:
+Only lobby name is shown.
+Time and fee remain separate fixed fields.
+*/
+
+option.textContent =
+lobby.name +
+(full
+?" — FULL"
+:"");
+
+
+option.disabled =
 disabled;
 
-select.appendChild(option);
+
+select.appendChild(
+option
+);
 
 });
 
+
 if(selectedId){
 
-select.value=
+select.value =
 String(selectedId);
 
 updateRegistrationLobbyDetails();
 
 }
+
 
 }catch(error){
 
@@ -1574,60 +2005,45 @@ updateRegistrationLobbyDetails
 
 function updateRegistrationLobbyDetails(){
 
-const select=
-document.getElementById("regLobby");
+const select =
+document.getElementById(
+"regLobby"
+);
 
-const lobby=
+const lobby =
 cachedLobbies.find(
-x=>
-String(x.id)===
+x =>
+String(x.id) ===
 String(select.value)
 );
 
-const time=
-document.getElementById("regTime");
 
-const fee=
-document.getElementById("regFee");
+const time =
+document.getElementById(
+"regTime"
+);
 
-const name=
-document.getElementById("selectedLobbyName");
+const fee =
+document.getElementById(
+"regFee"
+);
 
-const selectedTime=
-document.getElementById("selectedLobbyTime");
-
-const selectedFee=
-document.getElementById("selectedLobbyFee");
 
 if(!lobby){
 
 time.value="";
 fee.value="";
 
-name.textContent=
-"Not selected";
-
-selectedTime.textContent="—";
-selectedFee.textContent="—";
-
 return;
 
 }
 
-time.value=
-lobby.time||"";
 
-fee.value=
-lobby.fee||"";
+time.value =
+lobby.time || "";
 
-name.textContent=
-lobby.name||"";
-
-selectedTime.textContent=
-lobby.time||"—";
-
-selectedFee.textContent=
-lobby.fee||"—";
+fee.value =
+lobby.fee || "";
 
 }
 
@@ -1638,14 +2054,18 @@ USE LOBBY
 
 async function useLobby(id){
 
-await loadRegistrationCategories(id);
-
 showPage("register");
 
-const select=
-document.getElementById("regLobby");
+await loadRegistrationCategories(
+id
+);
 
-select.value=
+const select =
+document.getElementById(
+"regLobby"
+);
+
+select.value =
 String(id);
 
 updateRegistrationLobbyDetails();
@@ -1654,32 +2074,39 @@ updateRegistrationLobbyDetails();
 
 
 /* =====================================================
-REGISTRATION SUBMIT
+REGISTRATION
 ===================================================== */
 
 document
-.getElementById("registrationForm")
+.getElementById(
+"registrationForm"
+)
 .addEventListener(
 "submit",
 async e=>{
 
 e.preventDefault();
 
-const lobbyId=
-document.getElementById("regLobby").value;
 
-const lobby=
+const lobbyId =
+document.getElementById(
+"regLobby"
+).value;
+
+
+const lobby =
 cachedLobbies.find(
-x=>
-String(x.id)===
+x =>
+String(x.id) ===
 String(lobbyId)
 );
+
 
 if(!lobby){
 
 showMessage(
 "registerMessage",
-"Please select a valid scrim category.",
+"Please select a valid scrim.",
 "error"
 );
 
@@ -1687,11 +2114,27 @@ return;
 
 }
 
+
 try{
 
-const payload={
 
-lobbyId:Number(lobby.id),
+const data =
+await api(
+"/api/registrations",
+{
+method:"POST",
+
+body:
+JSON.stringify({
+
+/*
+Only lobby ID and user details
+are trusted from browser.
+Server gets time + fee itself.
+*/
+
+lobbyId:
+Number(lobby.id),
 
 team:
 document
@@ -1717,46 +2160,43 @@ document
 .value
 .trim()
 
-};
+})
 
-const data=
-await api(
-"/api/registrations",
-{
-method:"POST",
-body:
-JSON.stringify(payload)
 }
 );
 
+
 showMessage(
 "registerMessage",
-`Registration submitted successfully. Your reference is ${data.ref}. Save this reference to check your status later.`
+`Registration submitted successfully. Reference: ${data.ref}. Status: PENDING`
 );
+
 
 e.target.reset();
 
-document
-.getElementById("regTime")
-.value="";
+document.getElementById(
+"regTime"
+).value="";
 
-document
-.getElementById("regFee")
-.value="";
+document.getElementById(
+"regFee"
+).value="";
 
-document
-.getElementById("selectedLobbyName")
-.textContent="Not selected";
 
-document
-.getElementById("selectedLobbyTime")
-.textContent="—";
+/*
+Automatically put reference into
+Check Status field.
+*/
 
-document
-.getElementById("selectedLobbyFee")
-.textContent="—";
+const statusRef =
+document.getElementById(
+"statusRef"
+);
 
-await loadRegistrationCategories();
+if(statusRef)
+statusRef.value =
+data.ref;
+
 
 }catch(error){
 
@@ -1773,19 +2213,25 @@ error.message,
 
 
 /* =====================================================
-CHECK STATUS
+STATUS
 ===================================================== */
 
 async function checkStatus(){
 
-const input=
-document.getElementById("statusRef");
+const input =
+document.getElementById(
+"statusRef"
+);
 
-const ref=
+const ref =
 input.value.trim();
 
-const result=
-document.getElementById("statusResult");
+
+const result =
+document.getElementById(
+"statusResult"
+);
+
 
 if(!ref){
 
@@ -1801,141 +2247,110 @@ return;
 
 }
 
-result.innerHTML=
-'<p class="muted">Checking registration...</p>';
 
 try{
 
-const data=
+const data =
 await api(
 `/api/registration-status/${encodeURIComponent(ref)}`
 );
 
+
 showMessage(
 "statusMessage",
-"Registration found."
+"Registration found.",
+"success"
 );
 
-const status=
-String(
-data.status||"pending"
-).toLowerCase();
 
-let badgeClass="pending";
+let statusClass =
+"status-pending";
 
-if(status==="confirmed")
-badgeClass="confirmed";
 
-if(status==="rejected")
-badgeClass="rejected";
+if(data.status==="confirmed")
+statusClass =
+"status-confirmed";
 
-const statusText=
-status.charAt(0).toUpperCase()+
-status.slice(1);
 
-result.innerHTML=`
+if(data.status==="rejected")
+statusClass =
+"status-rejected";
+
+
+result.innerHTML =
+`
 
 <div class="card status-card">
 
-<div class="status-big">
-
-<span class="badge ${badgeClass}">
-${escapeHTML(statusText)}
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span class="status-label">
-Team
-</span>
-
-<span class="status-value">
-${escapeHTML(data.team||"—")}
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span class="status-label">
-Registration Reference
-</span>
-
-<span class="status-value">
-${escapeHTML(data.ref||ref)}
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span class="status-label">
-Captain
-</span>
-
-<span class="status-value">
-${escapeHTML(data.captain||"—")}
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span class="status-label">
-Scrim Category
-</span>
-
-<span class="status-value">
+<h3>
 ${escapeHTML(
-data.lobby_name||
-data.lobbyName||
-"Not assigned yet"
+data.team ||
+"Registration"
+)}
+</h3>
+
+
+<p>
+<strong>Reference:</strong>
+${escapeHTML(
+data.ref ||
+ref
+)}
+</p>
+
+
+<p>
+<strong>Captain:</strong>
+${escapeHTML(
+data.captain || ""
+)}
+</p>
+
+
+<p>
+<strong>Scrim Time:</strong>
+${escapeHTML(
+data.time || ""
+)}
+</p>
+
+
+<p>
+<strong>Entry Fee:</strong>
+${escapeHTML(
+data.fee || ""
+)}
+</p>
+
+
+<p>
+<strong>Status:</strong>
+
+<span class="${statusClass}">
+${escapeHTML(
+String(
+data.status ||
+"pending"
+).toUpperCase()
 )}
 </span>
 
-</div>
+</p>
 
-<div class="status-row">
 
-<span class="status-label">
-Time
-</span>
+<p>
+<strong>Assigned Lobby:</strong>
+${escapeHTML(
+data.lobby_name ||
+"Not assigned yet"
+)}
+</p>
 
-<span class="status-value">
-${escapeHTML(data.time||"—")}
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span class="status-label">
-Entry Fee
-</span>
-
-<span class="status-value">
-${escapeHTML(data.fee||"—")}
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span class="status-label">
-Current Status
-</span>
-
-<span class="status-value">
-${escapeHTML(statusText)}
-</span>
-
-</div>
 
 </div>
 
 `;
+
 
 }catch(error){
 
@@ -1960,40 +2375,60 @@ async function checkAdmin(){
 
 try{
 
-const exists=
-await api("/api/admin-exists");
+const exists =
+await api(
+"/api/admin-exists"
+);
 
-const me=
-await api("/api/me");
+const me =
+await api(
+"/api/me"
+);
+
 
 document
-.getElementById("adminLoginBox")
+.getElementById(
+"adminLoginBox"
+)
 .classList
 .toggle(
 "hidden",
-!exists.exists||me.loggedIn
+!exists.exists ||
+me.loggedIn
 );
 
+
 document
-.getElementById("adminSetupBox")
+.getElementById(
+"adminSetupBox"
+)
 .classList
 .toggle(
 "hidden",
 exists.exists
 );
 
+
 document
-.getElementById("adminDashboard")
+.getElementById(
+"adminDashboard"
+)
 .classList
 .toggle(
 "hidden",
 !me.loggedIn
 );
 
-if(!exists.exists)return;
+
+if(!exists.exists)
+return;
+
 
 if(me.loggedIn)
-showAdminDashboard(me.name);
+showAdminDashboard(
+me.name
+);
+
 
 }catch(error){
 
@@ -2008,24 +2443,44 @@ console.error(error);
 ADMIN DASHBOARD
 ===================================================== */
 
-function showAdminDashboard(name){
+function showAdminDashboard(
+name
+){
 
 document
-.getElementById("adminLoginBox")
-.classList.add("hidden");
+.getElementById(
+"adminLoginBox"
+)
+.classList.add(
+"hidden"
+);
+
 
 document
-.getElementById("adminSetupBox")
-.classList.add("hidden");
+.getElementById(
+"adminSetupBox"
+)
+.classList.add(
+"hidden"
+);
+
 
 document
-.getElementById("adminDashboard")
-.classList.remove("hidden");
+.getElementById(
+"adminDashboard"
+)
+.classList.remove(
+"hidden"
+);
+
 
 document
-.getElementById("adminName")
-.textContent=
-name||"Admin";
+.getElementById(
+"adminName"
+)
+.textContent =
+name || "Admin";
+
 
 loadAdminData();
 
@@ -2037,42 +2492,52 @@ SETUP
 ===================================================== */
 
 document
-.getElementById("setupForm")
+.getElementById(
+"setupForm"
+)
 .addEventListener(
 "submit",
 async e=>{
 
 e.preventDefault();
 
+
 try{
 
-const d=
+const d =
 await api(
 "/api/setup-admin",
 {
 method:"POST",
-body:JSON.stringify({
+
+body:
+JSON.stringify({
 
 name:
-document
-.getElementById("setupName")
-.value,
+document.getElementById(
+"setupName"
+).value,
 
 email:
-document
-.getElementById("setupEmail")
-.value,
+document.getElementById(
+"setupEmail"
+).value,
 
 password:
-document
-.getElementById("setupPassword")
-.value
+document.getElementById(
+"setupPassword"
+).value
 
 })
+
 }
 );
 
-showAdminDashboard(d.name);
+
+showAdminDashboard(
+d.name
+);
+
 
 }catch(error){
 
@@ -2093,37 +2558,47 @@ LOGIN
 ===================================================== */
 
 document
-.getElementById("loginForm")
+.getElementById(
+"loginForm"
+)
 .addEventListener(
 "submit",
 async e=>{
 
 e.preventDefault();
 
+
 try{
 
-const d=
+const d =
 await api(
 "/api/login",
 {
 method:"POST",
-body:JSON.stringify({
+
+body:
+JSON.stringify({
 
 email:
-document
-.getElementById("loginEmail")
-.value,
+document.getElementById(
+"loginEmail"
+).value,
 
 password:
-document
-.getElementById("loginPassword")
-.value
+document.getElementById(
+"loginPassword"
+).value
 
 })
+
 }
 );
 
-showAdminDashboard(d.name);
+
+showAdminDashboard(
+d.name
+);
+
 
 }catch(error){
 
@@ -2156,9 +2631,12 @@ method:"POST"
 
 checkAdmin();
 
+
 }catch(error){
 
-alert(error.message);
+alert(
+error.message
+);
 
 }
 
@@ -2190,23 +2668,29 @@ async function loadStats(){
 
 try{
 
-const s=
-await api("/api/stats");
+const s =
+await api(
+"/api/stats"
+);
 
-document
-.getElementById("pendingCount")
-.textContent=
-s.pending??0;
 
-document
-.getElementById("confirmedCount")
-.textContent=
-s.confirmed??0;
+document.getElementById(
+"pendingCount"
+).textContent =
+s.pending ?? 0;
 
-document
-.getElementById("activeLobbyCount")
-.textContent=
-s.activeLobbies??0;
+
+document.getElementById(
+"confirmedCount"
+).textContent =
+s.confirmed ?? 0;
+
+
+document.getElementById(
+"activeLobbyCount"
+).textContent =
+s.activeLobbies ?? 0;
+
 
 }catch(error){
 
@@ -2222,12 +2706,15 @@ CREATE LOBBY
 ===================================================== */
 
 document
-.getElementById("lobbyForm")
+.getElementById(
+"lobbyForm"
+)
 .addEventListener(
 "submit",
 async e=>{
 
 e.preventDefault();
+
 
 try{
 
@@ -2235,49 +2722,57 @@ await api(
 "/api/lobbies",
 {
 method:"POST",
-body:JSON.stringify({
+
+body:
+JSON.stringify({
 
 name:
-document
-.getElementById("lobbyName")
-.value,
+document.getElementById(
+"lobbyName"
+).value,
 
 time:
-document
-.getElementById("lobbyTime")
-.value,
+document.getElementById(
+"lobbyTime"
+).value,
 
 fee:
-document
-.getElementById("lobbyFee")
-.value,
+document.getElementById(
+"lobbyFee"
+).value,
 
 maxTeams:
 Number(
-document
-.getElementById("lobbyMaxTeams")
-.value
+document.getElementById(
+"lobbyMaxTeams"
+).value
 )
 
 })
 }
 );
 
+
 showMessage(
 "lobbyMessage",
 "Lobby created successfully."
 );
 
+
 e.target.reset();
 
-document
-.getElementById("lobbyMaxTeams")
-.value=12;
+
+document.getElementById(
+"lobbyMaxTeams"
+).value =
+12;
+
 
 await loadAdminLobbies();
 await loadStats();
 await loadScoreLobbyOptions();
 await loadRegistrationCategories();
+
 
 }catch(error){
 
@@ -2299,28 +2794,40 @@ ADMIN LOBBIES
 
 async function loadAdminLobbies(){
 
-const target=
-document.getElementById("adminLobbies");
+const target =
+document.getElementById(
+"adminLobbies"
+);
+
 
 try{
 
-const lobbies=
-await api("/api/lobbies");
+const lobbies =
+await api(
+"/api/lobbies"
+);
 
-cachedLobbies=
-Array.isArray(lobbies)?lobbies:[];
+
+cachedLobbies =
+Array.isArray(lobbies)
+? lobbies
+: [];
+
 
 if(!lobbies.length){
 
-target.innerHTML=
+target.innerHTML =
 '<p class="muted">No lobbies created yet.</p>';
 
 return;
 
 }
 
-target.innerHTML=
-lobbies.map(lobby=>`
+
+target.innerHTML =
+lobbies
+.map(
+lobby=>`
 
 <div class="card">
 
@@ -2331,36 +2838,58 @@ lobby.status==="open"
 }">
 
 ${String(
-lobby.status||""
+lobby.status || ""
 ).toUpperCase()}
 
 </span>
 
+
 <h3>
-${escapeHTML(lobby.name)}
+${escapeHTML(
+lobby.name
+)}
 </h3>
 
-<p>
-Time: ${escapeHTML(lobby.time)}
-</p>
 
 <p>
-Fee: ${escapeHTML(lobby.fee)}
+Time:
+${escapeHTML(
+lobby.time
+)}
 </p>
+
+
+<p>
+Fee:
+${escapeHTML(
+lobby.fee
+)}
+</p>
+
 
 <p>
 Teams:
-${Number(lobby.confirmed||0)}/
-${Number(lobby.max_teams||0)}
+${Number(
+lobby.confirmed || 0
+)}
+/
+${Number(
+lobby.max_teams || 0
+)}
 </p>
+
 
 <br>
 
-<div style="
+
+<div
+style="
 display:flex;
 gap:8px;
 flex-wrap:wrap
-">
+"
+>
+
 
 <button
 class="btn small ${
@@ -2368,11 +2897,11 @@ lobby.status==="open"
 ?"danger"
 :"success"
 }"
-onclick="
-toggleLobby(
+onclick="toggleLobby(
 ${Number(lobby.id)},
 '${escapeAttribute(lobby.status)}'
-)">
+)"
+>
 
 ${
 lobby.status==="open"
@@ -2382,30 +2911,37 @@ lobby.status==="open"
 
 </button>
 
+
 <button
 class="btn small danger-outline"
-onclick="
-deleteLobby(
+onclick="deleteLobby(
 ${Number(lobby.id)},
 '${escapeAttribute(lobby.name)}'
-)">
-
+)"
+>
 Delete Scrim
-
 </button>
 
-</div>
 
 </div>
 
-`).join("");
+</div>
+
+`
+)
+.join("");
+
 
 }catch(error){
 
-target.innerHTML=
-`<p class="muted">
-${escapeHTML(error.message)}
-</p>`;
+target.innerHTML =
+`
+<p class="muted">
+${escapeHTML(
+error.message
+)}
+</p>
+`;
 
 }
 
@@ -2413,10 +2949,13 @@ ${escapeHTML(error.message)}
 
 
 /* =====================================================
-TOGGLE LOBBY
+TOGGLE
 ===================================================== */
 
-async function toggleLobby(id,currentStatus){
+async function toggleLobby(
+id,
+currentStatus
+){
 
 try{
 
@@ -2424,7 +2963,9 @@ await api(
 `/api/lobbies/${id}`,
 {
 method:"PATCH",
-body:JSON.stringify({
+
+body:
+JSON.stringify({
 
 status:
 currentStatus==="open"
@@ -2432,18 +2973,27 @@ currentStatus==="open"
 :"open"
 
 })
+
 }
 );
+
 
 await loadAdminLobbies();
 await loadStats();
 await loadRegistrationCategories();
-await loadPublicLobbies("homeLobbies");
-await loadPublicLobbies("scrimList");
+await loadPublicLobbies(
+"homeLobbies"
+);
+await loadPublicLobbies(
+"scrimList"
+);
+
 
 }catch(error){
 
-alert(error.message);
+alert(
+error.message
+);
 
 }
 
@@ -2451,17 +3001,22 @@ alert(error.message);
 
 
 /* =====================================================
-DELETE LOBBY
+DELETE
 ===================================================== */
 
-async function deleteLobby(id,name){
+async function deleteLobby(
+id,
+name
+){
 
-const ok=
+const ok =
 confirm(
-`Delete "${name}" permanently?\n\nAll registrations assigned to this lobby and all scores belonging to this lobby will also be deleted.`
+`Delete "${name}" permanently?\n\nThis deletes its registrations and scores.`
 );
 
+
 if(!ok)return;
+
 
 try{
 
@@ -2472,22 +3027,31 @@ method:"DELETE"
 }
 );
 
+
 alert(
 "Scrim deleted successfully."
 );
+
 
 await loadAdminLobbies();
 await loadRegistrations();
 await loadStats();
 await loadScoreLobbyOptions();
 await loadRegistrationCategories();
-await loadPublicLobbies("homeLobbies");
-await loadPublicLobbies("scrimList");
+await loadPublicLobbies(
+"homeLobbies"
+);
+await loadPublicLobbies(
+"scrimList"
+);
 await loadLeaderboardLobbyOptions();
+
 
 }catch(error){
 
-alert(error.message);
+alert(
+error.message
+);
 
 }
 
@@ -2502,13 +3066,19 @@ async function getAdminLobbies(){
 
 try{
 
-const lobbies=
-await api("/api/lobbies");
+const lobbies =
+await api(
+"/api/lobbies"
+);
 
-cachedLobbies=
-Array.isArray(lobbies)?lobbies:[];
+cachedLobbies =
+Array.isArray(lobbies)
+? lobbies
+: [];
+
 
 return cachedLobbies;
+
 
 }catch(error){
 
@@ -2527,27 +3097,43 @@ REGISTRATIONS
 
 async function loadRegistrations(){
 
-const tbody=
+const tbody =
 document.getElementById(
 "registrationTable"
 );
 
+
 try{
 
-const rows=
-await api("/api/registrations");
+const rows =
+await api(
+"/api/registrations"
+);
 
-if(!Array.isArray(rows)||!rows.length){
 
-tbody.innerHTML=`
+const activeRows =
+(Array.isArray(rows)
+? rows
+: [])
+.filter(
+row =>
+row.status !==
+"rejected"
+);
+
+
+if(!activeRows.length){
+
+tbody.innerHTML =
+`
 
 <tr>
 
-<td colspan="7"
-class="registration-empty">
-
-No registrations yet.
-
+<td
+colspan="7"
+class="registration-empty"
+>
+No active registrations.
 </td>
 
 </tr>
@@ -2558,115 +3144,169 @@ return;
 
 }
 
-const lobbies=
+
+const lobbies =
 await getAdminLobbies();
 
-tbody.innerHTML=
-rows.map(row=>{
 
-const selectedLobby=
-lobbies.find(
-l=>
-Number(l.id)===
-Number(row.lobby_id)
+tbody.innerHTML =
+activeRows
+.map(
+row=>{
+
+const selectedLobby =
+row.lobby_id || "";
+
+
+const lobbyOptions =
+lobbies
+.map(
+lobby=>{
+
+const full =
+Number(
+lobby.confirmed || 0
+) >=
+Number(
+lobby.max_teams || 0
 );
 
-let statusClass="pending";
 
-if(row.status==="confirmed")
-statusClass="confirmed";
+const selected =
+String(
+selectedLobby
+) ===
+String(
+lobby.id
+);
 
-if(row.status==="rejected")
-statusClass="rejected";
 
-return`
+return `
+
+<option
+value="${Number(lobby.id)}"
+${selected?"selected":""}
+${lobby.status!=="open"&&!selected?"disabled":""}
+>
+
+${escapeHTML(
+lobby.name
+)}
+${
+full&&!selected
+?" — FULL"
+:""
+}
+
+</option>
+
+`;
+
+}
+)
+.join("");
+
+
+return `
 
 <tr>
 
 <td>
-${escapeHTML(row.id)}
+${escapeHTML(
+row.id
+)}
 </td>
 
+
 <td>
-${escapeHTML(row.ref)}
+${escapeHTML(
+row.ref
+)}
 </td>
 
-<td>
-<strong>
-${escapeHTML(row.team)}
-</strong>
-</td>
 
 <td>
-${escapeHTML(row.captain)}
-</td>
-
-<td>
-
 <strong>
 ${escapeHTML(
-selectedLobby
-?selectedLobby.name
-:"Not assigned"
+row.team
 )}
 </strong>
+</td>
+
+
+<td>
+${escapeHTML(
+row.captain
+)}
+</td>
+
+
+<td>
+
+${escapeHTML(
+row.time || ""
+)}
 
 <br>
 
 <small class="muted">
-${escapeHTML(row.time||"—")}
-&nbsp; | &nbsp;
-${escapeHTML(row.fee||"—")}
+${escapeHTML(
+row.fee || ""
+)}
 </small>
 
 </td>
 
+
 <td>
 
-<span class="badge ${statusClass}">
-${escapeHTML(
-String(row.status||"pending")
-.toUpperCase()
-)}
-</span>
+<div
+class="assignment-box"
+>
+
+<select
+id="assignLobby-${Number(row.id)}"
+>
+
+<option value="">
+Select lobby
+</option>
+
+${lobbyOptions}
+
+</select>
+
+</div>
 
 </td>
 
+
 <td>
 
-<div class="registration-actions">
+<div
+class="registration-actions"
+>
 
-${
-row.status==="pending"
-?
-`
 
 <button
 class="btn small success"
-onclick="
-confirmRegistration(
+onclick="confirmRegistration(
 ${Number(row.id)}
-)">
+)"
+>
 Accept
 </button>
 
+
 <button
 class="btn small danger"
-onclick="
-rejectRegistration(
+onclick="rejectRegistration(
 ${Number(row.id)}
-)">
+)"
+>
 Reject
 </button>
 
-`
-:
-`
-<span class="muted">
-No action
-</span>
-`
-}
 
 </div>
 
@@ -2676,18 +3316,26 @@ No action
 
 `;
 
-}).join("");
+}
+)
+.join("");
+
 
 }catch(error){
 
-tbody.innerHTML=`
+tbody.innerHTML =
+`
 
 <tr>
 
-<td colspan="7"
-class="registration-empty">
+<td
+colspan="7"
+class="registration-empty"
+>
 
-${escapeHTML(error.message)}
+${escapeHTML(
+error.message
+)}
 
 </td>
 
@@ -2701,94 +3349,88 @@ ${escapeHTML(error.message)}
 
 
 /* =====================================================
-CONFIRM REGISTRATION
+CONFIRM
 ===================================================== */
 
-async function confirmRegistration(id){
+async function confirmRegistration(
+id
+){
 
-const rows=
-await api("/api/registrations");
-
-const row=
-rows.find(
-r=>Number(r.id)===Number(id)
+const select =
+document.getElementById(
+`assignLobby-${id}`
 );
 
-if(!row){
 
-alert("Registration not found.");
-
-return;
-
-}
-
-if(row.status!=="pending"){
+if(!select){
 
 alert(
-`This registration is already ${row.status}.`
+"Lobby selector not found."
 );
 
 return;
 
 }
 
-const lobby=
-cachedLobbies.find(
-l=>
-Number(l.id)===
-Number(row.lobby_id)
-);
 
-if(!lobby){
+const lobbyId =
+select.value;
+
+
+if(!lobbyId){
 
 alert(
-"This registration does not have a valid selected scrim. Refresh registrations and check the lobby."
+"Please select a lobby before accepting."
 );
 
 return;
 
 }
 
-const full=
-Number(lobby.confirmed||0)>=
-Number(lobby.max_teams||0);
-
-if(full){
-
-alert(
-"That scrim is already full."
-);
-
-return;
-
-}
 
 try{
 
+const data =
 await api(
 `/api/registrations/${id}`,
 {
 method:"PATCH",
-body:JSON.stringify({
-status:"confirmed"
+
+body:
+JSON.stringify({
+
+status:"confirmed",
+
+lobbyId:
+Number(lobbyId)
+
 })
+
 }
 );
 
+
 alert(
-"Registration accepted successfully."
+`Registration confirmed and assigned to "${data.lobby_name}".`
 );
+
 
 await loadRegistrations();
 await loadStats();
 await loadAdminLobbies();
-await loadPublicLobbies("homeLobbies");
-await loadPublicLobbies("scrimList");
+await loadScoreLobbyOptions();
+await loadPublicLobbies(
+"homeLobbies"
+);
+await loadPublicLobbies(
+"scrimList"
+);
+
 
 }catch(error){
 
 alert(
-"Could not accept registration: "+
+"Could not accept registration: " +
 error.message
 );
 
@@ -2798,17 +3440,21 @@ error.message
 
 
 /* =====================================================
-REJECT REGISTRATION
+REJECT
 ===================================================== */
 
-async function rejectRegistration(id){
+async function rejectRegistration(
+id
+){
 
-const ok=
+const ok =
 confirm(
 "Reject this registration?"
 );
 
+
 if(!ok)return;
+
 
 try{
 
@@ -2816,23 +3462,29 @@ await api(
 `/api/registrations/${id}`,
 {
 method:"PATCH",
-body:JSON.stringify({
+
+body:
+JSON.stringify({
 status:"rejected"
 })
+
 }
 );
+
 
 alert(
 "Registration rejected."
 );
 
+
 await loadRegistrations();
 await loadStats();
+
 
 }catch(error){
 
 alert(
-"Could not reject registration: "+
+"Could not reject registration: " +
 error.message
 );
 
@@ -2847,26 +3499,44 @@ SCORE LOBBY OPTIONS
 
 async function loadScoreLobbyOptions(){
 
-const select=
-document.getElementById("scoreLobby");
+const select =
+document.getElementById(
+"scoreLobby"
+);
+
 
 try{
 
-const l=
-await api("/api/lobbies");
+const lobbies =
+await api(
+"/api/lobbies"
+);
 
-select.innerHTML=
-'<option value="">Select lobby</option>'+
-l.map(x=>`
+
+select.innerHTML =
+`
+<option value="">
+Select lobby
+</option>
+` +
+lobbies
+.map(
+x=>`
 
 <option
-value="${escapeAttribute(x.name)}">
+value="${escapeAttribute(x.name)}"
+>
 
-${escapeHTML(x.name)}
+${escapeHTML(
+x.name
+)}
 
 </option>
 
-`).join("");
+`
+)
+.join("");
+
 
 }catch(error){
 
@@ -2878,21 +3548,35 @@ console.error(error);
 
 
 /* =====================================================
-SCORE MATCH SELECT
+MATCH SELECT
 ===================================================== */
 
-function selectScoreMatch(match,button){
+function selectScoreMatch(
+match,
+button
+){
 
-currentScoreMatch=match;
+currentScoreMatch =
+match;
+
 
 document
-.querySelectorAll(".match-tabs button")
+.querySelectorAll(
+".match-tabs button"
+)
 .forEach(
-b=>b.classList.remove("active")
+b =>
+b.classList.remove(
+"active"
+)
 );
 
+
 if(button)
-button.classList.add("active");
+button.classList.add(
+"active"
+);
+
 
 renderScoreEntry();
 
@@ -2905,46 +3589,68 @@ SCORE ENTRY
 
 async function renderScoreEntry(){
 
-const body=
+const body =
 document.getElementById(
 "scoreEntryBody"
 );
 
-const lobby=
+
+const lobby =
 document.getElementById(
 "scoreLobby"
 ).value;
 
+
 if(!lobby){
 
-body.innerHTML=
-'<p class="muted">Select a lobby first.</p>';
+body.innerHTML =
+`
+<p class="muted">
+Select a lobby first.
+</p>
+`;
 
 return;
 
 }
 
-body.innerHTML=
-'<p class="muted">Loading teams...</p>';
+
+body.innerHTML =
+`
+<p class="muted">
+Loading 12 teams...
+</p>
+`;
+
 
 try{
 
-const teams=
+
+const teams =
 await api(
-`/api/leaderboard/teams?lobby=${encodeURIComponent(lobby)}`
+`/api/leaderboard/teams?lobby=${encodeURIComponent(
+lobby
+)}`
 );
 
-if(teams.length!==12){
 
-body.innerHTML=`
+if(teams.length !== 12){
+
+body.innerHTML =
+`
 
 <div class="message show error">
 
 This lobby currently has
-${teams.length}/12 confirmed teams.
+<strong>
+${teams.length}/12
+</strong>
+confirmed teams.
 
-Exactly 12 teams are required
-to enter match results.
+<br><br>
+
+Exactly 12 confirmed teams are required
+before match results can be entered.
 
 </div>
 
@@ -2954,25 +3660,69 @@ return;
 
 }
 
-let existing=[];
+
+/* ---------------------------------------------
+   LOAD EXISTING MATCH
+--------------------------------------------- */
+
+let existing = [];
+
 
 try{
 
-existing=
+existing =
 await api(
-`/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${currentScoreMatch}`
+`/api/leaderboard/match?lobby=${encodeURIComponent(
+lobby
+)}&match=${currentScoreMatch}`
 );
 
-}catch(e){}
+}catch(error){
 
-const map=
+existing = [];
+
+}
+
+
+const map =
 new Map(
 existing.map(
-r=>[r.team,r]
+r =>
+[
+String(r.team)
+.trim()
+.toLowerCase(),
+r
+]
 )
 );
 
-body.innerHTML=`
+
+/* ---------------------------------------------
+   CREATE SCORE TABLE
+--------------------------------------------- */
+
+body.innerHTML =
+`
+
+<div class="info-box">
+
+<strong>Match ${currentScoreMatch}</strong>
+
+<br>
+
+Enter only the team's
+<strong>Position</strong>
+and
+<strong>Kills</strong>.
+
+<br>
+
+Position 1 automatically receives
+<strong>1 Booyah</strong>.
+
+</div>
+
 
 <div class="table-wrap">
 
@@ -2983,27 +3733,46 @@ body.innerHTML=`
 <tr>
 
 <th>Team</th>
+
 <th>Position</th>
+
 <th>Kills</th>
 
 </tr>
 
 </thead>
 
+
 <tbody>
 
-${teams.map((t,i)=>{
+${teams
+.map(
+(t,i)=>{
 
-const old=
-map.get(t.team);
+const key =
+String(
+t.team
+)
+.trim()
+.toLowerCase();
 
-return`
+
+const old =
+map.get(key);
+
+
+return `
 
 <tr>
 
 <td>
-${escapeHTML(t.team)}
+<strong>
+${escapeHTML(
+t.team
+)}
+</strong>
 </td>
+
 
 <td>
 
@@ -3012,27 +3781,46 @@ type="number"
 min="1"
 max="12"
 class="score-position"
-data-team="${escapeAttribute(t.team)}"
-value="${old?old.position:i+1}">
+data-team="${escapeAttribute(
+t.team
+)}"
+value="${
+old
+?old.position
+:i+1
+}"
+>
 
 </td>
+
 
 <td>
 
 <input
 type="number"
 min="0"
+step="1"
 class="score-kills"
-data-team="${escapeAttribute(t.team)}"
-value="${old?old.kills:0}">
+data-team="${escapeAttribute(
+t.team
+)}"
+value="${
+old
+?old.kills
+:0
+}"
+>
 
 </td>
+
 
 </tr>
 
 `;
 
-}).join("")}
+}
+)
+.join("")}
 
 </tbody>
 
@@ -3040,28 +3828,20 @@ value="${old?old.kills:0}">
 
 </div>
 
+
 <br>
+
 
 <button
 class="btn success"
-onclick="saveCurrentMatch()">
+onclick="saveCurrentMatch()"
+>
 
 Save Match ${currentScoreMatch}
 
 </button>
 
 `;
-
-}catch(error){
-
-body.innerHTML=
-`
-<div class="message show error">
-${escapeHTML(error.message)}
-</div>
-`;
-
-}
 
 }
 
@@ -3071,7 +3851,9 @@ SCORE LOBBY CHANGE
 ===================================================== */
 
 document
-.getElementById("scoreLobby")
+.getElementById(
+"scoreLobby"
+)
 .addEventListener(
 "change",
 renderScoreEntry
@@ -3079,15 +3861,16 @@ renderScoreEntry
 
 
 /* =====================================================
-SAVE MATCH
+SAVE CURRENT MATCH
 ===================================================== */
 
 async function saveCurrentMatch(){
 
-const lobby=
-document
-.getElementById("scoreLobby")
-.value;
+const lobby =
+document.getElementById(
+"scoreLobby"
+).value;
+
 
 if(!lobby){
 
@@ -3099,42 +3882,124 @@ return;
 
 }
 
-const entries=[];
+
+const entries = [];
+
 
 document
-.querySelectorAll(".score-position")
-.forEach(input=>{
+.querySelectorAll(
+".score-position"
+)
+.forEach(
+input=>{
 
-const team=
+const team =
 input.dataset.team;
 
-const k=
+
+const killInput =
 document.querySelector(
 `.score-kills[data-team="${CSS.escape(team)}"]`
 );
 
+
 entries.push({
+
+team:
 
 team,
 
 position:
-Number(input.value),
+Number(
+input.value
+),
 
 kills:
-Number(k.value)||0
+Number(
+killInput.value
+)
 
 });
 
-});
+}
+);
+
+
+/* ---------------------------------------------
+   CLIENT SIDE VALIDATION
+--------------------------------------------- */
+
+const positions =
+entries.map(
+x =>
+x.position
+);
+
+
+const uniquePositions =
+new Set(
+positions
+);
+
+
+if(
+uniquePositions.size !== 12
+){
+
+alert(
+"Every position from 1 to 12 must be used exactly once."
+);
+
+return;
+
+}
+
+
+if(
+positions.some(
+x =>
+!Number.isInteger(x) ||
+x < 1 ||
+x > 12
+)
+){
+
+alert(
+"Positions must be whole numbers from 1 to 12."
+);
+
+return;
+
+}
+
+
+if(
+entries.some(
+x =>
+!Number.isInteger(x.kills) ||
+x.kills < 0
+)
+){
+
+alert(
+"Kills must be whole numbers of 0 or more."
+);
+
+return;
+
+}
+
 
 try{
 
+const data =
 await api(
 "/api/leaderboard/match",
 {
 method:"POST",
 
-body:JSON.stringify({
+body:
+JSON.stringify({
 
 lobby,
 
@@ -3148,15 +4013,27 @@ entries
 }
 );
 
+
 alert(
 `Match ${currentScoreMatch} saved successfully.`
 );
 
+
 renderScoreEntry();
+
+
+/*
+If admin is also viewing the public
+leaderboard in another tab/device,
+that page will automatically refresh.
+*/
+
 
 }catch(error){
 
-alert(error.message);
+alert(
+error.message
+);
 
 }
 
@@ -3169,30 +4046,46 @@ PUBLIC LEADERBOARD OPTIONS
 
 async function loadLeaderboardLobbyOptions(){
 
-const select=
+const select =
 document.getElementById(
 "publicLobbySelect"
 );
 
+
 try{
 
-const l=
+const lobbies =
 await api(
 "/api/public/lobbies"
 );
 
-select.innerHTML=
-'<option value="">Select a lobby</option>'+
-l.map(x=>`
+
+select.innerHTML =
+`
+<option value="">
+Select a scrim
+</option>
+` +
+lobbies
+.map(
+x=>`
 
 <option
-value="${escapeAttribute(x.name)}">
+value="${escapeAttribute(
+x.name
+)}"
+>
 
-${escapeHTML(x.name)}
+${escapeHTML(
+x.name
+)}
 
 </option>
 
-`).join("");
+`
+)
+.join("");
+
 
 }catch(error){
 
@@ -3207,83 +4100,89 @@ console.error(error);
 PUBLIC LEADERBOARD
 ===================================================== */
 
-async function loadPublicLeaderboard(){
+async function loadPublicLeaderboard(
+silent=false
+){
 
-const lobby=
-document
-.getElementById(
+const lobby =
+document.getElementById(
 "publicLobbySelect"
-)
-.value;
+).value;
 
-const match=
-document
-.getElementById(
-"publicMatchSelect"
-)
-.value;
 
-const target=
-document
-.getElementById(
+const target =
+document.getElementById(
 "publicLeaderboard"
 );
 
+
 if(!lobby){
 
-target.innerHTML=`
+if(!silent){
+
+target.innerHTML =
+`
 
 <div class="message show error">
-Please select a lobby.
+Please select a scrim.
 </div>
 
 `;
+
+}
 
 return;
 
 }
 
+
 try{
 
-const rows=
+const data =
 await api(
-
-match==="overall"
-
-?`/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
-
-:`/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
-
+`/api/public-leaderboard?lobby=${encodeURIComponent(
+lobby
+)}`
 );
 
-if(match==="overall"){
+
+const rows =
+Array.isArray(data.rows)
+? data.rows
+: [];
+
 
 renderOverallLeaderboard(
 target,
-rows
-);
-
-}else{
-
-renderMatchLeaderboard(
-target,
 rows,
-match
+data.lobby
 );
 
-}
+
+document.getElementById(
+"liveUpdateText"
+).textContent =
+"Automatically updating every 5 seconds.";
+
 
 }catch(error){
 
-target.innerHTML=`
+if(!silent){
+
+target.innerHTML =
+`
 
 <div class="message show error">
 
-${escapeHTML(error.message)}
+${escapeHTML(
+error.message
+)}
 
 </div>
 
 `;
+
+}
 
 }
 
@@ -3291,16 +4190,39 @@ ${escapeHTML(error.message)}
 
 
 /* =====================================================
-OVERALL LEADERBOARD
+RENDER OVERALL LEADERBOARD
 ===================================================== */
 
-function renderOverallLeaderboard(target,rows){
+function renderOverallLeaderboard(
+target,
+rows,
+lobby
+){
 
 if(!rows.length){
 
-target.innerHTML=`
+target.innerHTML =
+`
 
 <div class="card">
+
+<div class="leaderboard-header">
+
+<h3>
+${escapeHTML(
+lobby?.name ||
+"Leaderboard"
+)}
+</h3>
+
+<span class="live-text">
+<span class="live-dot"></span>
+LIVE
+</span>
+
+</div>
+
+<br>
 
 <p class="muted">
 No match results have been entered yet.
@@ -3314,83 +4236,135 @@ return;
 
 }
 
-target.innerHTML=`
+
+target.innerHTML =
+`
 
 <div class="card">
 
+
+<div class="leaderboard-header">
+
 <h3>
-Overall Leaderboard
+${escapeHTML(
+lobby?.name ||
+"Overall Leaderboard"
+)}
 </h3>
+
+<span class="live-text">
+<span class="live-dot"></span>
+LIVE
+</span>
+
+</div>
+
 
 <br>
 
+
 <div class="table-wrap">
 
-<table>
+<table
+class="public-leaderboard-table"
+>
 
 <thead>
 
 <tr>
 
-<th>Rank</th>
-<th>Team</th>
-<th>Matches</th>
-<th>Booyahs</th>
-<th>Placement</th>
-<th>Kill Points</th>
-<th>Total</th>
+<th>
+Rank
+</th>
+
+<th>
+Team
+</th>
+
+<th>
+Booyahs
+</th>
+
+<th>
+Kill Points
+</th>
+
+<th>
+Placement Points
+</th>
+
+<th>
+Total Points
+</th>
 
 </tr>
 
 </thead>
 
+
 <tbody>
 
-${rows.map(r=>`
+${rows
+.map(
+r=>`
 
 <tr>
 
-<td class="rank">
-#${escapeHTML(r.position)}
+<td class="public-rank">
+#${escapeHTML(
+r.position
+)}
 </td>
+
 
 <td>
 <strong>
-${escapeHTML(r.team)}
+${escapeHTML(
+r.team
+)}
 </strong>
 </td>
 
-<td>
-${escapeHTML(r.matchesPlayed)}
-</td>
 
 <td>
-${escapeHTML(r.booyahs)}
+${escapeHTML(
+r.booyahs
+)}
 </td>
 
-<td>
-${escapeHTML(r.placementPoints)}
-</td>
 
 <td>
-${escapeHTML(r.killPoints)}
+${escapeHTML(
+r.killPoints
+)}
 </td>
 
+
 <td>
-<strong>
-${escapeHTML(r.totalPoints)}
-</strong>
+${escapeHTML(
+r.placementPoints
+)}
+</td>
+
+
+<td class="total-points">
+${escapeHTML(
+r.totalPoints
+)}
 </td>
 
 </tr>
 
-`).join("")}
+`
+)
+.join("")}
 
 </tbody>
 
 </table>
 
 </div>
+
 
 </div>
 
@@ -3400,112 +4374,68 @@ ${escapeHTML(r.totalPoints)}
 
 
 /* =====================================================
-MATCH LEADERBOARD
+LIVE AUTO REFRESH
 ===================================================== */
 
-function renderMatchLeaderboard(
-target,
-rows,
-match
+function startLeaderboardAutoRefresh(){
+
+stopLeaderboardAutoRefresh();
+
+
+leaderboardRefreshTimer =
+setInterval(
+async()=>{
+
+const page =
+document.getElementById(
+"leaderboard"
+);
+
+
+if(
+page &&
+page.classList.contains(
+"active"
+)
 ){
 
-if(!rows.length){
+const lobby =
+document.getElementById(
+"publicLobbySelect"
+).value;
 
-target.innerHTML=`
 
-<div class="card">
+if(lobby){
 
-<p class="muted">
-
-No results have been entered
-for Match ${escapeHTML(match)}.
-
-</p>
-
-</div>
-
-`;
-
-return;
+await loadPublicLeaderboard(
+true
+);
 
 }
 
-target.innerHTML=`
+}
 
-<div class="card">
+},
+5000
+);
 
-<h3>
-Match ${escapeHTML(match)} Results
-</h3>
+}
 
-<br>
 
-<div class="table-wrap">
+function stopLeaderboardAutoRefresh(){
 
-<table>
+if(
+leaderboardRefreshTimer
+){
 
-<thead>
+clearInterval(
+leaderboardRefreshTimer
+);
 
-<tr>
+leaderboardRefreshTimer =
+null;
 
-<th>Position</th>
-<th>Team</th>
-<th>Kills</th>
-<th>Placement Points</th>
-<th>Kill Points</th>
-<th>Total</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-${rows.map(r=>`
-
-<tr>
-
-<td class="rank">
-${escapeHTML(r.position)}
-</td>
-
-<td>
-<strong>
-${escapeHTML(r.team)}
-</strong>
-</td>
-
-<td>
-${escapeHTML(r.kills)}
-</td>
-
-<td>
-${escapeHTML(r.placement_points)}
-</td>
-
-<td>
-${escapeHTML(r.kill_points)}
-</td>
-
-<td>
-<strong>
-${escapeHTML(r.total_points)}
-</strong>
-</td>
-
-</tr>
-
-`).join("")}
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-`;
+}
 
 }
 
@@ -3516,14 +4446,37 @@ SECURITY
 
 function escapeHTML(v){
 
-return String(v??"")
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
+return String(
+v ?? ""
+)
+
+.replaceAll(
+"&",
+"&amp;"
+)
+
+.replaceAll(
+"<",
+"&lt;"
+)
+
+.replaceAll(
+">",
+"&gt;"
+)
+
+.replaceAll(
+'"',
+"&quot;"
+)
+
+.replaceAll(
+"'",
+"&#039;"
+);
 
 }
+
 
 function escapeAttribute(v){
 
@@ -3552,4 +4505,4 @@ await loadRegistrationCategories();
 </script>
 
 </body>
-</html> 
+</html>
