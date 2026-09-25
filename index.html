@@ -7,229 +7,373 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,Helvetica,sans-serif;background:#0b0f19;color:#fff;min-height:100vh}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0f19;
+color:#fff;
+min-height:100vh
+}
+
 button,input,select{font:inherit}
 button{cursor:pointer}
-.container{width:min(1200px,94%);margin:auto}
 
-header{background:#111827;border-bottom:1px solid #263044;position:sticky;top:0;z-index:100}
-.nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.logo{font-size:25px;font-weight:800;color:#7c3aed}
+.container{
+width:min(1200px,94%);
+margin:auto
+}
+
+header{
+background:#111827;
+border-bottom:1px solid #263044;
+position:sticky;
+top:0;
+z-index:100
+}
+
+.nav{
+min-height:70px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px
+}
+
+.logo{
+font-size:25px;
+font-weight:800;
+color:#7c3aed
+}
+
 .logo span{color:#fff}
-nav{display:flex;gap:8px;flex-wrap:wrap}
-nav button{border:0;background:transparent;color:#cbd5e1;padding:10px 13px;border-radius:8px}
-nav button:hover{background:#1e293b;color:#fff}
+
+nav{
+display:flex;
+gap:8px;
+flex-wrap:wrap
+}
+
+nav button{
+border:0;
+background:transparent;
+color:#cbd5e1;
+padding:10px 13px;
+border-radius:8px
+}
+
+nav button:hover{
+background:#1e293b;
+color:#fff
+}
 
 main{padding:35px 0 60px}
+
 .page{display:none}
 .page.active{display:block}
 
-.hero{text-align:center;padding:50px 15px}
-.hero h1{font-size:clamp(36px,7vw,70px);margin-bottom:15px}
+.hero{
+text-align:center;
+padding:50px 15px
+}
+
+.hero h1{
+font-size:clamp(36px,7vw,70px);
+margin-bottom:15px
+}
+
 .hero h1 span{color:#8b5cf6}
-.hero p{color:#94a3b8;max-width:650px;margin:auto;line-height:1.7}
 
-.hero-buttons{margin-top:28px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero p{
+color:#94a3b8;
+max-width:650px;
+margin:auto;
+line-height:1.7
+}
 
-.btn{border:0;border-radius:9px;padding:12px 18px;font-weight:700;background:#7c3aed;color:#fff}
+.hero-buttons{
+margin-top:28px;
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:wrap
+}
+
+.btn{
+border:0;
+border-radius:9px;
+padding:12px 18px;
+font-weight:700;
+background:#7c3aed;
+color:#fff
+}
+
 .btn:hover{background:#6d28d9}
+
 .btn.secondary{background:#1e293b}
 .btn.success{background:#059669}
 .btn.danger{background:#dc2626}
-.btn.small{padding:8px 12px;font-size:13px}
 
-.section-title{margin-bottom:20px;font-size:28px}
+.btn.small{
+padding:8px 12px;
+font-size:13px
+}
+
+.section-title{
+margin-bottom:20px;
+font-size:28px
+}
+
 .muted{color:#94a3b8}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:18px
+}
 
 .card{
-  background:#111827;
-  border:1px solid #263044;
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:18px
+background:#111827;
+border:1px solid #263044;
+border-radius:14px;
+padding:20px;
+margin-bottom:18px
 }
 
 .card h3{margin-bottom:12px}
-.card p{color:#cbd5e1;margin:7px 0}
+
+.card p{
+color:#cbd5e1;
+margin:7px 0
+}
 
 .lobby-card{position:relative}
 
 .badge{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:700;
-  background:#334155;
-  margin-bottom:10px
+display:inline-block;
+padding:5px 9px;
+border-radius:999px;
+font-size:12px;
+font-weight:700;
+background:#334155;
+margin-bottom:10px
 }
 
-.badge.open{background:#064e3b;color:#6ee7b7}
-.badge.closed{background:#450a0a;color:#fca5a5}
+.badge.open{
+background:#064e3b;
+color:#6ee7b7
+}
+
+.badge.closed{
+background:#450a0a;
+color:#fca5a5
+}
 
 .form-group{margin-bottom:15px}
 
 label{
-  display:block;
-  margin-bottom:7px;
-  color:#cbd5e1;
-  font-size:14px
+display:block;
+margin-bottom:7px;
+color:#cbd5e1;
+font-size:14px
 }
 
 input,select{
-  width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #334155;
-  background:#0f172a;
-  color:#fff;
-  outline:none
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #334155;
+background:#0f172a;
+color:#fff;
+outline:none
 }
 
-input:focus,select:focus{border-color:#8b5cf6}
+input:focus,select:focus{
+border-color:#8b5cf6
+}
+
+input[readonly],
+input:disabled,
+select:disabled{
+opacity:.75;
+cursor:not-allowed;
+background:#111827
+}
 
 .form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px
 }
 
+.full{grid-column:1/-1}
+
 .message{
-  padding:12px;
-  border-radius:8px;
-  margin:12px 0;
-  display:none
+padding:12px;
+border-radius:8px;
+margin:12px 0;
+display:none
 }
 
 .message.show{display:block}
-.message.success{background:#064e3b;color:#a7f3d0}
-.message.error{background:#450a0a;color:#fecaca}
+
+.message.success{
+background:#064e3b;
+color:#a7f3d0
+}
+
+.message.error{
+background:#450a0a;
+color:#fecaca
+}
 
 .stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-  margin-bottom:25px
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-bottom:25px
 }
 
 .stat{
-  background:#111827;
-  border:1px solid #263044;
-  padding:22px;
-  border-radius:13px
+background:#111827;
+border:1px solid #263044;
+padding:22px;
+border-radius:13px
 }
 
 .stat-number{
-  font-size:32px;
-  font-weight:800;
-  margin-top:5px;
-  color:#a78bfa
+font-size:32px;
+font-weight:800;
+margin-top:5px;
+color:#a78bfa
 }
 
 .table-wrap{overflow-x:auto}
 
 table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px
+width:100%;
+border-collapse:collapse;
+min-width:850px
 }
 
 th,td{
-  padding:12px;
-  border-bottom:1px solid #263044;
-  text-align:left
+padding:12px;
+border-bottom:1px solid #263044;
+text-align:left
 }
 
-th{background:#172033;color:#c4b5fd}
+th{
+background:#172033;
+color:#c4b5fd
+}
+
 td{color:#dbeafe}
 
-.rank{font-weight:800;font-size:18px}
+.rank{
+font-weight:800;
+font-size:18px
+}
 
 .admin-box{
-  max-width:600px;
-  margin:30px auto
+max-width:600px;
+margin:30px auto
 }
 
 .hidden{display:none!important}
 
 .top-actions{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:20px
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:20px
 }
 
 .match-tabs{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:20px
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-bottom:20px
 }
 
 .match-tabs button{
-  border:1px solid #334155;
-  background:#111827;
-  color:#fff;
-  padding:9px 13px;
-  border-radius:7px
+border:1px solid #334155;
+background:#111827;
+color:#fff;
+padding:9px 13px;
+border-radius:7px
 }
 
 .match-tabs button.active{
-  background:#7c3aed;
-  border-color:#7c3aed
+background:#7c3aed;
+border-color:#7c3aed
 }
 
 .score-table input{
-  width:90px;
-  padding:8px
-}
-
-.registration-actions{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap
-}
-
-.lobby-select{
-  min-width:190px
-}
-
-.danger-outline{
-  border:1px solid #dc2626!important;
-  background:transparent!important;
-  color:#fca5a5!important
-}
-
-.registration-empty{
-  text-align:center;
-  padding:25px;
-  color:#94a3b8
+width:90px;
+padding:8px
 }
 
 footer{
-  border-top:1px solid #263044;
-  padding:25px;
-  text-align:center;
-  color:#64748b
+border-top:1px solid #263044;
+padding:25px;
+text-align:center;
+color:#64748b
 }
 
+.danger-outline{
+border:1px solid #dc2626!important;
+background:transparent!important;
+color:#fca5a5!important
+}
+
+.registration-empty{
+text-align:center;
+padding:25px;
+color:#94a3b8
+}
+
+.assignment-box{
+min-width:190px
+}
+
+.assignment-box select{
+padding:8px;
+font-size:13px
+}
+
+.registration-actions{
+display:flex;
+gap:6px;
+flex-wrap:wrap
+}
+
+.info-box{
+background:#0f172a;
+border:1px solid #334155;
+border-radius:9px;
+padding:13px;
+margin-bottom:15px
+}
+
+.info-box strong{color:#c4b5fd}
+
 @media(max-width:700px){
-  .nav{
-    padding:12px 0;
-    flex-direction:column
-  }
 
-  nav{justify-content:center}
+.nav{
+padding:12px 0;
+flex-direction:column
+}
 
-  .form-grid{grid-template-columns:1fr}
+nav{justify-content:center}
 
-  .stats{grid-template-columns:1fr}
+.form-grid{grid-template-columns:1fr}
 
-  .hero{padding:30px 10px}
+.full{grid-column:auto}
+
+.stats{grid-template-columns:1fr}
+
+.hero{padding:30px 10px}
 }
 </style>
 </head>
@@ -258,7 +402,7 @@ Scrim<span>Forge</span>
 
 <main>
 
-<!-- ================= HOME ================= -->
+<!-- HOME -->
 
 <section id="home" class="page active">
 
@@ -276,14 +420,12 @@ all in one place.
 
 <div class="hero-buttons">
 
-<button
-class="btn"
+<button class="btn"
 onclick="showPage('scrims')">
 View Scrims
 </button>
 
-<button
-class="btn secondary"
+<button class="btn secondary"
 onclick="showPage('leaderboard')">
 Leaderboard
 </button>
@@ -298,17 +440,14 @@ Leaderboard
 Available Lobbies
 </h2>
 
-<div
-id="homeLobbies"
-class="grid">
-</div>
+<div id="homeLobbies" class="grid"></div>
 
 </div>
 
 </section>
 
 
-<!-- ================= SCRIMS ================= -->
+<!-- SCRIMS -->
 
 <section id="scrims" class="page">
 
@@ -323,30 +462,26 @@ Available Scrims
 </h2>
 
 <p class="muted">
-Choose a lobby and register your team.
+Choose the scrim category you want to play.
 </p>
 
 </div>
 
-<button
-class="btn"
+<button class="btn"
 onclick="loadPublicLobbies('scrimList')">
 Refresh
 </button>
 
 </div>
 
-<div
-id="scrimList"
-class="grid">
-</div>
+<div id="scrimList" class="grid"></div>
 
 </div>
 
 </section>
 
 
-<!-- ================= REGISTRATION ================= -->
+<!-- REGISTRATION -->
 
 <section id="register" class="page">
 
@@ -359,79 +494,129 @@ Scrim Registration
 </h2>
 
 <p class="muted">
-Submit your team details.
-Registration will remain pending until
-it is confirmed by the admin.
+First select the scrim category. Time and entry fee are automatically taken from that category.
 </p>
 
-<div
-id="registerMessage"
-class="message">
-</div>
+<div id="registerMessage" class="message"></div>
+
 
 <form id="registrationForm">
+
+<!-- CATEGORY -->
+
+<div class="form-group">
+
+<label>
+Select Scrim Category
+</label>
+
+<select id="regLobby" required>
+
+<option value="">
+Select a scrim category
+</option>
+
+</select>
+
+</div>
+
+
+<!-- AUTOMATIC DETAILS -->
 
 <div class="form-grid">
 
 <div class="form-group">
-<label>Scrim Time</label>
+
+<label>
+Scrim Time
+</label>
+
 <input
 type="text"
 id="regTime"
-placeholder="Example: 12 PM"
-required>
+readonly
+placeholder="Select category first">
+
 </div>
 
+
 <div class="form-group">
-<label>Entry Fee</label>
+
+<label>
+Entry Fee
+</label>
+
 <input
 type="text"
 id="regFee"
-placeholder="Example: ₹50"
-required>
+readonly
+placeholder="Select category first">
+
 </div>
 
+
 <div class="form-group">
-<label>Team Name</label>
+
+<label>
+Team Name
+</label>
+
 <input
 type="text"
 id="regTeam"
 placeholder="Your team name"
 required>
+
 </div>
 
+
 <div class="form-group">
-<label>Captain Name</label>
+
+<label>
+Captain Name
+</label>
+
 <input
 type="text"
 id="regCaptain"
 placeholder="Captain name"
 required>
+
 </div>
 
+
 <div class="form-group">
-<label>WhatsApp / Phone</label>
+
+<label>
+WhatsApp / Phone
+</label>
+
 <input
 type="text"
 id="regPhone"
 placeholder="Phone number"
 required>
+
 </div>
 
+
 <div class="form-group">
-<label>Free Fire UID</label>
+
+<label>
+Free Fire UID
+</label>
+
 <input
 type="text"
 id="regUid"
 placeholder="Captain UID"
 required>
-</div>
 
 </div>
 
-<button
-class="btn"
-type="submit">
+</div>
+
+<button class="btn" type="submit">
 Submit Registration
 </button>
 
@@ -444,7 +629,7 @@ Submit Registration
 </section>
 
 
-<!-- ================= STATUS ================= -->
+<!-- STATUS -->
 
 <section id="status" class="page">
 
@@ -455,6 +640,12 @@ Submit Registration
 <h2 class="section-title">
 Check Registration
 </h2>
+
+<p class="muted">
+Enter the registration reference you received after submitting your registration.
+</p>
+
+<br>
 
 <div class="form-group">
 
@@ -474,14 +665,9 @@ onclick="checkStatus()">
 Check Status
 </button>
 
-<div
-id="statusMessage"
-class="message">
-</div>
+<div id="statusMessage" class="message"></div>
 
-<div
-id="statusResult">
-</div>
+<div id="statusResult"></div>
 
 </div>
 
@@ -490,7 +676,7 @@ id="statusResult">
 </section>
 
 
-<!-- ================= LEADERBOARD ================= -->
+<!-- LEADERBOARD -->
 
 <section id="leaderboard" class="page">
 
@@ -532,6 +718,7 @@ Select a lobby
 
 </div>
 
+
 <div class="form-group">
 
 <label>
@@ -565,16 +752,14 @@ View Leaderboard
 
 </div>
 
-<div
-id="publicLeaderboard">
-</div>
+<div id="publicLeaderboard"></div>
 
 </div>
 
 </section>
 
 
-<!-- ================= ADMIN ================= -->
+<!-- ADMIN -->
 
 <section id="admin" class="page">
 
@@ -583,26 +768,19 @@ id="publicLeaderboard">
 
 <!-- ADMIN LOGIN -->
 
-<div
-id="adminLoginBox"
-class="card admin-box">
+<div id="adminLoginBox" class="card admin-box">
 
 <h2 class="section-title">
 Admin Login
 </h2>
 
-<div
-id="loginMessage"
-class="message">
-</div>
+<div id="loginMessage" class="message"></div>
 
 <form id="loginForm">
 
 <div class="form-group">
 
-<label>
-Email
-</label>
+<label>Email</label>
 
 <input
 type="email"
@@ -613,9 +791,7 @@ required>
 
 <div class="form-group">
 
-<label>
-Password
-</label>
+<label>Password</label>
 
 <input
 type="password"
@@ -624,9 +800,7 @@ required>
 
 </div>
 
-<button
-class="btn"
-type="submit">
+<button class="btn" type="submit">
 Login
 </button>
 
@@ -637,9 +811,7 @@ Login
 
 <!-- ADMIN SETUP -->
 
-<div
-id="adminSetupBox"
-class="card admin-box hidden">
+<div id="adminSetupBox" class="card admin-box hidden">
 
 <h2 class="section-title">
 Create Admin
@@ -652,35 +824,42 @@ Create the first admin.
 
 <br>
 
-<div
-id="setupMessage"
-class="message">
-</div>
+<div id="setupMessage" class="message"></div>
 
 <form id="setupForm">
 
 <div class="form-group">
+
 <label>Name</label>
+
 <input id="setupName" required>
+
 </div>
 
 <div class="form-group">
+
 <label>Email</label>
-<input type="email" id="setupEmail" required>
+
+<input
+type="email"
+id="setupEmail"
+required>
+
 </div>
 
 <div class="form-group">
+
 <label>Password</label>
+
 <input
 type="password"
 id="setupPassword"
 minlength="6"
 required>
+
 </div>
 
-<button
-class="btn"
-type="submit">
+<button class="btn" type="submit">
 Create Admin
 </button>
 
@@ -689,11 +868,9 @@ Create Admin
 </div>
 
 
-<!-- ADMIN DASHBOARD -->
+<!-- DASHBOARD -->
 
-<div
-id="adminDashboard"
-class="hidden">
+<div id="adminDashboard" class="hidden">
 
 
 <div class="top-actions">
@@ -730,8 +907,7 @@ Logout
 Pending Registrations
 </div>
 
-<div
-class="stat-number"
+<div class="stat-number"
 id="pendingCount">
 0
 </div>
@@ -744,8 +920,7 @@ id="pendingCount">
 Confirmed Registrations
 </div>
 
-<div
-class="stat-number"
+<div class="stat-number"
 id="confirmedCount">
 0
 </div>
@@ -758,8 +933,7 @@ id="confirmedCount">
 Active Lobbies
 </div>
 
-<div
-class="stat-number"
+<div class="stat-number"
 id="activeLobbyCount">
 0
 </div>
@@ -779,10 +953,7 @@ Create New Lobby
 
 <br>
 
-<div
-id="lobbyMessage"
-class="message">
-</div>
+<div id="lobbyMessage" class="message"></div>
 
 <form id="lobbyForm">
 
@@ -844,9 +1015,7 @@ required>
 
 </div>
 
-<button
-class="btn"
-type="submit">
+<button class="btn" type="submit">
 Create Lobby
 </button>
 
@@ -873,20 +1042,11 @@ Refresh
 
 </div>
 
-<p
-class="muted"
-style="margin-bottom:15px">
-
-Delete removes the scrim and its
-associated registration/score records
-permanently.
-
+<p class="muted" style="margin-bottom:15px">
+Delete removes the scrim and its associated registration/score records permanently.
 </p>
 
-<div
-id="adminLobbies"
-class="grid">
-</div>
+<div id="adminLobbies" class="grid"></div>
 
 </div>
 
@@ -904,8 +1064,7 @@ Pending Registrations
 </h3>
 
 <p class="muted">
-Select a lobby for the registration,
-then confirm or reject it.
+Assign a lobby, then confirm or reject the registration.
 </p>
 
 </div>
@@ -928,28 +1087,18 @@ Refresh
 <tr>
 
 <th>ID</th>
-
 <th>Reference</th>
-
 <th>Team</th>
-
 <th>Captain</th>
-
-<th>Fee</th>
-
-<th>Time</th>
-
-<th>Lobby</th>
-
+<th>Category</th>
+<th>Assign Lobby</th>
 <th>Action</th>
 
 </tr>
 
 </thead>
 
-<tbody
-id="registrationTable">
-</tbody>
+<tbody id="registrationTable"></tbody>
 
 </table>
 
@@ -958,7 +1107,7 @@ id="registrationTable">
 </div>
 
 
-<!-- MATCH SCORE ENTRY -->
+<!-- SCORE ENTRY -->
 
 <div class="card">
 
@@ -991,48 +1140,40 @@ Select lobby
 
 <div class="match-tabs">
 
-<button
-type="button"
+<button type="button"
 class="active"
 onclick="selectScoreMatch(1,this)">
 Match 1
 </button>
 
-<button
-type="button"
+<button type="button"
 onclick="selectScoreMatch(2,this)">
 Match 2
 </button>
 
-<button
-type="button"
+<button type="button"
 onclick="selectScoreMatch(3,this)">
 Match 3
 </button>
 
-<button
-type="button"
+<button type="button"
 onclick="selectScoreMatch(4,this)">
 Match 4
 </button>
 
-<button
-type="button"
+<button type="button"
 onclick="selectScoreMatch(5,this)">
 Match 5
 </button>
 
-<button
-type="button"
+<button type="button"
 onclick="selectScoreMatch(6,this)">
 Match 6
 </button>
 
 </div>
 
-<div
-id="scoreEntryBody">
-</div>
+<div id="scoreEntryBody"></div>
 
 </div>
 
@@ -1053,37 +1194,38 @@ ScrimForge &copy; 2026
 <script>
 
 let currentScoreMatch = 1;
+let cachedLobbies = [];
 
 
 /* =====================================================
-   PAGE NAVIGATION
+PAGE NAVIGATION
 ===================================================== */
 
 function showPage(pageId){
 
 document
 .querySelectorAll(".page")
-.forEach(
-p => p.classList.remove("active")
-);
+.forEach(p=>p.classList.remove("active"));
 
-const page =
-document.getElementById(pageId);
+const page=document.getElementById(pageId);
 
 if(page)
 page.classList.add("active");
 
 
-if(pageId === "home")
+if(pageId==="home")
 loadPublicLobbies("homeLobbies");
 
-if(pageId === "scrims")
+if(pageId==="scrims")
 loadPublicLobbies("scrimList");
 
-if(pageId === "leaderboard")
+if(pageId==="register")
+loadRegistrationCategories();
+
+if(pageId==="leaderboard")
 loadLeaderboardLobbyOptions();
 
-if(pageId === "admin")
+if(pageId==="admin")
 checkAdmin();
 
 window.scrollTo({
@@ -1095,144 +1237,125 @@ behavior:"smooth"
 
 
 /* =====================================================
-   MESSAGES
+MESSAGES
 ===================================================== */
 
-function showMessage(
-id,
-text,
-type="success"
-){
+function showMessage(id,text,type="success"){
 
-const e =
-document.getElementById(id);
+const e=document.getElementById(id);
 
-if(!e)
-return;
+if(!e)return;
 
-e.textContent =
-text;
+e.textContent=text;
 
-e.className =
-"message show " + type;
+e.className="message show "+type;
 
 }
 
 
 /* =====================================================
-   API
+API
 ===================================================== */
 
-async function api(
-url,
-options={}
-){
-
-const response =
-await fetch(
-url,
-{
-credentials:"same-origin",
-...options,
-
-headers:{
-"Content-Type":
-"application/json",
-
-...(options.headers || {})
-}
-
-}
-);
-
-let data = {};
+async function api(url,options={}){
 
 try{
 
-data =
-await response.json();
+const response=await fetch(url,{
+credentials:"same-origin",
+...options,
+headers:{
+"Content-Type":"application/json",
+...(options.headers||{})
+}
+});
 
-}catch(e){}
+let data={};
+
+const contentType=response.headers.get("content-type")||"";
+
+if(contentType.includes("application/json")){
+
+try{
+data=await response.json();
+}catch(e){
+data={};
+}
+
+}else{
+
+const text=await response.text();
+
+if(text){
+data={error:text};
+}
+
+}
 
 
 if(!response.ok){
 
 throw new Error(
 data.error ||
-"Request failed"
+data.message ||
+`Request failed (${response.status})`
 );
 
 }
 
 return data;
 
+}catch(error){
+
+throw error;
+
+}
+
 }
 
 
 /* =====================================================
-   PUBLIC LOBBIES
+PUBLIC LOBBIES
 ===================================================== */
 
-async function loadPublicLobbies(
-targetId="homeLobbies"
-){
+async function loadPublicLobbies(targetId="homeLobbies"){
 
-const target =
-document.getElementById(targetId);
+const target=document.getElementById(targetId);
 
-if(!target)
-return;
+if(!target)return;
 
-target.innerHTML =
+target.innerHTML=
 '<p class="muted">Loading lobbies...</p>';
 
 try{
 
-const lobbies =
-await api(
-"/api/public/lobbies"
-);
+const lobbies=await api("/api/public/lobbies");
 
-if(!lobbies.length){
+cachedLobbies=Array.isArray(lobbies)?lobbies:[];
 
-target.innerHTML =
-`
-<div class="card">
-<p class="muted">
-No lobbies available right now.
-</p>
-</div>
-`;
+if(!cachedLobbies.length){
+
+target.innerHTML=
+'<div class="card"><p class="muted">No lobbies available right now.</p></div>';
 
 return;
 
 }
 
+target.innerHTML=cachedLobbies.map(lobby=>{
 
-target.innerHTML =
-lobbies
-.map(
-lobby => {
+const full=
+Number(lobby.confirmed||0)>=Number(lobby.max_teams||0);
 
-const full =
-Number(lobby.confirmed) >=
-Number(lobby.max_teams);
+const open=lobby.status==="open";
 
 return `
 
 <div class="card lobby-card">
 
-<span class="badge ${
-lobby.status === "open"
-? "open"
-: "closed"
-}">
+<span class="badge ${open&&!full?"open":"closed"}">
 
-${
-lobby.status === "open"
-? "OPEN"
-: "CLOSED"
-}
+${open&&!full?"OPEN":"CLOSED"}
 
 </span>
 
@@ -1252,59 +1375,41 @@ ${escapeHTML(lobby.fee)}
 
 <p>
 <strong>Teams:</strong>
-${lobby.confirmed}/${lobby.max_teams}
+${Number(lobby.confirmed||0)}/${Number(lobby.max_teams||0)}
 </p>
 
 <br>
 
 ${
-lobby.status === "open" && !full
-
-? `
-
+open&&!full
+?
+`
 <button
 class="btn small"
-onclick="useLobby(
-'${escapeAttribute(lobby.time)}',
-'${escapeAttribute(lobby.fee)}'
-)">
-
+onclick="useLobby(${Number(lobby.id||0)})">
 Register
-
 </button>
-
 `
-
-: `
-
+:
+`
 <button
 class="btn small secondary"
 disabled>
-
-${
-full
-? "FULL"
-: "CLOSED"
-}
-
+${full?"FULL":"CLOSED"}
 </button>
-
 `
-
 }
 
 </div>
 
 `;
 
-}
-)
-.join("");
+}).join("");
 
 }catch(error){
 
-target.innerHTML =
-`
+target.innerHTML=`
+
 <div class="card">
 
 <p class="muted">
@@ -1312,6 +1417,7 @@ ${escapeHTML(error.message)}
 </p>
 
 </div>
+
 `;
 
 }
@@ -1320,93 +1426,221 @@ ${escapeHTML(error.message)}
 
 
 /* =====================================================
-   USE LOBBY
+LOAD REGISTRATION CATEGORIES
 ===================================================== */
 
-function useLobby(
-time,
-fee
-){
+async function loadRegistrationCategories(selectedId=""){
 
-document.getElementById(
-"regTime"
-).value =
-time;
+const select=document.getElementById("regLobby");
 
-document.getElementById(
-"regFee"
-).value =
-fee;
+if(!select)return;
 
-showPage("register");
+try{
+
+const lobbies=await api("/api/public/lobbies");
+
+cachedLobbies=Array.isArray(lobbies)?lobbies:[];
+
+select.innerHTML=
+`
+<option value="">
+Select a scrim category
+</option>
+`;
+
+cachedLobbies.forEach(lobby=>{
+
+const full=
+Number(lobby.confirmed||0)>=Number(lobby.max_teams||0);
+
+const disabled=
+lobby.status!=="open"||full;
+
+const option=document.createElement("option");
+
+option.value=String(lobby.id);
+
+option.textContent=
+`${lobby.name} — ${lobby.time} — ${lobby.fee}${full?" — FULL":""}`;
+
+option.disabled=disabled;
+
+select.appendChild(option);
+
+});
+
+
+if(selectedId){
+
+select.value=String(selectedId);
+
+updateRegistrationLobbyDetails();
+
+}
+
+}catch(error){
+
+showMessage(
+"registerMessage",
+error.message,
+"error"
+);
+
+}
 
 }
 
 
 /* =====================================================
-   REGISTRATION SUBMIT
+CATEGORY SELECT
+===================================================== */
+
+document
+.getElementById("regLobby")
+.addEventListener(
+"change",
+updateRegistrationLobbyDetails
+);
+
+
+function updateRegistrationLobbyDetails(){
+
+const select=document.getElementById("regLobby");
+
+const lobby=cachedLobbies.find(
+x=>String(x.id)===String(select.value)
+);
+
+const time=document.getElementById("regTime");
+const fee=document.getElementById("regFee");
+
+if(!lobby){
+
+time.value="";
+fee.value="";
+
+return;
+
+}
+
+time.value=lobby.time||"";
+fee.value=lobby.fee||"";
+
+}
+
+
+/* =====================================================
+USE LOBBY
+===================================================== */
+
+function useLobby(id){
+
+loadRegistrationCategories(id);
+
+showPage("register");
+
+setTimeout(()=>{
+
+const select=document.getElementById("regLobby");
+
+select.value=String(id);
+
+updateRegistrationLobbyDetails();
+
+},100);
+
+}
+
+
+/* =====================================================
+REGISTRATION SUBMIT
 ===================================================== */
 
 document
 .getElementById("registrationForm")
 .addEventListener(
 "submit",
-async e => {
+async e=>{
 
 e.preventDefault();
 
+const lobbyId=
+document.getElementById("regLobby").value;
+
+const lobby=
+cachedLobbies.find(
+x=>String(x.id)===String(lobbyId)
+);
+
+if(!lobby){
+
+showMessage(
+"registerMessage",
+"Please select a valid scrim category.",
+"error"
+);
+
+return;
+
+}
+
+
 try{
 
-const data =
+const payload={
+
+/*
+The backend receives the lobby ID as the
+primary category selection.
+
+Time and fee are also sent automatically
+from the selected lobby, never from
+editable user input.
+*/
+
+lobbyId:Number(lobby.id),
+
+lobby_id:Number(lobby.id),
+
+time:lobby.time,
+
+fee:lobby.fee,
+
+team:
+document.getElementById("regTeam").value.trim(),
+
+captain:
+document.getElementById("regCaptain").value.trim(),
+
+phone:
+document.getElementById("regPhone").value.trim(),
+
+uid:
+document.getElementById("regUid").value.trim()
+
+};
+
+
+const data=
 await api(
 "/api/registrations",
 {
 method:"POST",
-
-body:
-JSON.stringify({
-
-time:
-document
-.getElementById("regTime")
-.value,
-
-fee:
-document
-.getElementById("regFee")
-.value,
-
-team:
-document
-.getElementById("regTeam")
-.value,
-
-captain:
-document
-.getElementById("regCaptain")
-.value,
-
-phone:
-document
-.getElementById("regPhone")
-.value,
-
-uid:
-document
-.getElementById("regUid")
-.value
-
-})
-
+body:JSON.stringify(payload)
 }
 );
 
+
 showMessage(
 "registerMessage",
-`Registration submitted successfully. Your reference is ${data.ref}`
+`Registration submitted successfully. Your reference is ${data.ref||data.reference||"generated successfully"}.`
 );
 
 e.target.reset();
+
+document.getElementById("regTime").value="";
+document.getElementById("regFee").value="";
+
 
 }catch(error){
 
@@ -1423,16 +1657,16 @@ error.message,
 
 
 /* =====================================================
-   CHECK STATUS
+CHECK STATUS
 ===================================================== */
 
 async function checkStatus(){
 
-const ref =
-document
-.getElementById("statusRef")
-.value
-.trim();
+const input=document.getElementById("statusRef");
+
+const ref=input.value.trim();
+
+const result=document.getElementById("statusResult");
 
 if(!ref){
 
@@ -1442,59 +1676,71 @@ showMessage(
 "error"
 );
 
+result.innerHTML="";
+
 return;
 
 }
 
+
 try{
 
-const data =
+const data=
 await api(
 `/api/registration-status/${encodeURIComponent(ref)}`
 );
+
 
 showMessage(
 "statusMessage",
 "Registration found."
 );
 
-document.getElementById(
-"statusResult"
-).innerHTML = `
+
+const lobby=
+data.lobby_name||
+data.lobbyName||
+data.lobby||
+data.assigned_lobby||
+"Not assigned yet";
+
+
+result.innerHTML=`
 
 <div class="card">
 
 <h3>
-${escapeHTML(data.team)}
+${escapeHTML(data.team||"Registration")}
 </h3>
 
 <p>
 <strong>Reference:</strong>
-${escapeHTML(data.ref)}
+${escapeHTML(data.ref||ref)}
+</p>
+
+<p>
+<strong>Captain:</strong>
+${escapeHTML(data.captain||"")}
 </p>
 
 <p>
 <strong>Time:</strong>
-${escapeHTML(data.time)}
+${escapeHTML(data.time||"")}
 </p>
 
 <p>
 <strong>Fee:</strong>
-${escapeHTML(data.fee)}
+${escapeHTML(data.fee||"")}
 </p>
 
 <p>
 <strong>Status:</strong>
-${escapeHTML(data.status)}
+${escapeHTML(data.status||"Pending")}
 </p>
 
 <p>
-<strong>Lobby:</strong>
-${
-data.lobby_name
-? escapeHTML(data.lobby_name)
-: "Not assigned yet"
-}
+<strong>Assigned Lobby:</strong>
+${escapeHTML(lobby)}
 </p>
 
 </div>
@@ -1509,9 +1755,7 @@ error.message,
 "error"
 );
 
-document.getElementById(
-"statusResult"
-).innerHTML = "";
+result.innerHTML="";
 
 }
 
@@ -1519,30 +1763,23 @@ document.getElementById(
 
 
 /* =====================================================
-   ADMIN CHECK
+ADMIN CHECK
 ===================================================== */
 
 async function checkAdmin(){
 
 try{
 
-const exists =
-await api(
-"/api/admin-exists"
-);
+const exists=await api("/api/admin-exists");
 
-const me =
-await api(
-"/api/me"
-);
+const me=await api("/api/me");
 
 document
 .getElementById("adminLoginBox")
 .classList
 .toggle(
 "hidden",
-!exists.exists ||
-me.loggedIn
+!exists.exists||me.loggedIn
 );
 
 document
@@ -1561,13 +1798,11 @@ document
 !me.loggedIn
 );
 
-if(!exists.exists)
-return;
+
+if(!exists.exists)return;
 
 if(me.loggedIn)
-showAdminDashboard(
-me.name
-);
+showAdminDashboard(me.name);
 
 }catch(error){
 
@@ -1579,32 +1814,26 @@ console.error(error);
 
 
 /* =====================================================
-   ADMIN DASHBOARD
+ADMIN DASHBOARD
 ===================================================== */
 
-function showAdminDashboard(
-name
-){
+function showAdminDashboard(name){
 
 document
 .getElementById("adminLoginBox")
-.classList
-.add("hidden");
+.classList.add("hidden");
 
 document
 .getElementById("adminSetupBox")
-.classList
-.add("hidden");
+.classList.add("hidden");
 
 document
 .getElementById("adminDashboard")
-.classList
-.remove("hidden");
+.classList.remove("hidden");
 
 document
 .getElementById("adminName")
-.textContent =
-name || "Admin";
+.textContent=name||"Admin";
 
 loadAdminData();
 
@@ -1612,51 +1841,45 @@ loadAdminData();
 
 
 /* =====================================================
-   ADMIN SETUP
+SETUP
 ===================================================== */
 
 document
 .getElementById("setupForm")
 .addEventListener(
 "submit",
-async e => {
+async e=>{
 
 e.preventDefault();
 
 try{
 
-const d =
-await api(
+const d=await api(
 "/api/setup-admin",
 {
 method:"POST",
-
-body:
-JSON.stringify({
+body:JSON.stringify({
 
 name:
-setupName.value,
+document.getElementById("setupName").value,
 
 email:
-setupEmail.value,
+document.getElementById("setupEmail").value,
 
 password:
-setupPassword.value
+document.getElementById("setupPassword").value
 
 })
-
 }
 );
 
-showAdminDashboard(
-d.name
-);
+showAdminDashboard(d.name);
 
-}catch(x){
+}catch(error){
 
 showMessage(
 "setupMessage",
-x.message,
+error.message,
 "error"
 );
 
@@ -1667,48 +1890,42 @@ x.message,
 
 
 /* =====================================================
-   LOGIN
+LOGIN
 ===================================================== */
 
 document
 .getElementById("loginForm")
 .addEventListener(
 "submit",
-async e => {
+async e=>{
 
 e.preventDefault();
 
 try{
 
-const d =
-await api(
+const d=await api(
 "/api/login",
 {
 method:"POST",
-
-body:
-JSON.stringify({
+body:JSON.stringify({
 
 email:
-loginEmail.value,
+document.getElementById("loginEmail").value,
 
 password:
-loginPassword.value
+document.getElementById("loginPassword").value
 
 })
-
 }
 );
 
-showAdminDashboard(
-d.name
-);
+showAdminDashboard(d.name);
 
-}catch(x){
+}catch(error){
 
 showMessage(
 "loginMessage",
-x.message,
+error.message,
 "error"
 );
 
@@ -1719,7 +1936,7 @@ x.message,
 
 
 /* =====================================================
-   LOGOUT
+LOGOUT
 ===================================================== */
 
 async function logout(){
@@ -1735,11 +1952,9 @@ method:"POST"
 
 checkAdmin();
 
-}catch(e){
+}catch(error){
 
-alert(
-e.message
-);
+alert(error.message);
 
 }
 
@@ -1747,19 +1962,15 @@ e.message
 
 
 /* =====================================================
-   ADMIN DATA
+ADMIN DATA
 ===================================================== */
 
 async function loadAdminData(){
 
 await Promise.all([
-
 loadStats(),
-
 loadAdminLobbies(),
-
 loadRegistrations()
-
 ]);
 
 await loadScoreLobbyOptions();
@@ -1768,30 +1979,27 @@ await loadScoreLobbyOptions();
 
 
 /* =====================================================
-   STATS
+STATS
 ===================================================== */
 
 async function loadStats(){
 
 try{
 
-const s =
-await api(
-"/api/stats"
-);
+const s=await api("/api/stats");
 
-pendingCount.textContent =
-s.pending;
+document.getElementById("pendingCount").textContent=
+s.pending??0;
 
-confirmedCount.textContent =
-s.confirmed;
+document.getElementById("confirmedCount").textContent=
+s.confirmed??0;
 
-activeLobbyCount.textContent =
-s.activeLobbies;
+document.getElementById("activeLobbyCount").textContent=
+s.activeLobbies??0;
 
-}catch(e){
+}catch(error){
 
-console.error(e);
+console.error(error);
 
 }
 
@@ -1799,14 +2007,14 @@ console.error(e);
 
 
 /* =====================================================
-   CREATE LOBBY
+CREATE LOBBY
 ===================================================== */
 
 document
 .getElementById("lobbyForm")
 .addEventListener(
 "submit",
-async e => {
+async e=>{
 
 e.preventDefault();
 
@@ -1816,28 +2024,26 @@ await api(
 "/api/lobbies",
 {
 method:"POST",
-
-body:
-JSON.stringify({
+body:JSON.stringify({
 
 name:
-lobbyName.value,
+document.getElementById("lobbyName").value,
 
 time:
-lobbyTime.value,
+document.getElementById("lobbyTime").value,
 
 fee:
-lobbyFee.value,
+document.getElementById("lobbyFee").value,
 
 maxTeams:
 Number(
-lobbyMaxTeams.value
+document.getElementById("lobbyMaxTeams").value
 )
 
 })
-
 }
 );
+
 
 showMessage(
 "lobbyMessage",
@@ -1846,18 +2052,18 @@ showMessage(
 
 e.target.reset();
 
-lobbyMaxTeams.value =
-12;
+document.getElementById("lobbyMaxTeams").value=12;
 
-loadAdminLobbies();
-loadStats();
-loadScoreLobbyOptions();
+await loadAdminLobbies();
+await loadStats();
+await loadScoreLobbyOptions();
+await loadRegistrationCategories();
 
-}catch(x){
+}catch(error){
 
 showMessage(
 "lobbyMessage",
-x.message,
+error.message,
 "error"
 );
 
@@ -1868,46 +2074,37 @@ x.message,
 
 
 /* =====================================================
-   ADMIN LOBBIES
+ADMIN LOBBIES
 ===================================================== */
 
 async function loadAdminLobbies(){
 
-const target =
-document.getElementById(
-"adminLobbies"
-);
+const target=document.getElementById("adminLobbies");
 
 try{
 
-const lobbies =
-await api(
-"/api/lobbies"
-);
+const lobbies=await api("/api/lobbies");
+
+cachedLobbies=Array.isArray(lobbies)?lobbies:[];
 
 if(!lobbies.length){
 
-target.innerHTML =
+target.innerHTML=
 '<p class="muted">No lobbies created yet.</p>';
 
 return;
 
 }
 
-target.innerHTML =
-lobbies
-.map(
-lobby => `
+target.innerHTML=lobbies.map(lobby=>`
 
 <div class="card">
 
 <span class="badge ${
-lobby.status === "open"
-? "open"
-: "closed"
+lobby.status==="open"?"open":"closed"
 }">
 
-${lobby.status.toUpperCase()}
+${String(lobby.status||"").toUpperCase()}
 
 </span>
 
@@ -1916,24 +2113,21 @@ ${escapeHTML(lobby.name)}
 </h3>
 
 <p>
-Time:
-${escapeHTML(lobby.time)}
+Time: ${escapeHTML(lobby.time)}
 </p>
 
 <p>
-Fee:
-${escapeHTML(lobby.fee)}
+Fee: ${escapeHTML(lobby.fee)}
 </p>
 
 <p>
 Teams:
-${lobby.confirmed}/${lobby.max_teams}
+${Number(lobby.confirmed||0)}/${Number(lobby.max_teams||0)}
 </p>
 
 <br>
 
-<div
-style="
+<div style="
 display:flex;
 gap:8px;
 flex-wrap:wrap
@@ -1941,33 +2135,27 @@ flex-wrap:wrap
 
 <button
 class="btn small ${
-lobby.status === "open"
-? "danger"
-: "success"
+lobby.status==="open"?"danger":"success"
 }"
-onclick="
-toggleLobby(
-${lobby.id},
-'${lobby.status}'
-)
-">
+onclick="toggleLobby(
+${Number(lobby.id)},
+'${escapeAttribute(lobby.status)}'
+)">
 
 ${
-lobby.status === "open"
-? "Close Lobby"
-: "Open Lobby"
+lobby.status==="open"
+?"Close Lobby"
+:"Open Lobby"
 }
 
 </button>
 
 <button
 class="btn small danger-outline"
-onclick="
-deleteLobby(
-${lobby.id},
+onclick="deleteLobby(
+${Number(lobby.id)},
 '${escapeAttribute(lobby.name)}'
-)
-">
+)">
 
 Delete Scrim
 
@@ -1977,18 +2165,14 @@ Delete Scrim
 
 </div>
 
-`
-)
-.join("");
+`).join("");
 
-}catch(e){
+}catch(error){
 
-target.innerHTML =
-`
-<p class="muted">
-${escapeHTML(e.message)}
-</p>
-`;
+target.innerHTML=
+`<p class="muted">
+${escapeHTML(error.message)}
+</p>`;
 
 }
 
@@ -1996,13 +2180,10 @@ ${escapeHTML(e.message)}
 
 
 /* =====================================================
-   TOGGLE LOBBY
+TOGGLE LOBBY
 ===================================================== */
 
-async function toggleLobby(
-id,
-currentStatus
-){
+async function toggleLobby(id,currentStatus){
 
 try{
 
@@ -2010,36 +2191,27 @@ await api(
 `/api/lobbies/${id}`,
 {
 method:"PATCH",
-
-body:
-JSON.stringify({
+body:JSON.stringify({
 
 status:
-currentStatus === "open"
-? "closed"
-: "open"
+currentStatus==="open"
+?"closed"
+:"open"
 
 })
-
 }
 );
 
-loadAdminLobbies();
-loadStats();
+await loadAdminLobbies();
+await loadStats();
+await loadRegistrationCategories();
 
-loadPublicLobbies(
-"homeLobbies"
-);
+await loadPublicLobbies("homeLobbies");
+await loadPublicLobbies("scrimList");
 
-loadPublicLobbies(
-"scrimList"
-);
+}catch(error){
 
-}catch(e){
-
-alert(
-e.message
-);
+alert(error.message);
 
 }
 
@@ -2047,21 +2219,16 @@ e.message
 
 
 /* =====================================================
-   DELETE SCRIM
+DELETE LOBBY
 ===================================================== */
 
-async function deleteLobby(
-id,
-name
-){
+async function deleteLobby(id,name){
 
-const ok =
-confirm(
+const ok=confirm(
 `Delete "${name}" permanently?\n\nThis will delete the scrim and its linked registrations and match scores. This cannot be undone.`
 );
 
-if(!ok)
-return;
+if(!ok)return;
 
 try{
 
@@ -2072,30 +2239,20 @@ method:"DELETE"
 }
 );
 
-alert(
-"Scrim deleted successfully."
-);
+alert("Scrim deleted successfully.");
 
 await loadAdminLobbies();
 await loadRegistrations();
 await loadStats();
 await loadScoreLobbyOptions();
-
-await loadPublicLobbies(
-"homeLobbies"
-);
-
-await loadPublicLobbies(
-"scrimList"
-);
-
+await loadRegistrationCategories();
+await loadPublicLobbies("homeLobbies");
+await loadPublicLobbies("scrimList");
 await loadLeaderboardLobbyOptions();
 
-}catch(e){
+}catch(error){
 
-alert(
-e.message
-);
+alert(error.message);
 
 }
 
@@ -2103,48 +2260,57 @@ e.message
 
 
 /* =====================================================
-   PENDING REGISTRATIONS
-   OLD LOBBY ASSIGNMENT RESTORED
+LOAD ALL LOBBIES FOR ASSIGNMENT
+===================================================== */
+
+async function getAdminLobbies(){
+
+try{
+
+const lobbies=await api("/api/lobbies");
+
+cachedLobbies=Array.isArray(lobbies)?lobbies:[];
+
+return cachedLobbies;
+
+}catch(error){
+
+console.error(error);
+
+return [];
+
+}
+
+}
+
+
+/* =====================================================
+PENDING REGISTRATIONS
 ===================================================== */
 
 async function loadRegistrations(){
 
-const tbody =
-document.getElementById(
-"registrationTable"
-);
+const tbody=document.getElementById("registrationTable");
 
 try{
 
-const [rows,lobbies] =
-await Promise.all([
+const rows=await api("/api/registrations");
 
-api(
-"/api/registrations"
-),
-
-api(
-"/api/lobbies"
-)
-
-]);
-
-
-const pendingRows =
-rows.filter(
-row =>
-row.status === "pending"
+const pendingRows=
+(Array.isArray(rows)?rows:[])
+.filter(
+row=>
+String(row.status||"").toLowerCase()==="pending"
 );
 
 
 if(!pendingRows.length){
 
-tbody.innerHTML = `
+tbody.innerHTML=`
 
 <tr>
 
-<td
-colspan="8"
+<td colspan="7"
 class="registration-empty">
 
 No pending registrations.
@@ -2160,15 +2326,53 @@ return;
 }
 
 
-tbody.innerHTML =
-pendingRows
-.map(
-row => `
+const lobbies=await getAdminLobbies();
+
+
+tbody.innerHTML=pendingRows.map(row=>{
+
+const selectedLobby=
+row.lobby_id||
+row.lobbyId||
+row.assigned_lobby_id||
+"";
+
+
+const lobbyOptions=lobbies.map(lobby=>{
+
+const full=
+Number(lobby.confirmed||0)>=
+Number(lobby.max_teams||0);
+
+const isSelected=
+String(selectedLobby)===String(lobby.id);
+
+return `
+
+<option
+value="${Number(lobby.id)}"
+${isSelected?"selected":""}
+${lobby.status!=="open"&&!isSelected?"disabled":""}
+>
+
+${escapeHTML(lobby.name)}
+— ${escapeHTML(lobby.time)}
+— ${escapeHTML(lobby.fee)}
+${full&&!isSelected?" — FULL":""}
+
+</option>
+
+`;
+
+}).join("");
+
+
+return `
 
 <tr>
 
 <td>
-${row.id}
+${escapeHTML(row.id)}
 </td>
 
 <td>
@@ -2176,11 +2380,9 @@ ${escapeHTML(row.ref)}
 </td>
 
 <td>
-
 <strong>
 ${escapeHTML(row.team)}
 </strong>
-
 </td>
 
 <td>
@@ -2188,50 +2390,31 @@ ${escapeHTML(row.captain)}
 </td>
 
 <td>
-${escapeHTML(row.fee)}
+${escapeHTML(row.fee||"")}
+<br>
+<small class="muted">
+${escapeHTML(row.time||"")}
+</small>
 </td>
 
 <td>
-${escapeHTML(row.time)}
-</td>
 
-
-<!-- OLD LOBBY ASSIGNMENT -->
-
-<td>
+<div class="assignment-box">
 
 <select
-id="registrationLobby-${row.id}"
-class="lobby-select">
+id="assignLobby-${Number(row.id)}">
 
 <option value="">
-Select Lobby
+Select lobby
 </option>
 
-${
-lobbies
-.map(
-lobby => `
-
-<option
-value="${lobby.id}">
-
-${escapeHTML(lobby.name)}
-(${lobby.confirmed}/${lobby.max_teams})
-
-</option>
-
-`
-)
-.join("")
-}
+${lobbyOptions}
 
 </select>
 
+</div>
+
 </td>
-
-
-<!-- ACTIONS -->
 
 <td>
 
@@ -2241,22 +2424,19 @@ ${escapeHTML(lobby.name)}
 class="btn small success"
 onclick="
 confirmRegistration(
-${row.id}
-)
-">
+${Number(row.id)}
+)">
 
-Confirm
+Accept
 
 </button>
 
 <button
 class="btn small danger"
 onclick="
-updateRegistration(
-${row.id},
-'rejected'
-)
-">
+rejectRegistration(
+${Number(row.id)}
+)">
 
 Reject
 
@@ -2268,21 +2448,20 @@ Reject
 
 </tr>
 
-`
-)
-.join("");
+`;
 
-}catch(e){
+}).join("");
 
-tbody.innerHTML = `
+}catch(error){
+
+tbody.innerHTML=`
 
 <tr>
 
-<td
-colspan="8"
+<td colspan="7"
 class="registration-empty">
 
-${escapeHTML(e.message)}
+${escapeHTML(error.message)}
 
 </td>
 
@@ -2296,37 +2475,30 @@ ${escapeHTML(e.message)}
 
 
 /* =====================================================
-   CONFIRM + ASSIGN LOBBY
+CONFIRM REGISTRATION + ASSIGN LOBBY
 ===================================================== */
 
-async function confirmRegistration(
-id
-){
+async function confirmRegistration(id){
 
-const lobbySelect =
+const select=
 document.getElementById(
-`registrationLobby-${id}`
+`assignLobby-${id}`
 );
 
-if(!lobbySelect){
+if(!select){
 
-alert(
-"Lobby selector not found."
-);
+alert("Lobby selector not found.");
 
 return;
 
 }
 
-
-const lobbyId =
-lobbySelect.value;
-
+const lobbyId=select.value;
 
 if(!lobbyId){
 
 alert(
-"Please select a lobby before confirming the registration."
+"Please select a lobby before accepting this registration."
 );
 
 return;
@@ -2334,53 +2506,28 @@ return;
 }
 
 
-const selectedOption =
-lobbySelect.options[
-lobbySelect.selectedIndex
-];
-
-const lobbyName =
-selectedOption.textContent.trim();
-
-
-const ok =
-confirm(
-`Assign this registration to:\n\n${lobbyName}\n\nThen confirm the registration?`
+const lobby=
+cachedLobbies.find(
+x=>String(x.id)===String(lobbyId)
 );
 
-if(!ok)
+
+if(!lobby){
+
+alert("Selected lobby is no longer available. Refresh and try again.");
+
 return;
+
+}
 
 
 try{
 
 /*
-  IMPORTANT:
-
-  Lobby assignment is kept as the
-  OLD separate endpoint.
-*/
-
-await api(
-`/api/registrations/${id}/lobby`,
-{
-method:"PATCH",
-
-body:
-JSON.stringify({
-
-lobbyId:
-Number(lobbyId)
-
-})
-
-}
-);
-
-
-/*
-  After the lobby is assigned,
-  confirm the registration.
+IMPORTANT:
+Send both the status and lobby ID.
+This preserves the old admin workflow:
+select lobby -> accept registration.
 */
 
 await api(
@@ -2388,44 +2535,35 @@ await api(
 {
 method:"PATCH",
 
-body:
-JSON.stringify({
+body:JSON.stringify({
 
-status:
-"confirmed"
+status:"confirmed",
+
+lobbyId:Number(lobbyId),
+
+lobby_id:Number(lobbyId),
+
+lobbyName:lobby.name,
+
+lobby_name:lobby.name
 
 })
-
 }
 );
 
-
 alert(
-`Registration confirmed and assigned to ${lobbyName}.`
+"Registration accepted and lobby assigned successfully."
 );
 
-
 await loadRegistrations();
-
 await loadStats();
-
 await loadAdminLobbies();
 
-await loadScoreLobbyOptions();
-
-await loadPublicLobbies(
-"homeLobbies"
-);
-
-await loadPublicLobbies(
-"scrimList"
-);
-
-
-}catch(e){
+}catch(error){
 
 alert(
-e.message
+"Could not accept registration: "+
+error.message
 );
 
 }
@@ -2434,13 +2572,16 @@ e.message
 
 
 /* =====================================================
-   REJECT REGISTRATION
+REJECT REGISTRATION
 ===================================================== */
 
-async function updateRegistration(
-id,
-status
-){
+async function rejectRegistration(id){
+
+const ok=confirm(
+"Reject this registration?"
+);
+
+if(!ok)return;
 
 try{
 
@@ -2449,22 +2590,24 @@ await api(
 {
 method:"PATCH",
 
-body:
-JSON.stringify({
-status
-})
+body:JSON.stringify({
 
+status:"rejected"
+
+})
 }
 );
 
-await loadRegistrations();
+alert("Registration rejected.");
 
+await loadRegistrations();
 await loadStats();
 
-}catch(e){
+}catch(error){
 
 alert(
-e.message
+"Could not reject registration: "+
+error.message
 );
 
 }
@@ -2473,45 +2616,76 @@ e.message
 
 
 /* =====================================================
-   SCORE LOBBY OPTIONS
+BACKWARD COMPATIBILITY
+===================================================== */
+
+async function updateRegistration(id,status){
+
+if(status==="confirmed"){
+
+await confirmRegistration(id);
+
+return;
+
+}
+
+if(status==="rejected"){
+
+await rejectRegistration(id);
+
+return;
+
+}
+
+try{
+
+await api(
+`/api/registrations/${id}`,
+{
+method:"PATCH",
+body:JSON.stringify({status})
+}
+);
+
+await loadRegistrations();
+await loadStats();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+/* =====================================================
+SCORE LOBBY OPTIONS
 ===================================================== */
 
 async function loadScoreLobbyOptions(){
 
-const select =
-document.getElementById(
-"scoreLobby"
-);
+const select=document.getElementById("scoreLobby");
 
 try{
 
-const l =
-await api(
-"/api/lobbies"
-);
+const l=await api("/api/lobbies");
 
-select.innerHTML =
-'<option value="">Select lobby</option>' +
+select.innerHTML=
+'<option value="">Select lobby</option>'+
+l.map(x=>`
 
-l
-.map(
-x =>
-`
-
-<option
-value="${escapeAttribute(x.name)}">
+<option value="${escapeAttribute(x.name)}">
 
 ${escapeHTML(x.name)}
 
 </option>
 
-`
-)
-.join("");
+`).join("");
 
-}catch(e){
+}catch(error){
 
-console.error(e);
+console.error(error);
 
 }
 
@@ -2519,32 +2693,21 @@ console.error(e);
 
 
 /* =====================================================
-   SCORE MATCH SELECT
+SCORE MATCH SELECT
 ===================================================== */
 
-function selectScoreMatch(
-match,
-button
-){
+function selectScoreMatch(match,button){
 
-currentScoreMatch =
-match;
+currentScoreMatch=match;
 
 document
-.querySelectorAll(
-".match-tabs button"
-)
+.querySelectorAll(".match-tabs button")
 .forEach(
-b =>
-b.classList.remove(
-"active"
-)
+b=>b.classList.remove("active")
 );
 
 if(button)
-button.classList.add(
-"active"
-);
+button.classList.add("active");
 
 renderScoreEntry();
 
@@ -2552,48 +2715,37 @@ renderScoreEntry();
 
 
 /* =====================================================
-   SCORE ENTRY
+SCORE ENTRY
 ===================================================== */
 
 async function renderScoreEntry(){
 
-const body =
-document.getElementById(
-"scoreEntryBody"
-);
+const body=document.getElementById("scoreEntryBody");
 
-const lobby =
-document.getElementById(
-"scoreLobby"
-).value;
-
+const lobby=document.getElementById("scoreLobby").value;
 
 if(!lobby){
 
-body.innerHTML =
+body.innerHTML=
 '<p class="muted">Select a lobby first.</p>';
 
 return;
 
 }
 
-
-body.innerHTML =
+body.innerHTML=
 '<p class="muted">Loading teams...</p>';
-
 
 try{
 
-const teams =
-await api(
+const teams=await api(
 `/api/leaderboard/teams?lobby=${encodeURIComponent(lobby)}`
 );
 
 
-if(teams.length !== 12){
+if(teams.length!==12){
 
-body.innerHTML =
-`
+body.innerHTML=`
 
 <div class="message show error">
 
@@ -2612,32 +2764,25 @@ return;
 }
 
 
-let existing = [];
-
+let existing=[];
 
 try{
 
-existing =
-await api(
+existing=await api(
 `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${currentScoreMatch}`
 );
 
 }catch(e){}
 
 
-const map =
-new Map(
+const map=new Map(
 existing.map(
-r =>
-[
-r.team,
-r
-]
+r=>[r.team,r]
 )
 );
 
 
-body.innerHTML = `
+body.innerHTML=`
 
 <div class="table-wrap">
 
@@ -2647,17 +2792,9 @@ body.innerHTML = `
 
 <tr>
 
-<th>
-Team
-</th>
-
-<th>
-Position
-</th>
-
-<th>
-Kills
-</th>
+<th>Team</th>
+<th>Position</th>
+<th>Kills</th>
 
 </tr>
 
@@ -2665,16 +2802,9 @@ Kills
 
 <tbody>
 
-${
+${teams.map((t,i)=>{
 
-teams
-.map(
-(t,i) => {
-
-const old =
-map.get(
-t.team
-);
+const old=map.get(t.team);
 
 return `
 
@@ -2692,11 +2822,7 @@ min="1"
 max="12"
 class="score-position"
 data-team="${escapeAttribute(t.team)}"
-value="${
-old
-? old.position
-: i + 1
-}">
+value="${old?old.position:i+1}">
 
 </td>
 
@@ -2707,11 +2833,7 @@ type="number"
 min="0"
 class="score-kills"
 data-team="${escapeAttribute(t.team)}"
-value="${
-old
-? old.kills
-: 0
-}">
+value="${old?old.kills:0}">
 
 </td>
 
@@ -2719,11 +2841,7 @@ old
 
 `;
 
-}
-)
-.join("")
-
-}
+}).join("")}
 
 </tbody>
 
@@ -2743,17 +2861,13 @@ Save Match ${currentScoreMatch}
 
 `;
 
-}catch(e){
+}catch(error){
 
-body.innerHTML =
+body.innerHTML=
 `
-
 <div class="message show error">
-
-${escapeHTML(e.message)}
-
+${escapeHTML(error.message)}
 </div>
-
 `;
 
 }
@@ -2762,7 +2876,7 @@ ${escapeHTML(e.message)}
 
 
 /* =====================================================
-   SCORE LOBBY CHANGE
+SCORE LOBBY CHANGE
 ===================================================== */
 
 document
@@ -2774,43 +2888,31 @@ renderScoreEntry
 
 
 /* =====================================================
-   SAVE MATCH
+SAVE MATCH
 ===================================================== */
 
 async function saveCurrentMatch(){
 
-const lobby =
-document.getElementById(
-"scoreLobby"
-).value;
-
+const lobby=
+document.getElementById("scoreLobby").value;
 
 if(!lobby){
 
-alert(
-"Please select a lobby."
-);
+alert("Please select a lobby.");
 
 return;
 
 }
 
-
-const entries = [];
-
+const entries=[];
 
 document
-.querySelectorAll(
-".score-position"
-)
-.forEach(
-input => {
+.querySelectorAll(".score-position")
+.forEach(input=>{
 
-const team =
-input.dataset.team;
+const team=input.dataset.team;
 
-const k =
-document.querySelector(
+const k=document.querySelector(
 `.score-kills[data-team="${CSS.escape(team)}"]`
 );
 
@@ -2818,20 +2920,13 @@ entries.push({
 
 team,
 
-position:
-Number(
-input.value
-),
+position:Number(input.value),
 
-kills:
-Number(
-k.value
-) || 0
+kills:Number(k.value)||0
 
 });
 
-}
-);
+});
 
 
 try{
@@ -2841,13 +2936,11 @@ await api(
 {
 method:"POST",
 
-body:
-JSON.stringify({
+body:JSON.stringify({
 
 lobby,
 
-matchNo:
-currentScoreMatch,
+matchNo:currentScoreMatch,
 
 entries
 
@@ -2862,11 +2955,9 @@ alert(
 
 renderScoreEntry();
 
-}catch(e){
+}catch(error){
 
-alert(
-e.message
-);
+alert(error.message);
 
 }
 
@@ -2874,30 +2965,24 @@ e.message
 
 
 /* =====================================================
-   PUBLIC LEADERBOARD OPTIONS
+PUBLIC LEADERBOARD OPTIONS
 ===================================================== */
 
 async function loadLeaderboardLobbyOptions(){
 
-const select =
+const select=
 document.getElementById(
 "publicLobbySelect"
 );
 
 try{
 
-const l =
-await api(
-"/api/public/lobbies"
-);
+const l=
+await api("/api/public/lobbies");
 
-select.innerHTML =
-'<option value="">Select a lobby</option>' +
-
-l
-.map(
-x =>
-`
+select.innerHTML=
+'<option value="">Select a lobby</option>'+
+l.map(x=>`
 
 <option
 value="${escapeAttribute(x.name)}">
@@ -2906,13 +2991,11 @@ ${escapeHTML(x.name)}
 
 </option>
 
-`
-)
-.join("");
+`).join("");
 
-}catch(e){
+}catch(error){
 
-console.error(e);
+console.error(error);
 
 }
 
@@ -2920,36 +3003,32 @@ console.error(e);
 
 
 /* =====================================================
-   PUBLIC LEADERBOARD
+PUBLIC LEADERBOARD
 ===================================================== */
 
 async function loadPublicLeaderboard(){
 
-const lobby =
+const lobby=
 document.getElementById(
 "publicLobbySelect"
 ).value;
 
-const match =
+const match=
 document.getElementById(
 "publicMatchSelect"
 ).value;
 
-const target =
+const target=
 document.getElementById(
 "publicLeaderboard"
 );
 
-
 if(!lobby){
 
-target.innerHTML =
-`
+target.innerHTML=`
 
 <div class="message show error">
-
 Please select a lobby.
-
 </div>
 
 `;
@@ -2961,43 +3040,34 @@ return;
 
 try{
 
-const rows =
-await api(
+const rows=await api(
 
-match === "overall"
+match==="overall"
 
-? `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
+?`/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
 
-: `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
+:`/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
 
 );
 
 
-if(match === "overall"){
+if(match==="overall"){
 
-renderOverallLeaderboard(
-target,
-rows
-);
+renderOverallLeaderboard(target,rows);
 
 }else{
 
-renderMatchLeaderboard(
-target,
-rows,
-match
-);
+renderMatchLeaderboard(target,rows,match);
 
 }
 
-}catch(e){
+}catch(error){
 
-target.innerHTML =
-`
+target.innerHTML=`
 
 <div class="message show error">
 
-${escapeHTML(e.message)}
+${escapeHTML(error.message)}
 
 </div>
 
@@ -3009,25 +3079,19 @@ ${escapeHTML(e.message)}
 
 
 /* =====================================================
-   OVERALL LEADERBOARD
+OVERALL LEADERBOARD
 ===================================================== */
 
-function renderOverallLeaderboard(
-target,
-rows
-){
+function renderOverallLeaderboard(target,rows){
 
 if(!rows.length){
 
-target.innerHTML =
-`
+target.innerHTML=`
 
 <div class="card">
 
 <p class="muted">
-
 No match results have been entered yet.
-
 </p>
 
 </div>
@@ -3038,8 +3102,7 @@ return;
 
 }
 
-
-target.innerHTML = `
+target.innerHTML=`
 
 <div class="card">
 
@@ -3071,16 +3134,12 @@ Overall Leaderboard
 
 <tbody>
 
-${
-
-rows
-.map(
-r => `
+${rows.map(r=>`
 
 <tr>
 
 <td class="rank">
-#${r.position}
+#${escapeHTML(r.position)}
 </td>
 
 <td>
@@ -3090,34 +3149,30 @@ ${escapeHTML(r.team)}
 </td>
 
 <td>
-${r.matchesPlayed}
+${escapeHTML(r.matchesPlayed)}
 </td>
 
 <td>
-${r.booyahs}
+${escapeHTML(r.booyahs)}
 </td>
 
 <td>
-${r.placementPoints}
+${escapeHTML(r.placementPoints)}
 </td>
 
 <td>
-${r.killPoints}
+${escapeHTML(r.killPoints)}
 </td>
 
 <td>
 <strong>
-${r.totalPoints}
+${escapeHTML(r.totalPoints)}
 </strong>
 </td>
 
 </tr>
 
-`
-)
-.join("")
-
-}
+`).join("")}
 
 </tbody>
 
@@ -3133,26 +3188,21 @@ ${r.totalPoints}
 
 
 /* =====================================================
-   MATCH LEADERBOARD
+MATCH LEADERBOARD
 ===================================================== */
 
-function renderMatchLeaderboard(
-target,
-rows,
-match
-){
+function renderMatchLeaderboard(target,rows,match){
 
 if(!rows.length){
 
-target.innerHTML =
-`
+target.innerHTML=`
 
 <div class="card">
 
 <p class="muted">
 
 No results have been entered
-for Match ${match}.
+for Match ${escapeHTML(match)}.
 
 </p>
 
@@ -3164,13 +3214,12 @@ return;
 
 }
 
-
-target.innerHTML = `
+target.innerHTML=`
 
 <div class="card">
 
 <h3>
-Match ${match} Results
+Match ${escapeHTML(match)} Results
 </h3>
 
 <br>
@@ -3196,16 +3245,12 @@ Match ${match} Results
 
 <tbody>
 
-${
-
-rows
-.map(
-r => `
+${rows.map(r=>`
 
 <tr>
 
 <td class="rank">
-${r.position}
+${escapeHTML(r.position)}
 </td>
 
 <td>
@@ -3215,30 +3260,26 @@ ${escapeHTML(r.team)}
 </td>
 
 <td>
-${r.kills}
+${escapeHTML(r.kills)}
 </td>
 
 <td>
-${r.placement_points}
+${escapeHTML(r.placement_points)}
 </td>
 
 <td>
-${r.kill_points}
+${escapeHTML(r.kill_points)}
 </td>
 
 <td>
 <strong>
-${r.total_points}
+${escapeHTML(r.total_points)}
 </strong>
 </td>
 
 </tr>
 
-`
-)
-.join("")
-
-}
+`).join("")}
 
 </tbody>
 
@@ -3254,37 +3295,19 @@ ${r.total_points}
 
 
 /* =====================================================
-   SECURITY / ESCAPING
+SECURITY
 ===================================================== */
 
 function escapeHTML(v){
 
-return String(
-v ?? ""
-)
-.replaceAll(
-"&",
-"&amp;"
-)
-.replaceAll(
-"<",
-"&lt;"
-)
-.replaceAll(
-">",
-"&gt;"
-)
-.replaceAll(
-'"',
-"&quot;"
-)
-.replaceAll(
-"'",
-"&#039;"
-);
+return String(v??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 
 }
-
 
 function escapeAttribute(v){
 
@@ -3294,15 +3317,18 @@ return escapeHTML(v);
 
 
 /* =====================================================
-   INITIAL LOAD
+INITIAL LOAD
 ===================================================== */
 
 document.addEventListener(
 "DOMContentLoaded",
-() =>
-loadPublicLobbies(
-"homeLobbies"
-)
+async()=>{
+
+await loadPublicLobbies("homeLobbies");
+
+await loadRegistrationCategories();
+
+}
 );
 
 </script>
