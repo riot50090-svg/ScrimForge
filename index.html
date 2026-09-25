@@ -215,6 +215,14 @@ select:focus{
   border-color:#8b5cf6;
 }
 
+input[readonly],
+input:disabled{
+  opacity:.75;
+  cursor:not-allowed;
+  border-color:#475569;
+  background:#111827;
+}
+
 .form-grid{
   display:grid;
   grid-template-columns:
@@ -362,6 +370,16 @@ footer{
 .live-text{
   color:#6ee7b7;
   font-weight:700;
+}
+
+.locked-field{
+  position:relative;
+}
+
+.locked-note{
+  font-size:12px;
+  color:#64748b;
+  margin-top:5px;
 }
 
 @media(max-width:700px){
@@ -517,9 +535,8 @@ Scrim Registration
 </h2>
 
 <p class="muted">
-Submit your team details.
-Registration will remain pending
-until it is confirmed by the admin.
+Submit your team details for the selected lobby.
+Time and entry fee are fixed by the admin.
 </p>
 
 <div
@@ -535,33 +552,52 @@ id="regLobbyId">
 
 <div class="form-grid">
 
-<div class="form-group">
+
+<!-- ADMIN CONTROLLED TIME -->
+
+<div class="form-group locked-field">
 
 <label>
-Scrim Time
+Scrim Time 🔒
 </label>
 
 <input
 type="text"
 id="regTime"
-placeholder="Example: 12 PM"
-required>
+readonly
+disabled
+>
+
+<div class="locked-note">
+Set by admin — players cannot change the time.
+</div>
 
 </div>
 
-<div class="form-group">
+
+<!-- ADMIN CONTROLLED FEE -->
+
+<div class="form-group locked-field">
 
 <label>
-Entry Fee
+Entry Fee 🔒
 </label>
 
 <input
 type="text"
 id="regFee"
-placeholder="Example: ₹50"
-required>
+readonly
+disabled
+>
+
+<div class="locked-note">
+Set by admin — players cannot change the fee.
+</div>
 
 </div>
+
+
+<!-- PLAYER DETAILS -->
 
 <div class="form-group">
 
@@ -573,9 +609,11 @@ Team Name
 type="text"
 id="regTeam"
 placeholder="Your team name"
-required>
+required
+>
 
 </div>
+
 
 <div class="form-group">
 
@@ -587,9 +625,11 @@ Captain Name
 type="text"
 id="regCaptain"
 placeholder="Captain name"
-required>
+required
+>
 
 </div>
+
 
 <div class="form-group">
 
@@ -601,9 +641,11 @@ WhatsApp / Phone
 type="text"
 id="regPhone"
 placeholder="Phone number"
-required>
+required
+>
 
 </div>
+
 
 <div class="form-group">
 
@@ -615,11 +657,21 @@ Free Fire UID
 type="text"
 id="regUid"
 placeholder="Captain UID"
-required>
+required
+>
 
 </div>
 
 </div>
+
+<br>
+
+<p class="muted">
+🔒 Lobby time and entry fee are controlled by the admin.
+They cannot be changed during registration.
+</p>
+
+<br>
 
 <button
 class="btn"
@@ -1484,17 +1536,24 @@ function useLobby(
   fee
 ){
 
+  if(!lobbyId){
+
+    alert("Invalid lobby.");
+
+    return;
+  }
+
   document.getElementById(
     "regLobbyId"
   ).value = lobbyId;
 
   document.getElementById(
     "regTime"
-  ).value = time;
+  ).value = time || "Admin controlled";
 
   document.getElementById(
     "regFee"
-  ).value = fee;
+  ).value = fee || "Admin controlled";
 
   showPage("register");
 }
@@ -1502,6 +1561,8 @@ function useLobby(
 
 /* =====================================================
    REGISTRATION
+   V3
+   TIME AND FEE ARE NOT SENT BY PLAYER
 ===================================================== */
 
 document
@@ -1512,7 +1573,77 @@ document
 
       e.preventDefault();
 
+      const lobbyId =
+        document
+          .getElementById("regLobbyId")
+          .value
+          .trim();
+
+      const team =
+        document
+          .getElementById("regTeam")
+          .value
+          .trim();
+
+      const captain =
+        document
+          .getElementById("regCaptain")
+          .value
+          .trim();
+
+      const phone =
+        document
+          .getElementById("regPhone")
+          .value
+          .trim();
+
+      const uid =
+        document
+          .getElementById("regUid")
+          .value
+          .trim();
+
+
+      if(!lobbyId){
+
+        showMessage(
+          "registerMessage",
+          "Please select a valid lobby first.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if(
+        !team ||
+        !captain ||
+        !phone ||
+        !uid
+      ){
+
+        showMessage(
+          "registerMessage",
+          "Please fill all required details.",
+          "error"
+        );
+
+        return;
+      }
+
+
       try{
+
+        /*
+          IMPORTANT:
+
+          Time and fee are intentionally NOT
+          included in this request.
+
+          The server must get them directly
+          from the selected lobby.
+        */
 
         const data =
           await api(
@@ -1523,50 +1654,46 @@ document
               body:JSON.stringify({
 
                 lobbyId:
-                  document.getElementById(
-                    "regLobbyId"
-                  ).value,
-
-                time:
-                  document.getElementById(
-                    "regTime"
-                  ).value,
-
-                fee:
-                  document.getElementById(
-                    "regFee"
-                  ).value,
+                  Number(lobbyId),
 
                 team:
-                  document.getElementById(
-                    "regTeam"
-                  ).value,
+                  team,
 
                 captain:
-                  document.getElementById(
-                    "regCaptain"
-                  ).value,
+                  captain,
 
                 phone:
-                  document.getElementById(
-                    "regPhone"
-                  ).value,
+                  phone,
 
                 uid:
-                  document.getElementById(
-                    "regUid"
-                  ).value
+                  uid
 
               })
             }
           );
+
 
         showMessage(
           "registerMessage",
           `Registration submitted successfully. Your reference is ${data.ref}`
         );
 
+
         e.target.reset();
+
+
+        document.getElementById(
+          "regLobbyId"
+        ).value = "";
+
+        document.getElementById(
+          "regTime"
+        ).value = "";
+
+        document.getElementById(
+          "regFee"
+        ).value = "";
+
 
       }catch(error){
 
@@ -2804,774 +2931,4 @@ function previewScoreRow(
   const row =
     input.closest("tr");
 
-  if(!row) return;
-
-  const position =
-    Number(
-      row.querySelector(
-        ".score-position"
-      ).value
-    );
-
-  const kills =
-    Number(
-      row.querySelector(
-        ".score-kills"
-      ).value
-    ) || 0;
-
-  const placement =
-    calculatePlacement(
-      position
-    );
-
-  const booyah =
-    position === 1
-      ? "YES"
-      : "—";
-
-  const total =
-    placement + kills;
-
-  const booyahCell =
-    row.querySelector(
-      ".preview-booyah"
-    );
-
-  const placementCell =
-    row.querySelector(
-      ".preview-placement"
-    );
-
-  const killsCell =
-    row.querySelector(
-      ".preview-kills"
-    );
-
-  const totalCell =
-    row.querySelector(
-      ".preview-total"
-    );
-
-  if(booyahCell)
-    booyahCell.textContent =
-      booyah;
-
-  if(placementCell)
-    placementCell.textContent =
-      placement;
-
-  if(killsCell)
-    killsCell.textContent =
-      kills;
-
-  if(totalCell)
-    totalCell.innerHTML =
-      `<strong>${total}</strong>`;
-}
-
-
-/* =====================================================
-   SAVE MATCH
-===================================================== */
-
-async function saveCurrentMatch(){
-
-  const lobby =
-    document.getElementById(
-      "scoreLobby"
-    ).value;
-
-  if(!lobby){
-
-    alert(
-      "Please select a lobby."
-    );
-
-    return;
-  }
-
-  const entries = [];
-
-  document
-    .querySelectorAll(
-      ".score-position"
-    )
-    .forEach(input => {
-
-      const row =
-        input.closest("tr");
-
-      const team =
-        input.dataset.team;
-
-      const killsInput =
-        row.querySelector(
-          ".score-kills"
-        );
-
-      entries.push({
-
-        team,
-
-        position:
-          Number(input.value),
-
-        kills:
-          Number(
-            killsInput.value
-          ) || 0
-
-      });
-
-    });
-
-  try{
-
-    await api(
-      "/api/leaderboard/match",
-      {
-        method:"POST",
-
-        body:JSON.stringify({
-
-          lobby,
-
-          matchNo:
-            currentScoreMatch,
-
-          entries
-
-        })
-      }
-    );
-
-    alert(
-      `Match ${currentScoreMatch} saved successfully.`
-    );
-
-    await renderScoreEntry();
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-}
-
-
-/* =====================================================
-   PUBLIC LEADERBOARD LOBBIES
-===================================================== */
-
-async function loadLeaderboardLobbyOptions(){
-
-  const select =
-    document.getElementById(
-      "publicLobbySelect"
-    );
-
-  const previous =
-    select.value;
-
-  try{
-
-    const lobbies =
-      await api(
-        "/api/public/lobbies"
-      );
-
-    select.innerHTML =
-      '<option value="">Select a lobby</option>' +
-
-      lobbies.map(
-        lobby => `
-
-          <option
-            value="${escapeAttribute(
-              lobby.name
-            )}">
-
-            ${escapeHTML(
-              lobby.name
-            )}
-
-          </option>
-
-        `
-      ).join("");
-
-    if(
-      previous &&
-      lobbies.some(
-        l => l.name === previous
-      )
-    ){
-
-      select.value =
-        previous;
-
-    }
-
-    startLeaderboardLive();
-
-    if(select.value){
-
-      await loadPublicLeaderboard(
-        true
-      );
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-}
-
-
-/* =====================================================
-   LIVE LEADERBOARD
-===================================================== */
-
-async function loadPublicLeaderboard(
-  silent = false
-){
-
-  const lobby =
-    document.getElementById(
-      "publicLobbySelect"
-    ).value;
-
-  const match =
-    document.getElementById(
-      "publicMatchSelect"
-    ).value;
-
-  const target =
-    document.getElementById(
-      "publicLeaderboard"
-    );
-
-  if(!lobby){
-
-    if(!silent){
-
-      target.innerHTML =
-        `<div class="message show error">
-          Please select a lobby.
-        </div>`;
-
-    }
-
-    return;
-  }
-
-  try{
-
-    let data;
-
-    if(match === "overall"){
-
-      data =
-        await api(
-          `/api/public-leaderboard?lobby=${encodeURIComponent(
-            lobby
-          )}`
-        );
-
-      const rows =
-        Array.isArray(data)
-          ? data
-          : data.rows || [];
-
-      renderOverallLeaderboard(
-        target,
-        rows
-      );
-
-    }else{
-
-      data =
-        await api(
-          `/api/leaderboard/match?lobby=${encodeURIComponent(
-            lobby
-          )}&match=${match}`
-        );
-
-      renderMatchLeaderboard(
-        target,
-        data,
-        match
-      );
-
-    }
-
-  }catch(error){
-
-    if(!silent){
-
-      target.innerHTML =
-        `<div class="message show error">
-          ${escapeHTML(
-            error.message
-          )}
-        </div>`;
-
-    }
-
-  }
-}
-
-
-function startLeaderboardLive(){
-
-  if(leaderboardTimer){
-    clearInterval(
-      leaderboardTimer
-    );
-  }
-
-  leaderboardTimer =
-    setInterval(
-      () => {
-
-        const page =
-          document.getElementById(
-            "leaderboard"
-          );
-
-        const lobby =
-          document.getElementById(
-            "publicLobbySelect"
-          );
-
-        if(
-          page &&
-          page.classList.contains(
-            "active"
-          ) &&
-          lobby &&
-          lobby.value
-        ){
-
-          loadPublicLeaderboard(
-            true
-          );
-
-        }
-
-      },
-      5000
-    );
-}
-
-
-/* =====================================================
-   OVERALL LEADERBOARD
-===================================================== */
-
-function renderOverallLeaderboard(
-  target,
-  rows
-){
-
-  if(!rows.length){
-
-    target.innerHTML =
-      `<div class="card">
-        <p class="muted">
-          No confirmed teams in this lobby yet.
-        </p>
-      </div>`;
-
-    return;
-  }
-
-  target.innerHTML = `
-
-    <div class="card live-box">
-
-      <div class="top-actions">
-
-        <div>
-
-          <h3>
-            Live Overall Leaderboard
-          </h3>
-
-          <p class="muted">
-            Automatically updated.
-          </p>
-
-        </div>
-
-        <span class="badge open">
-          LIVE
-        </span>
-
-      </div>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Rank
-              </th>
-
-              <th>
-                Team
-              </th>
-
-              <th>
-                Booyahs
-              </th>
-
-              <th>
-                Kill Points
-              </th>
-
-              <th>
-                Placement Points
-              </th>
-
-              <th>
-                Total Points
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${rows.map(
-              row => `
-
-              <tr>
-
-                <td class="rank">
-                  #${row.position}
-                </td>
-
-                <td>
-                  <strong>
-                    ${escapeHTML(
-                      row.team
-                    )}
-                  </strong>
-                </td>
-
-                <td>
-                  ${Number(
-                    row.booyahs || 0
-                  )}
-                </td>
-
-                <td>
-                  ${Number(
-                    row.killPoints || 0
-                  )}
-                </td>
-
-                <td>
-                  ${Number(
-                    row.placementPoints || 0
-                  )}
-                </td>
-
-                <td>
-                  <strong>
-                    ${Number(
-                      row.totalPoints || 0
-                    )}
-                  </strong>
-                </td>
-
-              </tr>
-
-              `
-            ).join("")}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-}
-
-
-/* =====================================================
-   MATCH LEADERBOARD
-===================================================== */
-
-function renderMatchLeaderboard(
-  target,
-  rows,
-  match
-){
-
-  if(!rows.length){
-
-    target.innerHTML =
-      `<div class="card">
-        <p class="muted">
-          No results have been published
-          for Match ${match} yet.
-        </p>
-      </div>`;
-
-    return;
-  }
-
-  target.innerHTML = `
-
-    <div class="card">
-
-      <div class="top-actions">
-
-        <div>
-
-          <h3>
-            Match ${match} Leaderboard
-          </h3>
-
-          <p class="muted">
-            Results for this match.
-          </p>
-
-        </div>
-
-        <span class="badge open">
-          LIVE
-        </span>
-
-      </div>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Position
-              </th>
-
-              <th>
-                Team
-              </th>
-
-              <th>
-                Booyah
-              </th>
-
-              <th>
-                Kills
-              </th>
-
-              <th>
-                Kill Points
-              </th>
-
-              <th>
-                Placement Points
-              </th>
-
-              <th>
-                Total Points
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${rows.map(
-              row => `
-
-              <tr>
-
-                <td class="rank">
-                  #${row.position}
-                </td>
-
-                <td>
-                  <strong>
-                    ${escapeHTML(
-                      row.team
-                    )}
-                  </strong>
-                </td>
-
-                <td>
-                  ${
-                    Number(
-                      row.booyah
-                    ) === 1
-
-                    ? "YES"
-
-                    : "—"
-                  }
-                </td>
-
-                <td>
-                  ${Number(
-                    row.kills || 0
-                  )}
-                </td>
-
-                <td>
-                  ${Number(
-                    row.kill_points || 0
-                  )}
-                </td>
-
-                <td>
-                  ${Number(
-                    row.placement_points || 0
-                  )}
-                </td>
-
-                <td>
-                  <strong>
-                    ${Number(
-                      row.total_points || 0
-                    )}
-                  </strong>
-                </td>
-
-              </tr>
-
-              `
-            ).join("")}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-}
-
-
-/* =====================================================
-   ESCAPE HELPERS
-===================================================== */
-
-function escapeHTML(value){
-
-  return String(
-    value ?? ""
-  )
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
-}
-
-function escapeAttribute(value){
-  return escapeHTML(value);
-}
-
-
-/* =====================================================
-   LEADERBOARD EVENTS
-===================================================== */
-
-document
-  .getElementById(
-    "scoreLobby"
-  )
-  .addEventListener(
-    "change",
-    renderScoreEntry
-  );
-
-document
-  .getElementById(
-    "publicLobbySelect"
-  )
-  .addEventListener(
-    "change",
-    () => loadPublicLeaderboard()
-  );
-
-document
-  .getElementById(
-    "publicMatchSelect"
-  )
-  .addEventListener(
-    "change",
-    () => {
-
-      if(
-        document.getElementById(
-          "publicLobbySelect"
-        ).value
-      ){
-
-        loadPublicLeaderboard();
-
-      }
-
-    }
-  );
-
-
-/* =====================================================
-   INITIAL LOAD
-===================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    loadPublicLobbies(
-      "homeLobbies"
-    );
-
-    startLeaderboardLive();
-
-  }
-);
-
-</script>
-
-</body>
-</html>
+  if(!row)
