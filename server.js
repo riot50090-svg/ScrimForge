@@ -29,9 +29,7 @@ app.use(
   })
 );
 
-app.use(
-  express.static(__dirname)
-);
+app.use(express.static(__dirname));
 
 
 /* =====================================================
@@ -62,13 +60,12 @@ function loadDB() {
 
   try {
 
-    const data =
-      JSON.parse(
-        fs.readFileSync(
-          DATA_FILE,
-          "utf8"
-        )
-      );
+    const data = JSON.parse(
+      fs.readFileSync(
+        DATA_FILE,
+        "utf8"
+      )
+    );
 
     return {
 
@@ -103,7 +100,12 @@ function loadDB() {
 
     };
 
-  } catch {
+  } catch (error) {
+
+    console.error(
+      "Database load error:",
+      error
+    );
 
     return {
 
@@ -154,7 +156,7 @@ function hashPassword(password) {
   return crypto
     .createHash("sha256")
     .update(
-      String(password)
+      String(password || "")
     )
     .digest("hex");
 
@@ -181,9 +183,7 @@ function getToken(req) {
     );
 
   return match
-    ? decodeURIComponent(
-        match[1]
-      )
+    ? decodeURIComponent(match[1])
     : null;
 
 }
@@ -221,8 +221,7 @@ function requireAdmin(
 
   }
 
-  req.admin =
-    admin;
+  req.admin = admin;
 
   next();
 
@@ -255,18 +254,45 @@ function lobbyByName(name) {
 }
 
 
+/*
+  IMPORTANT:
+
+  A registration belongs to a lobby
+  through registration.lobby_id.
+
+  Therefore the lobby count is calculated
+  from BOTH:
+
+  1. matching lobby_id
+  2. confirmed status
+*/
+
 function confirmedCount(lobbyId) {
 
-  return db.registrations
-    .filter(
-      registration =>
-        Number(
-          registration.lobby_id
-        ) === Number(lobbyId) &&
-        registration.status ===
-          "confirmed"
-    )
-    .length;
+  return db.registrations.filter(
+    registration =>
+      Number(
+        registration.lobby_id
+      ) === Number(lobbyId) &&
+
+      registration.status ===
+        "confirmed"
+  ).length;
+
+}
+
+
+function registrationCount(lobbyId) {
+
+  return db.registrations.filter(
+    registration =>
+      Number(
+        registration.lobby_id
+      ) === Number(lobbyId) &&
+
+      registration.status !==
+        "rejected"
+  ).length;
 
 }
 
@@ -292,6 +318,15 @@ function publicLobby(lobby) {
 
     status:
       lobby.status,
+
+    /*
+      pending + confirmed registrations
+      are counted here.
+    */
+    registered:
+      registrationCount(
+        lobby.id
+      ),
 
     confirmed:
       confirmedCount(
@@ -336,7 +371,7 @@ function placementPoints(position) {
 
 
 /* =====================================================
-   ADMIN ROUTES
+   ADMIN AUTH
 ===================================================== */
 
 app.get(
@@ -361,13 +396,11 @@ app.get(
 
     res.json(
       admin
-
         ? {
             loggedIn: true,
             name: admin.name,
             email: admin.email
           }
-
         : {
             loggedIn: false
           }
@@ -436,7 +469,8 @@ app.post(
     saveDB();
 
     const token =
-      crypto.randomBytes(32)
+      crypto
+        .randomBytes(32)
         .toString("hex");
 
     sessions.set(
@@ -500,7 +534,8 @@ app.post(
     }
 
     const token =
-      crypto.randomBytes(32)
+      crypto
+        .randomBytes(32)
         .toString("hex");
 
     sessions.set(
@@ -537,9 +572,7 @@ app.post(
 
     if (token) {
 
-      sessions.delete(
-        token
-      );
+      sessions.delete(token);
 
     }
 
@@ -723,7 +756,7 @@ app.patch(
 
 
 /* =====================================================
-   DELETE SCRIM
+   DELETE LOBBY
 ===================================================== */
 
 app.delete(
@@ -753,11 +786,19 @@ app.delete(
     const lobbyName =
       lobby.name;
 
+    /*
+      IMPORTANT:
+
+      Delete the lobby AND every registration
+      belonging to that exact lobby.
+
+      This prevents ghost registrations.
+    */
+
     db.lobbies =
       db.lobbies.filter(
-        lobby =>
-          Number(lobby.id) !==
-          id
+        item =>
+          Number(item.id) !== id
       );
 
     db.registrations =
@@ -793,10 +834,25 @@ app.delete(
 
 /* =====================================================
    REGISTRATION
-   IMPORTANT:
-   USER SENDS ONLY lobbyId + DETAILS.
-   TIME AND FEE COME FROM THE SERVER.
 ===================================================== */
+
+/*
+  NEW CORRECT REGISTRATION FLOW
+
+  Frontend should send:
+
+  {
+    lobbyId,
+    team,
+    captain,
+    phone,
+    uid
+  }
+
+  The server gets time + fee FROM THE LOBBY.
+
+  The user cannot modify fee/time.
+*/
 
 app.post(
   "/api/registrations",
@@ -810,6 +866,11 @@ app.post(
       uid
     } = req.body || {};
 
+
+    /* ---------------------------------------------
+       BASIC VALIDATION
+    --------------------------------------------- */
+
     if (
       !lobbyId ||
       !team ||
@@ -822,10 +883,15 @@ app.post(
         .status(400)
         .json({
           error:
-            "Please select a scrim category and fill all required details."
+            "Please select a scrim and fill all required details."
         });
 
     }
+
+
+    /* ---------------------------------------------
+       FIND EXACT SELECTED LOBBY
+    --------------------------------------------- */
 
     const lobby =
       lobbyById(lobbyId);
@@ -836,10 +902,15 @@ app.post(
         .status(404)
         .json({
           error:
-            "Selected scrim category was not found."
+            "Selected scrim was not found."
         });
 
     }
+
+
+    /* ---------------------------------------------
+       LOBBY MUST BE OPEN
+    --------------------------------------------- */
 
     if (
       lobby.status !==
@@ -855,10 +926,23 @@ app.post(
 
     }
 
-    if (
-      confirmedCount(
+
+    /* ---------------------------------------------
+       CHECK CAPACITY
+
+       Pending + confirmed registrations reserve
+       a slot.
+
+       Rejected registrations do not.
+    --------------------------------------------- */
+
+    const current =
+      registrationCount(
         lobby.id
-      ) >=
+      );
+
+    if (
+      current >=
       Number(
         lobby.max_teams
       )
@@ -868,10 +952,21 @@ app.post(
         .status(400)
         .json({
           error:
-            "This scrim is already full."
+            "That scrim is full."
         });
 
     }
+
+
+    /* ---------------------------------------------
+       CREATE REGISTRATION
+
+       NOTICE:
+
+       time and fee come directly from lobby.
+
+       The client cannot choose different values.
+    --------------------------------------------- */
 
     const row = {
 
@@ -881,24 +976,17 @@ app.post(
       ref:
         makeRef(),
 
-      /*
-        The user cannot choose these values.
-        They are copied directly from the
-        selected lobby.
-      */
+      lobby_id:
+        lobby.id,
+
+      lobby_name:
+        lobby.name,
 
       time:
-        String(lobby.time),
+        lobby.time,
 
       fee:
-        String(lobby.fee),
-
-      /*
-        Category selected by user.
-      */
-
-      category_lobby_id:
-        lobby.id,
+        lobby.fee,
 
       team:
         String(team).trim(),
@@ -913,37 +1001,25 @@ app.post(
         String(uid).trim(),
 
       /*
-        EVERY new registration starts pending.
+        THIS IS STORED IMMEDIATELY.
+
+        Therefore the status exists even when
+        the admin is completely offline.
       */
 
       status:
         "pending",
-
-      /*
-        Admin can later assign the confirmed
-        registration to an actual lobby.
-      */
-
-      lobby_id:
-        null,
 
       created_at:
         new Date().toISOString()
 
     };
 
-    db.registrations.push(
-      row
-    );
 
-    /*
-      This is the important part:
-      registration is saved immediately.
-      It does NOT depend on the admin
-      being online.
-    */
+    db.registrations.push(row);
 
     saveDB();
+
 
     res.json({
 
@@ -955,14 +1031,21 @@ app.post(
       status:
         row.status,
 
-      category:
-        lobby.name,
+      lobby: {
 
-      time:
-        lobby.time,
+        id:
+          lobby.id,
 
-      fee:
-        lobby.fee
+        name:
+          lobby.name,
+
+        time:
+          lobby.time,
+
+        fee:
+          lobby.fee
+
+      }
 
     });
 
@@ -988,8 +1071,7 @@ app.get(
         registration =>
           String(
             registration.ref
-          ).toLowerCase() ===
-          ref.toLowerCase()
+          ) === ref
       );
 
     if (!row) {
@@ -1003,35 +1085,37 @@ app.get(
 
     }
 
-    const assignedLobby =
+
+    /*
+      Always get lobby from the stored lobby_id.
+    */
+
+    const lobby =
       row.lobby_id
         ? lobbyById(
             row.lobby_id
           )
         : null;
 
-    const categoryLobby =
-      row.category_lobby_id
-        ? lobbyById(
-            row.category_lobby_id
-          )
-        : null;
 
     res.json({
 
       ok: true,
 
-      id:
-        row.id,
+      team:
+        row.team,
 
       ref:
         row.ref,
 
-      team:
-        row.team,
-
       captain:
         row.captain,
+
+      phone:
+        row.phone,
+
+      uid:
+        row.uid,
 
       time:
         row.time,
@@ -1039,30 +1123,19 @@ app.get(
       fee:
         row.fee,
 
-      /*
-        ALWAYS return current status.
-      */
-
       status:
         row.status,
 
-      /*
-        Category originally selected.
-      */
-
-      category:
-        categoryLobby
-          ? categoryLobby.name
-          : null,
-
-      /*
-        Actual lobby assigned by admin.
-      */
+      lobby_id:
+        row.lobby_id,
 
       lobby_name:
-        assignedLobby
-          ? assignedLobby.name
-          : null,
+        lobby
+          ? lobby.name
+          : (
+              row.lobby_name ||
+              null
+            ),
 
       created_at:
         row.created_at
@@ -1082,21 +1155,15 @@ app.get(
   requireAdmin,
   (req, res) => {
 
-    const registrations =
+    res.json(
+
       db.registrations.map(
         row => {
 
-          const assignedLobby =
+          const lobby =
             row.lobby_id
               ? lobbyById(
                   row.lobby_id
-                )
-              : null;
-
-          const categoryLobby =
-            row.category_lobby_id
-              ? lobbyById(
-                  row.category_lobby_id
                 )
               : null;
 
@@ -1104,23 +1171,19 @@ app.get(
 
             ...row,
 
-            category_name:
-              categoryLobby
-                ? categoryLobby.name
-                : null,
-
-            assigned_lobby_name:
-              assignedLobby
-                ? assignedLobby.name
-                : null
+            lobby_name:
+              lobby
+                ? lobby.name
+                : (
+                    row.lobby_name ||
+                    null
+                  )
 
           };
 
         }
-      );
+      )
 
-    res.json(
-      registrations
     );
 
   }
@@ -1158,17 +1221,21 @@ app.patch(
 
     }
 
-    const status =
+
+    const newStatus =
       String(
         req.body.status || ""
       ).toLowerCase();
+
 
     if (
       ![
         "pending",
         "confirmed",
         "rejected"
-      ].includes(status)
+      ].includes(
+        newStatus
+      )
     ) {
 
       return res
@@ -1180,29 +1247,81 @@ app.patch(
 
     }
 
-    /*
-      Save the status permanently.
-    */
-
-    row.status =
-      status;
 
     /*
-      A rejected registration cannot
-      stay assigned to a lobby.
+      Registration MUST have a lobby.
+
+      New registrations always do.
+
+      This protects old/broken registrations too.
     */
+
+    const lobby =
+      row.lobby_id
+        ? lobbyById(
+            row.lobby_id
+          )
+        : null;
+
 
     if (
-      status ===
-      "rejected"
+      newStatus ===
+      "confirmed"
     ) {
 
-      row.lobby_id =
-        null;
+      if (!lobby) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "This registration has no valid scrim assigned. Assign it to a scrim first."
+          });
+
+      }
+
+
+      /*
+        Do not allow confirmation above capacity.
+      */
+
+      const alreadyConfirmed =
+        row.status ===
+        "confirmed";
+
+      if (
+        !alreadyConfirmed &&
+        confirmedCount(
+          lobby.id
+        ) >=
+        Number(
+          lobby.max_teams
+        )
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "That scrim is already full."
+          });
+
+      }
 
     }
 
+
+    /*
+      Save status permanently.
+
+      This is NOT dependent on admin being online.
+    */
+
+    row.status =
+      newStatus;
+
     saveDB();
+
 
     res.json({
 
@@ -1211,11 +1330,19 @@ app.patch(
       id:
         row.id,
 
+      ref:
+        row.ref,
+
       status:
         row.status,
 
       lobby_id:
-        row.lobby_id
+        row.lobby_id,
+
+      lobby_name:
+        lobby
+          ? lobby.name
+          : null
 
     });
 
@@ -1224,7 +1351,7 @@ app.patch(
 
 
 /* =====================================================
-   ASSIGN CONFIRMED REGISTRATION TO LOBBY
+   ASSIGN REGISTRATION TO LOBBY
 ===================================================== */
 
 app.patch(
@@ -1254,24 +1381,6 @@ app.patch(
 
     }
 
-    /*
-      Only confirmed registrations
-      can enter an actual lobby.
-    */
-
-    if (
-      row.status !==
-      "confirmed"
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          error:
-            "Confirm the registration first."
-        });
-
-    }
 
     const lobby =
       lobbyById(
@@ -1289,28 +1398,50 @@ app.patch(
 
     }
 
-    const count =
-      confirmedCount(
-        lobby.id
-      );
-
-    /*
-      If this registration is already
-      in this same lobby, don't count it
-      as a new team.
-    */
 
     if (
-      count >=
-        Number(
-          lobby.max_teams
-        ) &&
+      lobby.status !==
+      "open"
+    ) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "That lobby is closed."
+        });
+
+    }
+
+
+    /*
+      Count this registration as occupying a slot
+      if it is pending or confirmed.
+    */
+
+    const isActive =
+      row.status !==
+      "rejected";
+
+
+    const movingToDifferentLobby =
       Number(
         row.lobby_id
       ) !==
-        Number(
-          lobby.id
-        )
+      Number(
+        lobby.id
+      );
+
+
+    if (
+      isActive &&
+      movingToDifferentLobby &&
+      registrationCount(
+        lobby.id
+      ) >=
+      Number(
+        lobby.max_teams
+      )
     ) {
 
       return res
@@ -1322,23 +1453,55 @@ app.patch(
 
     }
 
+
+    /*
+      Move the registration.
+
+      IMPORTANT:
+      Time and fee are updated automatically
+      from the selected lobby.
+    */
+
     row.lobby_id =
       lobby.id;
 
+    row.lobby_name =
+      lobby.name;
+
+    row.time =
+      lobby.time;
+
+    row.fee =
+      lobby.fee;
+
+
     saveDB();
+
 
     res.json({
 
       ok: true,
 
-      registrationId:
+      id:
         row.id,
 
-      lobbyId:
+      ref:
+        row.ref,
+
+      lobby_id:
         lobby.id,
 
-      lobbyName:
-        lobby.name
+      lobby_name:
+        lobby.name,
+
+      time:
+        lobby.time,
+
+      fee:
+        lobby.fee,
+
+      status:
+        row.status
 
     });
 
@@ -1358,31 +1521,32 @@ app.get(
     res.json({
 
       pending:
-        db.registrations
-          .filter(
-            r =>
-              r.status ===
-              "pending"
-          )
-          .length,
+        db.registrations.filter(
+          r =>
+            r.status ===
+            "pending"
+        ).length,
 
       confirmed:
-        db.registrations
-          .filter(
-            r =>
-              r.status ===
-              "confirmed"
-          )
-          .length,
+        db.registrations.filter(
+          r =>
+            r.status ===
+            "confirmed"
+        ).length,
+
+      rejected:
+        db.registrations.filter(
+          r =>
+            r.status ===
+            "rejected"
+        ).length,
 
       activeLobbies:
-        db.lobbies
-          .filter(
-            lobby =>
-              lobby.status ===
-              "open"
-          )
-          .length
+        db.lobbies.filter(
+          lobby =>
+            lobby.status ===
+            "open"
+        ).length
 
     });
 
@@ -1423,11 +1587,10 @@ app.get(
             Number(
               registration.lobby_id
             ) ===
-            Number(
-              lobby.id
-            ) &&
+            Number(lobby.id) &&
+
             registration.status ===
-              "confirmed"
+            "confirmed"
         )
 
         .map(
@@ -1437,9 +1600,7 @@ app.get(
           })
         );
 
-    res.json(
-      teams
-    );
+    res.json(teams);
 
   }
 );
@@ -1497,13 +1658,11 @@ app.get(
             Number(
               score.lobby_id
             ) ===
-            Number(
-              lobby.id
-            ) &&
+            Number(lobby.id) &&
+
             Number(
               score.match_no
-            ) ===
-            match
+            ) === match
         )
 
         .sort(
@@ -1531,15 +1690,17 @@ app.get(
               score.kill_points,
 
             total_points:
-              score.placement_points +
-              score.kill_points
+              Number(
+                score.placement_points
+              ) +
+              Number(
+                score.kill_points
+              )
 
           })
         );
 
-    res.json(
-      rows
-    );
+    res.json(rows);
 
   }
 );
@@ -1566,9 +1727,7 @@ app.post(
       );
 
     const match =
-      Number(
-        matchNo
-      );
+      Number(matchNo);
 
     if (!lobby) {
 
@@ -1616,11 +1775,10 @@ app.post(
           Number(
             registration.lobby_id
           ) ===
-          Number(
-            lobby.id
-          ) &&
+          Number(lobby.id) &&
+
           registration.status ===
-            "confirmed"
+          "confirmed"
       );
 
     if (
@@ -1649,19 +1807,14 @@ app.post(
       new Set();
 
     for (
-      const entry
-      of entries
+      const entry of entries
     ) {
 
       const position =
-        Number(
-          entry.position
-        );
+        Number(entry.position);
 
       const kills =
-        Number(
-          entry.kills
-        );
+        Number(entry.kills);
 
       if (
         !names.has(
@@ -1684,9 +1837,7 @@ app.post(
         ) ||
         position < 1 ||
         position > 12 ||
-        positions.has(
-          position
-        )
+        positions.has(position)
       ) {
 
         return res
@@ -1699,9 +1850,7 @@ app.post(
       }
 
       if (
-        !Number.isFinite(
-          kills
-        ) ||
+        !Number.isFinite(kills) ||
         kills < 0
       ) {
 
@@ -1714,12 +1863,14 @@ app.post(
 
       }
 
-      positions.add(
-        position
-      );
+      positions.add(position);
 
     }
 
+
+    /*
+      Replace scores for this exact lobby + match.
+    */
 
     db.scores =
       db.scores.filter(
@@ -1728,20 +1879,17 @@ app.post(
             Number(
               score.lobby_id
             ) ===
-            Number(
-              lobby.id
-            ) &&
+            Number(lobby.id) &&
+
             Number(
               score.match_no
-            ) ===
-            match
+            ) === match
           )
       );
 
 
     for (
-      const entry
-      of entries
+      const entry of entries
     ) {
 
       db.scores.push({
@@ -1827,9 +1975,7 @@ app.get(
           Number(
             score.lobby_id
           ) ===
-          Number(
-            lobby.id
-          )
+          Number(lobby.id)
       )
 
       .forEach(
@@ -1932,9 +2078,7 @@ app.get(
     );
 
 
-    res.json(
-      rows
-    );
+    res.json(rows);
 
   }
 );
