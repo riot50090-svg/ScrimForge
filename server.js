@@ -5,14 +5,12 @@ const crypto = require("crypto");
 
 const app = express();
 
-const PORT =
-  process.env.PORT || 10000;
+const PORT = process.env.PORT || 10000;
 
-const DATA_FILE =
-  path.join(
-    __dirname,
-    "scrimforge-data.json"
-  );
+const DATA_FILE = path.join(
+  __dirname,
+  "scrimforge-data.json"
+);
 
 
 /* =====================================================
@@ -21,13 +19,13 @@ const DATA_FILE =
 
 app.use(
   express.json({
-    limit:"1mb"
+    limit: "1mb"
   })
 );
 
 app.use(
   express.urlencoded({
-    extended:true
+    extended: true
   })
 );
 
@@ -40,31 +38,29 @@ app.use(
    DATABASE
 ===================================================== */
 
-let db =
-  loadDB();
+let db = loadDB();
 
-const sessions =
-  new Map();
+const sessions = new Map();
 
 
-function loadDB(){
+function loadDB() {
 
-  if(!fs.existsSync(DATA_FILE)){
+  if (!fs.existsSync(DATA_FILE)) {
 
     return {
-      nextLobbyId:1,
-      nextRegistrationId:1,
-      nextScoreId:1,
+      nextLobbyId: 1,
+      nextRegistrationId: 1,
+      nextScoreId: 1,
 
-      admins:[],
-      lobbies:[],
-      registrations:[],
-      scores:[]
+      admins: [],
+      lobbies: [],
+      registrations: [],
+      scores: []
     };
 
   }
 
-  try{
+  try {
 
     const data =
       JSON.parse(
@@ -107,18 +103,18 @@ function loadDB(){
 
     };
 
-  }catch{
+  } catch {
 
     return {
 
-      nextLobbyId:1,
-      nextRegistrationId:1,
-      nextScoreId:1,
+      nextLobbyId: 1,
+      nextRegistrationId: 1,
+      nextScoreId: 1,
 
-      admins:[],
-      lobbies:[],
-      registrations:[],
-      scores:[]
+      admins: [],
+      lobbies: [],
+      registrations: [],
+      scores: []
 
     };
 
@@ -127,7 +123,7 @@ function loadDB(){
 }
 
 
-function saveDB(){
+function saveDB() {
 
   const tmp =
     DATA_FILE + ".tmp";
@@ -153,9 +149,7 @@ function saveDB(){
    AUTHENTICATION
 ===================================================== */
 
-function hashPassword(
-  password
-){
+function hashPassword(password) {
 
   return crypto
     .createHash("sha256")
@@ -167,14 +161,16 @@ function hashPassword(
 }
 
 
-function makeRef(){
+function makeRef() {
 
-  return `SF-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  return `SF-${Date.now()}-${Math.floor(
+    1000 + Math.random() * 9000
+  )}`;
 
 }
 
 
-function getToken(req){
+function getToken(req) {
 
   const raw =
     req.headers.cookie || "";
@@ -193,7 +189,7 @@ function getToken(req){
 }
 
 
-function currentAdmin(req){
+function currentAdmin(req) {
 
   const token =
     getToken(req);
@@ -209,12 +205,12 @@ function requireAdmin(
   req,
   res,
   next
-){
+) {
 
   const admin =
     currentAdmin(req);
 
-  if(!admin){
+  if (!admin) {
 
     return res
       .status(401)
@@ -237,7 +233,7 @@ function requireAdmin(
    LOBBY HELPERS
 ===================================================== */
 
-function lobbyById(id){
+function lobbyById(id) {
 
   return db.lobbies.find(
     lobby =>
@@ -248,7 +244,7 @@ function lobbyById(id){
 }
 
 
-function lobbyByName(name){
+function lobbyByName(name) {
 
   return db.lobbies.find(
     lobby =>
@@ -259,9 +255,7 @@ function lobbyByName(name){
 }
 
 
-function confirmedCount(
-  lobbyId
-){
+function confirmedCount(lobbyId) {
 
   return db.registrations
     .filter(
@@ -277,9 +271,7 @@ function confirmedCount(
 }
 
 
-function publicLobby(
-  lobby
-){
+function publicLobby(lobby) {
 
   return {
 
@@ -315,24 +307,22 @@ function publicLobby(
    PLACEMENT POINTS
 ===================================================== */
 
-function placementPoints(
-  position
-){
+function placementPoints(position) {
 
   const table = {
 
-    1:12,
-    2:9,
-    3:8,
-    4:7,
-    5:6,
-    6:5,
-    7:4,
-    8:3,
-    9:2,
-    10:1,
-    11:0,
-    12:0
+    1: 12,
+    2: 9,
+    3: 8,
+    4: 7,
+    5: 6,
+    6: 5,
+    7: 4,
+    8: 3,
+    9: 2,
+    10: 1,
+    11: 0,
+    12: 0
 
   };
 
@@ -351,7 +341,7 @@ function placementPoints(
 
 app.get(
   "/api/admin-exists",
-  (req,res) => {
+  (req, res) => {
 
     res.json({
       exists:
@@ -364,7 +354,7 @@ app.get(
 
 app.get(
   "/api/me",
-  (req,res) => {
+  (req, res) => {
 
     const admin =
       currentAdmin(req);
@@ -373,13 +363,13 @@ app.get(
       admin
 
         ? {
-            loggedIn:true,
-            name:admin.name,
-            email:admin.email
+            loggedIn: true,
+            name: admin.name,
+            email: admin.email
           }
 
         : {
-            loggedIn:false
+            loggedIn: false
           }
     );
 
@@ -389,9 +379,9 @@ app.get(
 
 app.post(
   "/api/setup-admin",
-  (req,res) => {
+  (req, res) => {
 
-    if(db.admins.length){
+    if (db.admins.length) {
 
       return res
         .status(400)
@@ -406,15 +396,14 @@ app.post(
       name,
       email,
       password
-    } =
-      req.body || {};
+    } = req.body || {};
 
-    if(
+    if (
       !name ||
       !email ||
       !password ||
       String(password).length < 6
-    ){
+    ) {
 
       return res
         .status(400)
@@ -427,7 +416,7 @@ app.post(
 
     const admin = {
 
-      id:1,
+      id: 1,
 
       name:
         String(name).trim(),
@@ -438,15 +427,11 @@ app.post(
           .toLowerCase(),
 
       password:
-        hashPassword(
-          password
-        )
+        hashPassword(password)
 
     };
 
-    db.admins.push(
-      admin
-    );
+    db.admins.push(admin);
 
     saveDB();
 
@@ -457,15 +442,17 @@ app.post(
     sessions.set(
       token,
       {
-        id:admin.id,
-        name:admin.name,
-        email:admin.email
+        id: admin.id,
+        name: admin.name,
+        email: admin.email
       }
     );
 
     res.setHeader(
       "Set-Cookie",
-      `scrimforge_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/`
+      `scrimforge_session=${encodeURIComponent(
+        token
+      )}; HttpOnly; SameSite=Lax; Path=/`
     );
 
     res.json({
@@ -479,13 +466,12 @@ app.post(
 
 app.post(
   "/api/login",
-  (req,res) => {
+  (req, res) => {
 
     const {
       email,
       password
-    } =
-      req.body || {};
+    } = req.body || {};
 
     const admin =
       db.admins.find(
@@ -498,11 +484,11 @@ app.post(
             .toLowerCase()
       );
 
-    if(
+    if (
       !admin ||
       admin.password !==
         hashPassword(password)
-    ){
+    ) {
 
       return res
         .status(401)
@@ -520,15 +506,17 @@ app.post(
     sessions.set(
       token,
       {
-        id:admin.id,
-        name:admin.name,
-        email:admin.email
+        id: admin.id,
+        name: admin.name,
+        email: admin.email
       }
     );
 
     res.setHeader(
       "Set-Cookie",
-      `scrimforge_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/`
+      `scrimforge_session=${encodeURIComponent(
+        token
+      )}; HttpOnly; SameSite=Lax; Path=/`
     );
 
     res.json({
@@ -542,12 +530,12 @@ app.post(
 
 app.post(
   "/api/logout",
-  (req,res) => {
+  (req, res) => {
 
     const token =
       getToken(req);
 
-    if(token){
+    if (token) {
 
       sessions.delete(
         token
@@ -561,7 +549,7 @@ app.post(
     );
 
     res.json({
-      ok:true
+      ok: true
     });
 
   }
@@ -574,7 +562,7 @@ app.post(
 
 app.get(
   "/api/public/lobbies",
-  (req,res) => {
+  (req, res) => {
 
     res.json(
       db.lobbies.map(
@@ -593,7 +581,7 @@ app.get(
 app.get(
   "/api/lobbies",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     res.json(
       db.lobbies.map(
@@ -605,31 +593,32 @@ app.get(
 );
 
 
-/* CREATE LOBBY */
+/* =====================================================
+   CREATE LOBBY
+===================================================== */
 
 app.post(
   "/api/lobbies",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const {
       name,
       time,
       fee,
       maxTeams
-    } =
-      req.body || {};
+    } = req.body || {};
 
     const max =
       Number(maxTeams);
 
-    if(
+    if (
       !name ||
       !time ||
       !fee ||
       !Number.isInteger(max) ||
       max < 1
-    ){
+    ) {
 
       return res
         .status(400)
@@ -665,9 +654,7 @@ app.post(
 
     };
 
-    db.lobbies.push(
-      lobby
-    );
+    db.lobbies.push(lobby);
 
     saveDB();
 
@@ -679,19 +666,21 @@ app.post(
 );
 
 
-/* OPEN / CLOSE LOBBY */
+/* =====================================================
+   OPEN / CLOSE LOBBY
+===================================================== */
 
 app.patch(
   "/api/lobbies/:id",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const lobby =
       lobbyById(
         req.params.id
       );
 
-    if(!lobby){
+    if (!lobby) {
 
       return res
         .status(404)
@@ -702,14 +691,14 @@ app.patch(
 
     }
 
-    if(
+    if (
       ![
         "open",
         "closed"
       ].includes(
         req.body.status
       )
-    ){
+    ) {
 
       return res
         .status(400)
@@ -737,25 +726,10 @@ app.patch(
    DELETE SCRIM
 ===================================================== */
 
-/*
-  DELETE /api/lobbies/:id
-
-  Admin-only.
-
-  This permanently deletes:
-
-  1. The scrim/lobby
-  2. Registrations assigned to that lobby
-  3. Match scores belonging to that lobby
-
-  It does NOT delete unrelated lobbies,
-  registrations or scores.
-*/
-
 app.delete(
   "/api/lobbies/:id",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const id =
       Number(
@@ -765,7 +739,7 @@ app.delete(
     const lobby =
       lobbyById(id);
 
-    if(!lobby){
+    if (!lobby) {
 
       return res
         .status(404)
@@ -806,7 +780,7 @@ app.delete(
 
     res.json({
 
-      ok:true,
+      ok: true,
 
       message:
         `Lobby "${lobbyName}" deleted successfully.`
@@ -818,77 +792,83 @@ app.delete(
 
 
 /* =====================================================
-   REGISTRATIONS
+   REGISTRATION
+   IMPORTANT:
+   USER SENDS ONLY lobbyId + DETAILS.
+   TIME AND FEE COME FROM THE SERVER.
 ===================================================== */
 
 app.post(
   "/api/registrations",
-  (req,res) => {
+  (req, res) => {
 
     const {
-      time,
-      fee,
+      lobbyId,
       team,
       captain,
       phone,
       uid
-    } =
-      req.body || {};
+    } = req.body || {};
 
-    if(
-      !time ||
-      !fee ||
+    if (
+      !lobbyId ||
       !team ||
       !captain ||
       !phone ||
       !uid
-    ){
+    ) {
 
       return res
         .status(400)
         .json({
           error:
-            "All registration fields are required."
+            "Please select a scrim category and fill all required details."
         });
 
     }
 
     const lobby =
-      db.lobbies.find(
-        lobby =>
-          lobby.time ===
-            String(time) &&
-          lobby.fee ===
-            String(fee) &&
-          lobby.status ===
-            "open"
-      );
+      lobbyById(lobbyId);
 
-    if(!lobby){
+    if (!lobby) {
+
+      return res
+        .status(404)
+        .json({
+          error:
+            "Selected scrim category was not found."
+        });
+
+    }
+
+    if (
+      lobby.status !==
+      "open"
+    ) {
 
       return res
         .status(400)
         .json({
           error:
-            "The selected scrim is not currently open."
+            "This scrim is currently closed."
         });
 
     }
 
-    if(
+    if (
       confirmedCount(
         lobby.id
       ) >=
       Number(
         lobby.max_teams
       )
-    ){
+    ) {
 
       return res
         .status(400)
         .json({
           error:
-            "That scrim is full."
+            "This scrim is already full."
         });
 
     }
@@ -901,11 +881,24 @@ app.post(
       ref:
         makeRef(),
 
+      /*
+        The user cannot choose these values.
+        They are copied directly from the
+        selected lobby.
+      */
+
       time:
-        String(time).trim(),
+        String(lobby.time),
 
       fee:
-        String(fee).trim(),
+        String(lobby.fee),
+
+      /*
+        Category selected by user.
+      */
+
+      category_lobby_id:
+        lobby.id,
 
       team:
         String(team).trim(),
@@ -919,8 +912,17 @@ app.post(
       uid:
         String(uid).trim(),
 
+      /*
+        EVERY new registration starts pending.
+      */
+
       status:
         "pending",
+
+      /*
+        Admin can later assign the confirmed
+        registration to an actual lobby.
+      */
 
       lobby_id:
         null,
@@ -934,31 +936,63 @@ app.post(
       row
     );
 
+    /*
+      This is the important part:
+      registration is saved immediately.
+      It does NOT depend on the admin
+      being online.
+    */
+
     saveDB();
 
     res.json({
+
+      ok: true,
+
       ref:
-        row.ref
+        row.ref,
+
+      status:
+        row.status,
+
+      category:
+        lobby.name,
+
+      time:
+        lobby.time,
+
+      fee:
+        lobby.fee
+
     });
 
   }
 );
 
 
-/* STATUS */
+/* =====================================================
+   CHECK REGISTRATION STATUS
+===================================================== */
 
 app.get(
   "/api/registration-status/:ref",
-  (req,res) => {
+  (req, res) => {
+
+    const ref =
+      String(
+        req.params.ref || ""
+      ).trim();
 
     const row =
       db.registrations.find(
         registration =>
-          registration.ref ===
-          req.params.ref
+          String(
+            registration.ref
+          ).toLowerCase() ===
+          ref.toLowerCase()
       );
 
-    if(!row){
+    if (!row) {
 
       return res
         .status(404)
@@ -969,20 +1003,35 @@ app.get(
 
     }
 
-    const lobby =
+    const assignedLobby =
       row.lobby_id
         ? lobbyById(
             row.lobby_id
           )
         : null;
 
+    const categoryLobby =
+      row.category_lobby_id
+        ? lobbyById(
+            row.category_lobby_id
+          )
+        : null;
+
     res.json({
+
+      ok: true,
+
+      id:
+        row.id,
+
+      ref:
+        row.ref,
 
       team:
         row.team,
 
-      ref:
-        row.ref,
+      captain:
+        row.captain,
 
       time:
         row.time,
@@ -990,13 +1039,33 @@ app.get(
       fee:
         row.fee,
 
+      /*
+        ALWAYS return current status.
+      */
+
       status:
         row.status,
 
+      /*
+        Category originally selected.
+      */
+
+      category:
+        categoryLobby
+          ? categoryLobby.name
+          : null,
+
+      /*
+        Actual lobby assigned by admin.
+      */
+
       lobby_name:
-        lobby
-          ? lobby.name
-          : null
+        assignedLobby
+          ? assignedLobby.name
+          : null,
+
+      created_at:
+        row.created_at
 
     });
 
@@ -1004,31 +1073,68 @@ app.get(
 );
 
 
-/* ADMIN REGISTRATIONS */
+/* =====================================================
+   ADMIN REGISTRATIONS
+===================================================== */
 
 app.get(
   "/api/registrations",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
+
+    const registrations =
+      db.registrations.map(
+        row => {
+
+          const assignedLobby =
+            row.lobby_id
+              ? lobbyById(
+                  row.lobby_id
+                )
+              : null;
+
+          const categoryLobby =
+            row.category_lobby_id
+              ? lobbyById(
+                  row.category_lobby_id
+                )
+              : null;
+
+          return {
+
+            ...row,
+
+            category_name:
+              categoryLobby
+                ? categoryLobby.name
+                : null,
+
+            assigned_lobby_name:
+              assignedLobby
+                ? assignedLobby.name
+                : null
+
+          };
+
+        }
+      );
 
     res.json(
-      db.registrations.map(
-        row => ({
-          ...row
-        })
-      )
+      registrations
     );
 
   }
 );
 
 
-/* CONFIRM / REJECT */
+/* =====================================================
+   CONFIRM / REJECT REGISTRATION
+===================================================== */
 
 app.patch(
   "/api/registrations/:id",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const row =
       db.registrations.find(
@@ -1041,7 +1147,7 @@ app.patch(
           )
       );
 
-    if(!row){
+    if (!row) {
 
       return res
         .status(404)
@@ -1052,15 +1158,18 @@ app.patch(
 
     }
 
-    if(
+    const status =
+      String(
+        req.body.status || ""
+      ).toLowerCase();
+
+    if (
       ![
         "pending",
         "confirmed",
         "rejected"
-      ].includes(
-        req.body.status
-      )
-    ){
+      ].includes(status)
+    ) {
 
       return res
         .status(400)
@@ -1071,25 +1180,57 @@ app.patch(
 
     }
 
+    /*
+      Save the status permanently.
+    */
+
     row.status =
-      req.body.status;
+      status;
+
+    /*
+      A rejected registration cannot
+      stay assigned to a lobby.
+    */
+
+    if (
+      status ===
+      "rejected"
+    ) {
+
+      row.lobby_id =
+        null;
+
+    }
 
     saveDB();
 
     res.json({
-      ok:true
+
+      ok: true,
+
+      id:
+        row.id,
+
+      status:
+        row.status,
+
+      lobby_id:
+        row.lobby_id
+
     });
 
   }
 );
 
 
-/* ASSIGN REGISTRATION TO LOBBY */
+/* =====================================================
+   ASSIGN CONFIRMED REGISTRATION TO LOBBY
+===================================================== */
 
 app.patch(
   "/api/registrations/:id/lobby",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const row =
       db.registrations.find(
@@ -1102,7 +1243,7 @@ app.patch(
           )
       );
 
-    if(!row){
+    if (!row) {
 
       return res
         .status(404)
@@ -1113,26 +1254,15 @@ app.patch(
 
     }
 
-    const lobby =
-      lobbyById(
-        req.body.lobbyId
-      );
+    /*
+      Only confirmed registrations
+      can enter an actual lobby.
+    */
 
-    if(!lobby){
-
-      return res
-        .status(404)
-        .json({
-          error:
-            "Lobby not found."
-        });
-
-    }
-
-    if(
+    if (
       row.status !==
       "confirmed"
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1143,20 +1273,45 @@ app.patch(
 
     }
 
-    if(
+    const lobby =
+      lobbyById(
+        req.body.lobbyId
+      );
+
+    if (!lobby) {
+
+      return res
+        .status(404)
+        .json({
+          error:
+            "Lobby not found."
+        });
+
+    }
+
+    const count =
       confirmedCount(
         lobby.id
-      ) >=
-      Number(
-        lobby.max_teams
-      ) &&
+      );
+
+    /*
+      If this registration is already
+      in this same lobby, don't count it
+      as a new team.
+    */
+
+    if (
+      count >=
+        Number(
+          lobby.max_teams
+        ) &&
       Number(
         row.lobby_id
       ) !==
-      Number(
-        lobby.id
-      )
-    ){
+        Number(
+          lobby.id
+        )
+    ) {
 
       return res
         .status(400)
@@ -1173,7 +1328,18 @@ app.patch(
     saveDB();
 
     res.json({
-      ok:true
+
+      ok: true,
+
+      registrationId:
+        row.id,
+
+      lobbyId:
+        lobby.id,
+
+      lobbyName:
+        lobby.name
+
     });
 
   }
@@ -1187,7 +1353,7 @@ app.patch(
 app.get(
   "/api/stats",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     res.json({
 
@@ -1231,14 +1397,14 @@ app.get(
 app.get(
   "/api/leaderboard/teams",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const lobby =
       lobbyByName(
         req.query.lobby
       );
 
-    if(!lobby){
+    if (!lobby) {
 
       return res
         .status(404)
@@ -1285,14 +1451,14 @@ app.get(
 
 app.get(
   "/api/leaderboard/match",
-  (req,res) => {
+  (req, res) => {
 
     const lobby =
       lobbyByName(
         req.query.lobby
       );
 
-    if(!lobby){
+    if (!lobby) {
 
       return res
         .status(404)
@@ -1308,11 +1474,11 @@ app.get(
         req.query.match
       );
 
-    if(
+    if (
       !Number.isInteger(match) ||
       match < 1 ||
       match > 6
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1341,7 +1507,7 @@ app.get(
         )
 
         .sort(
-          (a,b) =>
+          (a, b) =>
             Number(a.position) -
             Number(b.position)
         )
@@ -1386,14 +1552,13 @@ app.get(
 app.post(
   "/api/leaderboard/match",
   requireAdmin,
-  (req,res) => {
+  (req, res) => {
 
     const {
-      lobby:lobbyName,
+      lobby: lobbyName,
       matchNo,
       entries
-    } =
-      req.body || {};
+    } = req.body || {};
 
     const lobby =
       lobbyByName(
@@ -1405,7 +1570,7 @@ app.post(
         matchNo
       );
 
-    if(!lobby){
+    if (!lobby) {
 
       return res
         .status(404)
@@ -1416,11 +1581,11 @@ app.post(
 
     }
 
-    if(
+    if (
       !Number.isInteger(match) ||
       match < 1 ||
       match > 6
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1431,10 +1596,10 @@ app.post(
 
     }
 
-    if(
+    if (
       !Array.isArray(entries) ||
       entries.length !== 12
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1458,10 +1623,10 @@ app.post(
             "confirmed"
       );
 
-    if(
+    if (
       confirmed.length !==
       12
-    ){
+    ) {
 
       return res
         .status(400)
@@ -1483,10 +1648,10 @@ app.post(
     const positions =
       new Set();
 
-    for(
+    for (
       const entry
       of entries
-    ){
+    ) {
 
       const position =
         Number(
@@ -1498,11 +1663,11 @@ app.post(
           entry.kills
         );
 
-      if(
+      if (
         !names.has(
           entry.team
         )
-      ){
+      ) {
 
         return res
           .status(400)
@@ -1513,7 +1678,7 @@ app.post(
 
       }
 
-      if(
+      if (
         !Number.isInteger(
           position
         ) ||
@@ -1522,7 +1687,7 @@ app.post(
         positions.has(
           position
         )
-      ){
+      ) {
 
         return res
           .status(400)
@@ -1533,12 +1698,12 @@ app.post(
 
       }
 
-      if(
+      if (
         !Number.isFinite(
           kills
         ) ||
         kills < 0
-      ){
+      ) {
 
         return res
           .status(400)
@@ -1574,10 +1739,10 @@ app.post(
       );
 
 
-    for(
+    for (
       const entry
       of entries
-    ){
+    ) {
 
       db.scores.push({
 
@@ -1620,7 +1785,7 @@ app.post(
     saveDB();
 
     res.json({
-      ok:true
+      ok: true
     });
 
   }
@@ -1633,14 +1798,14 @@ app.post(
 
 app.get(
   "/api/public-leaderboard",
-  (req,res) => {
+  (req, res) => {
 
     const lobby =
       lobbyByName(
         req.query.lobby
       );
 
-    if(!lobby){
+    if (!lobby) {
 
       return res
         .status(404)
@@ -1670,27 +1835,34 @@ app.get(
       .forEach(
         score => {
 
-          if(
+          if (
             !teams.has(
               score.team
             )
-          ){
+          ) {
 
             teams.set(
               score.team,
               {
+
                 team:
                   score.team,
 
-                matchesPlayed:0,
+                matchesPlayed:
+                  0,
 
-                booyahs:0,
+                booyahs:
+                  0,
 
-                placementPoints:0,
+                placementPoints:
+                  0,
 
-                killPoints:0,
+                killPoints:
+                  0,
 
-                totalPoints:0
+                totalPoints:
+                  0
+
               }
             );
 
@@ -1738,7 +1910,7 @@ app.get(
       ]
 
       .sort(
-        (a,b) =>
+        (a, b) =>
           b.totalPoints -
           a.totalPoints ||
 
@@ -1751,7 +1923,7 @@ app.get(
 
 
     rows.forEach(
-      (row,index) => {
+      (row, index) => {
 
         row.position =
           index + 1;
@@ -1774,7 +1946,7 @@ app.get(
 
 app.get(
   "*",
-  (req,res) => {
+  (req, res) => {
 
     res.sendFile(
       path.join(
