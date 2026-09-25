@@ -29,7 +29,9 @@ app.use(
   })
 );
 
-app.use(express.static(__dirname));
+app.use(
+  express.static(__dirname)
+);
 
 
 /* =====================================================
@@ -41,21 +43,26 @@ let db = loadDB();
 const sessions = new Map();
 
 
+function emptyDB() {
+
+  return {
+    nextLobbyId: 1,
+    nextRegistrationId: 1,
+    nextScoreId: 1,
+
+    admins: [],
+    lobbies: [],
+    registrations: [],
+    scores: []
+  };
+
+}
+
+
 function loadDB() {
 
   if (!fs.existsSync(DATA_FILE)) {
-
-    return {
-      nextLobbyId: 1,
-      nextRegistrationId: 1,
-      nextScoreId: 1,
-
-      admins: [],
-      lobbies: [],
-      registrations: [],
-      scores: []
-    };
-
+    return emptyDB();
   }
 
   try {
@@ -70,13 +77,13 @@ function loadDB() {
     return {
 
       nextLobbyId:
-        data.nextLobbyId || 1,
+        Number(data.nextLobbyId) || 1,
 
       nextRegistrationId:
-        data.nextRegistrationId || 1,
+        Number(data.nextRegistrationId) || 1,
 
       nextScoreId:
-        data.nextScoreId || 1,
+        Number(data.nextScoreId) || 1,
 
       admins:
         Array.isArray(data.admins)
@@ -103,22 +110,11 @@ function loadDB() {
   } catch (error) {
 
     console.error(
-      "Database load error:",
+      "Could not load database:",
       error
     );
 
-    return {
-
-      nextLobbyId: 1,
-      nextRegistrationId: 1,
-      nextScoreId: 1,
-
-      admins: [],
-      lobbies: [],
-      registrations: [],
-      scores: []
-
-    };
+    return emptyDB();
 
   }
 
@@ -155,9 +151,7 @@ function hashPassword(password) {
 
   return crypto
     .createHash("sha256")
-    .update(
-      String(password || "")
-    )
+    .update(String(password))
     .digest("hex");
 
 }
@@ -247,51 +241,34 @@ function lobbyByName(name) {
 
   return db.lobbies.find(
     lobby =>
-      String(lobby.name) ===
-      String(name)
+      String(lobby.name).trim() ===
+      String(name).trim()
   );
 
 }
 
 
-/*
-  IMPORTANT:
-
-  A registration belongs to a lobby
-  through registration.lobby_id.
-
-  Therefore the lobby count is calculated
-  from BOTH:
-
-  1. matching lobby_id
-  2. confirmed status
-*/
-
-function confirmedCount(lobbyId) {
+function confirmedRegistrations(
+  lobbyId
+) {
 
   return db.registrations.filter(
     registration =>
-      Number(
-        registration.lobby_id
-      ) === Number(lobbyId) &&
-
+      Number(registration.lobby_id) ===
+        Number(lobbyId) &&
       registration.status ===
         "confirmed"
-  ).length;
+  );
 
 }
 
 
-function registrationCount(lobbyId) {
+function confirmedCount(
+  lobbyId
+) {
 
-  return db.registrations.filter(
-    registration =>
-      Number(
-        registration.lobby_id
-      ) === Number(lobbyId) &&
-
-      registration.status !==
-        "rejected"
+  return confirmedRegistrations(
+    lobbyId
   ).length;
 
 }
@@ -301,37 +278,21 @@ function publicLobby(lobby) {
 
   return {
 
-    id:
-      lobby.id,
+    id: lobby.id,
 
-    name:
-      lobby.name,
+    name: lobby.name,
 
-    time:
-      lobby.time,
+    time: lobby.time,
 
-    fee:
-      lobby.fee,
+    fee: lobby.fee,
 
     max_teams:
-      lobby.max_teams,
+      Number(lobby.max_teams),
 
-    status:
-      lobby.status,
-
-    /*
-      pending + confirmed registrations
-      are counted here.
-    */
-    registered:
-      registrationCount(
-        lobby.id
-      ),
+    status: lobby.status,
 
     confirmed:
-      confirmedCount(
-        lobby.id
-      )
+      confirmedCount(lobby.id)
 
   };
 
@@ -339,7 +300,7 @@ function publicLobby(lobby) {
 
 
 /* =====================================================
-   PLACEMENT POINTS
+   SCORE CALCULATION
 ===================================================== */
 
 function placementPoints(position) {
@@ -362,16 +323,30 @@ function placementPoints(position) {
   };
 
   return (
-    table[
-      Number(position)
-    ] || 0
+    table[Number(position)] || 0
   );
 
 }
 
 
+function killPoints(kills) {
+
+  return Number(kills);
+
+}
+
+
+function isBooyah(position) {
+
+  return Number(position) === 1
+    ? 1
+    : 0;
+
+}
+
+
 /* =====================================================
-   ADMIN AUTH
+   ADMIN ROUTES
 ===================================================== */
 
 app.get(
@@ -396,11 +371,13 @@ app.get(
 
     res.json(
       admin
+
         ? {
             loggedIn: true,
             name: admin.name,
             email: admin.email
           }
+
         : {
             loggedIn: false
           }
@@ -490,8 +467,7 @@ app.post(
     );
 
     res.json({
-      name:
-        admin.name
+      name: admin.name
     });
 
   }
@@ -511,9 +487,7 @@ app.post(
       db.admins.find(
         a =>
           a.email ===
-          String(
-            email || ""
-          )
+          String(email || "")
             .trim()
             .toLowerCase()
       );
@@ -555,8 +529,7 @@ app.post(
     );
 
     res.json({
-      name:
-        admin.name
+      name: admin.name
     });
 
   }
@@ -571,9 +544,7 @@ app.post(
       getToken(req);
 
     if (token) {
-
       sessions.delete(token);
-
     }
 
     res.setHeader(
@@ -626,9 +597,7 @@ app.get(
 );
 
 
-/* =====================================================
-   CREATE LOBBY
-===================================================== */
+/* CREATE LOBBY */
 
 app.post(
   "/api/lobbies",
@@ -642,13 +611,22 @@ app.post(
       maxTeams
     } = req.body || {};
 
+    const cleanName =
+      String(name || "").trim();
+
+    const cleanTime =
+      String(time || "").trim();
+
+    const cleanFee =
+      String(fee || "").trim();
+
     const max =
       Number(maxTeams);
 
     if (
-      !name ||
-      !time ||
-      !fee ||
+      !cleanName ||
+      !cleanTime ||
+      !cleanFee ||
       !Number.isInteger(max) ||
       max < 1
     ) {
@@ -668,13 +646,13 @@ app.post(
         db.nextLobbyId++,
 
       name:
-        String(name).trim(),
+        cleanName,
 
       time:
-        String(time).trim(),
+        cleanTime,
 
       fee:
-        String(fee).trim(),
+        cleanFee,
 
       max_teams:
         max,
@@ -699,9 +677,7 @@ app.post(
 );
 
 
-/* =====================================================
-   OPEN / CLOSE LOBBY
-===================================================== */
+/* OPEN / CLOSE */
 
 app.patch(
   "/api/lobbies/:id",
@@ -728,9 +704,7 @@ app.patch(
       ![
         "open",
         "closed"
-      ].includes(
-        req.body.status
-      )
+      ].includes(req.body.status)
     ) {
 
       return res
@@ -765,9 +739,7 @@ app.delete(
   (req, res) => {
 
     const id =
-      Number(
-        req.params.id
-      );
+      Number(req.params.id);
 
     const lobby =
       lobbyById(id);
@@ -786,19 +758,10 @@ app.delete(
     const lobbyName =
       lobby.name;
 
-    /*
-      IMPORTANT:
-
-      Delete the lobby AND every registration
-      belonging to that exact lobby.
-
-      This prevents ghost registrations.
-    */
-
     db.lobbies =
       db.lobbies.filter(
-        item =>
-          Number(item.id) !== id
+        x =>
+          Number(x.id) !== id
       );
 
     db.registrations =
@@ -836,24 +799,6 @@ app.delete(
    REGISTRATION
 ===================================================== */
 
-/*
-  NEW CORRECT REGISTRATION FLOW
-
-  Frontend should send:
-
-  {
-    lobbyId,
-    team,
-    captain,
-    phone,
-    uid
-  }
-
-  The server gets time + fee FROM THE LOBBY.
-
-  The user cannot modify fee/time.
-*/
-
 app.post(
   "/api/registrations",
   (req, res) => {
@@ -866,86 +811,37 @@ app.post(
       uid
     } = req.body || {};
 
-
-    /* ---------------------------------------------
-       BASIC VALIDATION
-    --------------------------------------------- */
-
-    if (
-      !lobbyId ||
-      !team ||
-      !captain ||
-      !phone ||
-      !uid
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          error:
-            "Please select a scrim and fill all required details."
-        });
-
-    }
-
-
-    /* ---------------------------------------------
-       FIND EXACT SELECTED LOBBY
-    --------------------------------------------- */
+    const id =
+      Number(lobbyId);
 
     const lobby =
-      lobbyById(lobbyId);
+      lobbyById(id);
 
     if (!lobby) {
 
       return res
-        .status(404)
+        .status(400)
         .json({
           error:
-            "Selected scrim was not found."
+            "Please select a valid scrim."
         });
 
     }
 
-
-    /* ---------------------------------------------
-       LOBBY MUST BE OPEN
-    --------------------------------------------- */
-
-    if (
-      lobby.status !==
-      "open"
-    ) {
+    if (lobby.status !== "open") {
 
       return res
         .status(400)
         .json({
           error:
-            "This scrim is currently closed."
+            "This scrim is closed."
         });
 
     }
 
-
-    /* ---------------------------------------------
-       CHECK CAPACITY
-
-       Pending + confirmed registrations reserve
-       a slot.
-
-       Rejected registrations do not.
-    --------------------------------------------- */
-
-    const current =
-      registrationCount(
-        lobby.id
-      );
-
     if (
-      current >=
-      Number(
-        lobby.max_teams
-      )
+      confirmedCount(lobby.id) >=
+      Number(lobby.max_teams)
     ) {
 
       return res
@@ -957,16 +853,39 @@ app.post(
 
     }
 
+    const cleanTeam =
+      String(team || "").trim();
 
-    /* ---------------------------------------------
-       CREATE REGISTRATION
+    const cleanCaptain =
+      String(captain || "").trim();
 
-       NOTICE:
+    const cleanPhone =
+      String(phone || "").trim();
 
-       time and fee come directly from lobby.
+    const cleanUid =
+      String(uid || "").trim();
 
-       The client cannot choose different values.
-    --------------------------------------------- */
+    if (
+      !cleanTeam ||
+      !cleanCaptain ||
+      !cleanPhone ||
+      !cleanUid
+    ) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "Team, captain, phone and UID are required."
+        });
+
+    }
+
+    /*
+      Time and fee are ALWAYS taken from
+      the selected lobby on the server.
+      The browser cannot change them.
+    */
 
     const row = {
 
@@ -979,9 +898,6 @@ app.post(
       lobby_id:
         lobby.id,
 
-      lobby_name:
-        lobby.name,
-
       time:
         lobby.time,
 
@@ -989,23 +905,16 @@ app.post(
         lobby.fee,
 
       team:
-        String(team).trim(),
+        cleanTeam,
 
       captain:
-        String(captain).trim(),
+        cleanCaptain,
 
       phone:
-        String(phone).trim(),
+        cleanPhone,
 
       uid:
-        String(uid).trim(),
-
-      /*
-        THIS IS STORED IMMEDIATELY.
-
-        Therefore the status exists even when
-        the admin is completely offline.
-      */
+        cleanUid,
 
       status:
         "pending",
@@ -1015,37 +924,24 @@ app.post(
 
     };
 
-
     db.registrations.push(row);
 
     saveDB();
 
-
     res.json({
 
-      ok: true,
+      ref: row.ref,
 
-      ref:
-        row.ref,
+      status: row.status,
 
-      status:
-        row.status,
+      lobby_name:
+        lobby.name,
 
-      lobby: {
+      time:
+        lobby.time,
 
-        id:
-          lobby.id,
-
-        name:
-          lobby.name,
-
-        time:
-          lobby.time,
-
-        fee:
-          lobby.fee
-
-      }
+      fee:
+        lobby.fee
 
     });
 
@@ -1054,7 +950,7 @@ app.post(
 
 
 /* =====================================================
-   CHECK REGISTRATION STATUS
+   STATUS
 ===================================================== */
 
 app.get(
@@ -1062,16 +958,12 @@ app.get(
   (req, res) => {
 
     const ref =
-      String(
-        req.params.ref || ""
-      ).trim();
+      String(req.params.ref || "").trim();
 
     const row =
       db.registrations.find(
         registration =>
-          String(
-            registration.ref
-          ) === ref
+          registration.ref === ref
       );
 
     if (!row) {
@@ -1085,28 +977,15 @@ app.get(
 
     }
 
-
-    /*
-      Always get lobby from the stored lobby_id.
-    */
-
     const lobby =
       row.lobby_id
-        ? lobbyById(
-            row.lobby_id
-          )
+        ? lobbyById(row.lobby_id)
         : null;
-
 
     res.json({
 
-      ok: true,
-
       team:
         row.team,
-
-      ref:
-        row.ref,
 
       captain:
         row.captain,
@@ -1116,6 +995,9 @@ app.get(
 
       uid:
         row.uid,
+
+      ref:
+        row.ref,
 
       time:
         row.time,
@@ -1132,10 +1014,7 @@ app.get(
       lobby_name:
         lobby
           ? lobby.name
-          : (
-              row.lobby_name ||
-              null
-            ),
+          : null,
 
       created_at:
         row.created_at
@@ -1156,34 +1035,11 @@ app.get(
   (req, res) => {
 
     res.json(
-
       db.registrations.map(
-        row => {
-
-          const lobby =
-            row.lobby_id
-              ? lobbyById(
-                  row.lobby_id
-                )
-              : null;
-
-          return {
-
-            ...row,
-
-            lobby_name:
-              lobby
-                ? lobby.name
-                : (
-                    row.lobby_name ||
-                    null
-                  )
-
-          };
-
-        }
+        row => ({
+          ...row
+        })
       )
-
     );
 
   }
@@ -1191,7 +1047,7 @@ app.get(
 
 
 /* =====================================================
-   CONFIRM / REJECT REGISTRATION
+   CONFIRM / REJECT + ASSIGN LOBBY
 ===================================================== */
 
 app.patch(
@@ -1202,12 +1058,8 @@ app.patch(
     const row =
       db.registrations.find(
         registration =>
-          Number(
-            registration.id
-          ) ===
-          Number(
-            req.params.id
-          )
+          Number(registration.id) ===
+          Number(req.params.id)
       );
 
     if (!row) {
@@ -1221,21 +1073,17 @@ app.patch(
 
     }
 
-
     const newStatus =
       String(
         req.body.status || ""
       ).toLowerCase();
-
 
     if (
       ![
         "pending",
         "confirmed",
         "rejected"
-      ].includes(
-        newStatus
-      )
+      ].includes(newStatus)
     ) {
 
       return res
@@ -1248,90 +1096,186 @@ app.patch(
     }
 
 
-    /*
-      Registration MUST have a lobby.
+    /* -------------------------
+       REJECT
+    ------------------------- */
 
-      New registrations always do.
+    if (newStatus === "rejected") {
 
-      This protects old/broken registrations too.
-    */
+      row.status = "rejected";
+
+      row.lobby_id = null;
+
+      saveDB();
+
+      return res.json({
+
+        ok: true,
+
+        status:
+          row.status,
+
+        lobby_id:
+          null
+
+      });
+
+    }
+
+
+    /* -------------------------
+       PENDING
+    ------------------------- */
+
+    if (newStatus === "pending") {
+
+      row.status = "pending";
+
+      saveDB();
+
+      return res.json({
+
+        ok: true,
+
+        status:
+          row.status
+
+      });
+
+    }
+
+
+    /* -------------------------
+       CONFIRM
+    ------------------------- */
+
+    const lobbyId =
+      Number(
+        req.body.lobbyId ||
+        req.body.lobby_id
+      );
 
     const lobby =
-      row.lobby_id
-        ? lobbyById(
-            row.lobby_id
-          )
-        : null;
+      lobbyById(lobbyId);
 
+    if (!lobby) {
 
-    if (
-      newStatus ===
-      "confirmed"
-    ) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Please select a valid lobby before accepting."
+        });
 
-      if (!lobby) {
+    }
 
-        return res
-          .status(400)
-          .json({
-            error:
-              "This registration has no valid scrim assigned. Assign it to a scrim first."
-          });
+    if (lobby.status !== "open") {
 
-      }
-
-
-      /*
-        Do not allow confirmation above capacity.
-      */
-
-      const alreadyConfirmed =
-        row.status ===
-        "confirmed";
-
-      if (
-        !alreadyConfirmed &&
-        confirmedCount(
-          lobby.id
-        ) >=
-        Number(
-          lobby.max_teams
-        )
-      ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "That scrim is already full."
-          });
-
-      }
+      return res
+        .status(400)
+        .json({
+          error:
+            "The selected lobby is closed."
+        });
 
     }
 
 
     /*
-      Save status permanently.
+      Prevent duplicate team names
+      inside the same lobby.
+    */
 
-      This is NOT dependent on admin being online.
+    const duplicateTeam =
+      db.registrations.find(
+        registration =>
+          Number(
+            registration.lobby_id
+          ) === Number(lobby.id) &&
+
+          registration.status ===
+            "confirmed" &&
+
+          Number(
+            registration.id
+          ) !== Number(row.id) &&
+
+          String(
+            registration.team
+          ).trim().toLowerCase() ===
+            String(
+              row.team
+            ).trim().toLowerCase()
+      );
+
+    if (duplicateTeam) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "This team is already confirmed in that lobby."
+        });
+
+    }
+
+
+    /*
+      Check lobby capacity.
+    */
+
+    const alreadyConfirmed =
+      confirmedRegistrations(
+        lobby.id
+      ).filter(
+        registration =>
+          Number(registration.id) !==
+          Number(row.id)
+      ).length;
+
+    if (
+      alreadyConfirmed >=
+      Number(lobby.max_teams)
+    ) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "That lobby is full."
+        });
+
+    }
+
+
+    /*
+      IMPORTANT:
+      Status + lobby assignment happen
+      together in ONE operation.
     */
 
     row.status =
-      newStatus;
+      "confirmed";
+
+    row.lobby_id =
+      lobby.id;
+
+    /*
+      Always synchronize these values
+      with the selected lobby.
+    */
+
+    row.time =
+      lobby.time;
+
+    row.fee =
+      lobby.fee;
 
     saveDB();
-
 
     res.json({
 
       ok: true,
-
-      id:
-        row.id,
-
-      ref:
-        row.ref,
 
       status:
         row.status,
@@ -1340,9 +1284,13 @@ app.patch(
         row.lobby_id,
 
       lobby_name:
-        lobby
-          ? lobby.name
-          : null
+        lobby.name,
+
+      time:
+        row.time,
+
+      fee:
+        row.fee
 
     });
 
@@ -1351,7 +1299,7 @@ app.patch(
 
 
 /* =====================================================
-   ASSIGN REGISTRATION TO LOBBY
+   MANUAL LOBBY ASSIGNMENT
 ===================================================== */
 
 app.patch(
@@ -1362,12 +1310,8 @@ app.patch(
     const row =
       db.registrations.find(
         registration =>
-          Number(
-            registration.id
-          ) ===
-          Number(
-            req.params.id
-          )
+          Number(registration.id) ===
+          Number(req.params.id)
       );
 
     if (!row) {
@@ -1380,7 +1324,6 @@ app.patch(
         });
 
     }
-
 
     const lobby =
       lobbyById(
@@ -1398,50 +1341,58 @@ app.patch(
 
     }
 
-
     if (
-      lobby.status !==
-      "open"
+      row.status !==
+      "confirmed"
     ) {
 
       return res
         .status(400)
         .json({
           error:
-            "That lobby is closed."
+            "Confirm the registration first."
         });
 
     }
 
+    const duplicateTeam =
+      db.registrations.find(
+        registration =>
+          Number(
+            registration.lobby_id
+          ) === Number(lobby.id) &&
 
-    /*
-      Count this registration as occupying a slot
-      if it is pending or confirmed.
-    */
+          registration.status ===
+            "confirmed" &&
 
-    const isActive =
-      row.status !==
-      "rejected";
+          Number(
+            registration.id
+          ) !== Number(row.id) &&
 
-
-    const movingToDifferentLobby =
-      Number(
-        row.lobby_id
-      ) !==
-      Number(
-        lobby.id
+          String(
+            registration.team
+          ).trim().toLowerCase() ===
+            String(
+              row.team
+            ).trim().toLowerCase()
       );
 
+    if (duplicateTeam) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "This team is already assigned to that lobby."
+        });
+
+    }
 
     if (
-      isActive &&
-      movingToDifferentLobby &&
-      registrationCount(
-        lobby.id
-      ) >=
-      Number(
-        lobby.max_teams
-      )
+      confirmedCount(lobby.id) >=
+        Number(lobby.max_teams) &&
+      Number(row.lobby_id) !==
+        Number(lobby.id)
     ) {
 
       return res
@@ -1453,20 +1404,8 @@ app.patch(
 
     }
 
-
-    /*
-      Move the registration.
-
-      IMPORTANT:
-      Time and fee are updated automatically
-      from the selected lobby.
-    */
-
     row.lobby_id =
       lobby.id;
-
-    row.lobby_name =
-      lobby.name;
 
     row.time =
       lobby.time;
@@ -1474,34 +1413,17 @@ app.patch(
     row.fee =
       lobby.fee;
 
-
     saveDB();
-
 
     res.json({
 
       ok: true,
 
-      id:
-        row.id,
-
-      ref:
-        row.ref,
-
       lobby_id:
         lobby.id,
 
       lobby_name:
-        lobby.name,
-
-      time:
-        lobby.time,
-
-      fee:
-        lobby.fee,
-
-      status:
-        row.status
+        lobby.name
 
     });
 
@@ -1532,13 +1454,6 @@ app.get(
           r =>
             r.status ===
             "confirmed"
-        ).length,
-
-      rejected:
-        db.registrations.filter(
-          r =>
-            r.status ===
-            "rejected"
         ).length,
 
       activeLobbies:
@@ -1580,25 +1495,15 @@ app.get(
     }
 
     const teams =
-      db.registrations
-
-        .filter(
-          registration =>
-            Number(
-              registration.lobby_id
-            ) ===
-            Number(lobby.id) &&
-
-            registration.status ===
-            "confirmed"
-        )
-
-        .map(
-          registration => ({
-            team:
-              registration.team
-          })
-        );
+      confirmedRegistrations(
+        lobby.id
+      )
+      .map(
+        registration => ({
+          team:
+            registration.team
+        })
+      );
 
     res.json(teams);
 
@@ -1631,9 +1536,7 @@ app.get(
     }
 
     const match =
-      Number(
-        req.query.match
-      );
+      Number(req.query.match);
 
     if (
       !Number.isInteger(match) ||
@@ -1655,14 +1558,11 @@ app.get(
 
         .filter(
           score =>
-            Number(
-              score.lobby_id
-            ) ===
-            Number(lobby.id) &&
+            Number(score.lobby_id) ===
+              Number(lobby.id) &&
 
-            Number(
-              score.match_no
-            ) === match
+            Number(score.match_no) ===
+              match
         )
 
         .sort(
@@ -1678,23 +1578,27 @@ app.get(
               score.team,
 
             position:
-              score.position,
+              Number(score.position),
 
             kills:
-              score.kills,
+              Number(score.kills),
+
+            booyah:
+              Number(score.booyah),
 
             placement_points:
-              score.placement_points,
+              Number(
+                score.placement_points
+              ),
 
             kill_points:
-              score.kill_points,
+              Number(
+                score.kill_points
+              ),
 
             total_points:
               Number(
-                score.placement_points
-              ) +
-              Number(
-                score.kill_points
+                score.total_points
               )
 
           })
@@ -1769,56 +1673,121 @@ app.post(
 
     }
 
-    const confirmed =
-      db.registrations.filter(
-        registration =>
-          Number(
-            registration.lobby_id
-          ) ===
-          Number(lobby.id) &&
 
-          registration.status ===
-          "confirmed"
+    /* ---------------------------------------------
+       CONFIRMED TEAMS
+    --------------------------------------------- */
+
+    const confirmed =
+      confirmedRegistrations(
+        lobby.id
       );
 
+    if (confirmed.length !== 12) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            `This lobby has ${confirmed.length}/12 confirmed teams. Exactly 12 teams are required.`
+        });
+
+    }
+
+
+    /* ---------------------------------------------
+       UNIQUE TEAM LIST
+    --------------------------------------------- */
+
+    const confirmedTeamMap =
+      new Map();
+
+    confirmed.forEach(
+      registration => {
+
+        const key =
+          String(
+            registration.team
+          )
+            .trim()
+            .toLowerCase();
+
+        confirmedTeamMap.set(
+          key,
+          registration.team
+        );
+
+      }
+    );
+
+
     if (
-      confirmed.length !==
-      12
+      confirmedTeamMap.size !==
+      confirmed.length
     ) {
 
       return res
         .status(400)
         .json({
           error:
-            `This lobby has ${confirmed.length}/12 confirmed teams.`
+            "This lobby contains duplicate team names. Fix the registrations before entering scores."
         });
 
     }
 
-    const names =
-      new Set(
-        confirmed.map(
-          registration =>
-            registration.team
-        )
-      );
+
+    const enteredTeams =
+      new Set();
 
     const positions =
       new Set();
+
+    const cleanedEntries = [];
+
+
+    /* ---------------------------------------------
+       VALIDATE EVERY ENTRY
+    --------------------------------------------- */
 
     for (
       const entry of entries
     ) {
 
+      const team =
+        String(
+          entry.team || ""
+        ).trim();
+
+      const teamKey =
+        team.toLowerCase();
+
       const position =
-        Number(entry.position);
+        Number(
+          entry.position
+        );
 
       const kills =
-        Number(entry.kills);
+        Number(
+          entry.kills
+        );
+
+
+      /* TEAM */
+
+      if (!team) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Every score row must have a team."
+          });
+
+      }
 
       if (
-        !names.has(
-          entry.team
+        !confirmedTeamMap.has(
+          teamKey
         )
       ) {
 
@@ -1826,17 +1795,45 @@ app.post(
           .status(400)
           .json({
             error:
-              `Team ${entry.team} is not assigned to this lobby.`
+              `Team "${team}" is not assigned to this lobby.`
           });
 
       }
 
       if (
-        !Number.isInteger(
-          position
-        ) ||
+        enteredTeams.has(
+          teamKey
+        )
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              `Team "${team}" appears more than once in this match.`
+          });
+
+      }
+
+
+      /* POSITION */
+
+      if (
+        !Number.isInteger(position) ||
         position < 1 ||
-        position > 12 ||
+        position > 12
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Positions must be unique numbers from 1 to 12."
+          });
+
+      }
+
+      if (
         positions.has(position)
       ) {
 
@@ -1844,13 +1841,16 @@ app.post(
           .status(400)
           .json({
             error:
-              "Positions must be unique and range from 1 to 12."
+              `Position ${position} is used more than once.`
           });
 
       }
 
+
+      /* KILLS */
+
       if (
-        !Number.isFinite(kills) ||
+        !Number.isInteger(kills) ||
         kills < 0
       ) {
 
@@ -1858,82 +1858,202 @@ app.post(
           .status(400)
           .json({
             error:
-              "Kills must be zero or more."
+              "Kills must be whole numbers greater than or equal to zero."
           });
 
       }
 
-      positions.add(position);
 
-    }
+      /* ---------------------------------------------
+         CALCULATE
+      --------------------------------------------- */
+
+      const placement =
+        placementPoints(
+          position
+        );
+
+      const killsPoints =
+        killPoints(
+          kills
+        );
+
+      const booyah =
+        isBooyah(
+          position
+        );
+
+      const total =
+        placement +
+        killsPoints;
 
 
-    /*
-      Replace scores for this exact lobby + match.
-    */
+      enteredTeams.add(
+        teamKey
+      );
 
-    db.scores =
-      db.scores.filter(
-        score =>
-          !(
-            Number(
-              score.lobby_id
-            ) ===
-            Number(lobby.id) &&
-
-            Number(
-              score.match_no
-            ) === match
-          )
+      positions.add(
+        position
       );
 
 
-    for (
-      const entry of entries
-    ) {
-
-      db.scores.push({
-
-        id:
-          db.nextScoreId++,
-
-        lobby_id:
-          lobby.id,
-
-        match_no:
-          match,
+      cleanedEntries.push({
 
         team:
-          entry.team,
-
-        position:
-          Number(
-            entry.position
+          confirmedTeamMap.get(
+            teamKey
           ),
 
-        kills:
-          Number(
-            entry.kills
-          ),
+        position,
+
+        kills,
+
+        booyah,
 
         placement_points:
-          placementPoints(
-            entry.position
-          ),
+          placement,
 
         kill_points:
-          Number(
-            entry.kills
-          )
+          killsPoints,
+
+        total_points:
+          total
 
       });
 
     }
 
+
+    /* ---------------------------------------------
+       ENSURE ALL 12 POSITIONS EXIST
+    --------------------------------------------- */
+
+    for (
+      let position = 1;
+      position <= 12;
+      position++
+    ) {
+
+      if (
+        !positions.has(position)
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              `Position ${position} is missing. Positions 1 to 12 must all be used exactly once.`
+          });
+
+      }
+
+    }
+
+
+    /* ---------------------------------------------
+       ENSURE ALL 12 TEAMS EXIST
+    --------------------------------------------- */
+
+    if (
+      enteredTeams.size !== 12
+    ) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "Exactly 12 unique teams are required."
+        });
+
+    }
+
+
+    /* ---------------------------------------------
+       REMOVE OLD VERSION OF THIS MATCH
+       BEFORE SAVING UPDATED VERSION
+    --------------------------------------------- */
+
+    db.scores =
+      db.scores.filter(
+        score =>
+          !(
+            Number(score.lobby_id) ===
+              Number(lobby.id) &&
+
+            Number(score.match_no) ===
+              match
+          )
+      );
+
+
+    /* ---------------------------------------------
+       SAVE NEW RESULTS
+    --------------------------------------------- */
+
+    cleanedEntries.forEach(
+      entry => {
+
+        db.scores.push({
+
+          id:
+            db.nextScoreId++,
+
+          lobby_id:
+            lobby.id,
+
+          match_no:
+            match,
+
+          team:
+            entry.team,
+
+          position:
+            entry.position,
+
+          kills:
+            entry.kills,
+
+          booyah:
+            entry.booyah,
+
+          placement_points:
+            entry.placement_points,
+
+          kill_points:
+            entry.kill_points,
+
+          total_points:
+            entry.total_points,
+
+          updated_at:
+            new Date().toISOString()
+
+        });
+
+      }
+    );
+
+
     saveDB();
 
+
+    /* ---------------------------------------------
+       RETURN CALCULATED RESULTS
+    --------------------------------------------- */
+
     res.json({
-      ok: true
+
+      ok: true,
+
+      lobby:
+        lobby.name,
+
+      match:
+        match,
+
+      entries:
+        cleanedEntries
+
     });
 
   }
@@ -1964,6 +2084,7 @@ app.get(
 
     }
 
+
     const teams =
       new Map();
 
@@ -1972,23 +2093,27 @@ app.get(
 
       .filter(
         score =>
-          Number(
-            score.lobby_id
-          ) ===
+          Number(score.lobby_id) ===
           Number(lobby.id)
       )
 
       .forEach(
         score => {
 
-          if (
-            !teams.has(
+          const key =
+            String(
               score.team
             )
+              .trim()
+              .toLowerCase();
+
+
+          if (
+            !teams.has(key)
           ) {
 
             teams.set(
-              score.team,
+              key,
               {
 
                 team:
@@ -2014,36 +2139,45 @@ app.get(
 
           }
 
-          const team =
-            teams.get(
-              score.team
-            );
 
-          team.matchesPlayed++;
+          const team =
+            teams.get(key);
+
+
+          team.matchesPlayed += 1;
 
           team.booyahs +=
             Number(
-              score.position
-            ) === 1
-              ? 1
-              : 0;
+              score.booyah
+            ) || (
+              Number(
+                score.position
+              ) === 1
+                ? 1
+                : 0
+            );
 
           team.placementPoints +=
             Number(
               score.placement_points
-            );
+            ) || 0;
 
           team.killPoints +=
             Number(
               score.kill_points
-            );
+            ) || 0;
 
           team.totalPoints +=
             Number(
-              score.placement_points
-            ) +
-            Number(
-              score.kill_points
+              score.total_points
+            ) ||
+            (
+              Number(
+                score.placement_points
+              ) +
+              Number(
+                score.kill_points
+              )
             );
 
         }
@@ -2051,21 +2185,28 @@ app.get(
 
 
     const rows =
-      [
-        ...teams.values()
-      ]
+      [...teams.values()]
 
-      .sort(
-        (a, b) =>
-          b.totalPoints -
-          a.totalPoints ||
 
-          b.killPoints -
-          a.killPoints ||
+        .sort(
+          (a, b) =>
 
-          b.placementPoints -
-          a.placementPoints
-      );
+            b.totalPoints -
+              a.totalPoints ||
+
+            b.killPoints -
+              a.killPoints ||
+
+            b.placementPoints -
+              a.placementPoints ||
+
+            b.booyahs -
+              a.booyahs ||
+
+            a.team.localeCompare(
+              b.team
+            )
+        );
 
 
     rows.forEach(
@@ -2078,7 +2219,25 @@ app.get(
     );
 
 
-    res.json(rows);
+    res.json({
+
+      lobby: {
+        id:
+          lobby.id,
+
+        name:
+          lobby.name,
+
+        time:
+          lobby.time,
+
+        fee:
+          lobby.fee
+      },
+
+      rows
+
+    });
 
   }
 );
@@ -2104,7 +2263,7 @@ app.get(
 
 
 /* =====================================================
-   START SERVER
+   START
 ===================================================== */
 
 app.listen(
