@@ -1,4506 +1,1664 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0">
-
-<title>ScrimForge</title>
+<title>ScrimForge — V2</title>
 
 <style>
 
 *{
-box-sizing:border-box;
-margin:0;
-padding:0
+  box-sizing:border-box
 }
 
 body{
-font-family:Arial,Helvetica,sans-serif;
-background:#0b0f19;
-color:#fff;
-min-height:100vh
-}
-
-button,input,select{
-font:inherit
-}
-
-button{
-cursor:pointer
-}
-
-.container{
-width:min(1200px,94%);
-margin:auto
+  margin:0;
+  background:#070b14;
+  color:#f5f7fb;
+  font-family:Arial,sans-serif
 }
 
 header{
-background:#111827;
-border-bottom:1px solid #263044;
-position:sticky;
-top:0;
-z-index:100
-}
-
-.nav{
-min-height:70px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:20px
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#0d1424;
+  border-bottom:1px solid #273149;
+  padding:14px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
 }
 
 .logo{
-font-size:25px;
-font-weight:800;
-color:#7c3aed
+  font-size:24px;
+  font-weight:900
 }
 
 .logo span{
-color:#fff
+  color:#62e5ff
 }
 
-nav{
-display:flex;
-gap:8px;
-flex-wrap:wrap
-}
-
-nav button{
-border:0;
-background:transparent;
-color:#cbd5e1;
-padding:10px 13px;
-border-radius:8px
-}
-
-nav button:hover{
-background:#1e293b;
-color:#fff
-}
-
-main{
-padding:35px 0 60px
-}
-
-.page{
-display:none
-}
-
-.page.active{
-display:block
+nav a{
+  color:#c4cedf;
+  text-decoration:none;
+  margin-left:18px;
+  font-size:14px
 }
 
 .hero{
-text-align:center;
-padding:50px 15px
+  padding:55px 5%;
+  background:linear-gradient(135deg,#101c35,#070b14)
 }
 
-.hero h1{
-font-size:clamp(36px,7vw,70px);
-margin-bottom:15px
+.pill,
+.tag{
+  display:inline-block;
+  background:#182943;
+  color:#74eaff;
+  border-radius:99px;
+  padding:7px 11px;
+  font-size:12px;
+  font-weight:700
 }
 
-.hero h1 span{
-color:#8b5cf6
+h1{
+  font-size:44px;
+  max-width:760px;
+  margin:16px 0 12px
 }
 
 .hero p{
-color:#94a3b8;
-max-width:650px;
-margin:auto;
-line-height:1.7
-}
-
-.hero-buttons{
-margin-top:28px;
-display:flex;
-justify-content:center;
-gap:12px;
-flex-wrap:wrap
+  max-width:720px;
+  color:#aeb9cc;
+  line-height:1.65
 }
 
 .btn{
-border:0;
-border-radius:9px;
-padding:12px 18px;
-font-weight:700;
-background:#7c3aed;
-color:#fff
-}
-
-.btn:hover{
-background:#6d28d9
+  border:0;
+  border-radius:9px;
+  padding:11px 16px;
+  background:#62e5ff;
+  color:#051018;
+  font-weight:900;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block
 }
 
 .btn.secondary{
-background:#1e293b
-}
-
-.btn.success{
-background:#059669
+  background:#202c43;
+  color:#e8eef8
 }
 
 .btn.danger{
-background:#dc2626
+  background:#ef6b7a;
+  color:white
 }
 
 .btn.small{
-padding:8px 12px;
-font-size:13px
+  padding:8px 11px;
+  font-size:12px
 }
 
-.section-title{
-margin-bottom:20px;
-font-size:28px
+.container{
+  padding:32px 5%
 }
 
+.sub,
 .muted{
-color:#94a3b8
+  color:#98a7be;
+  font-size:14px
+}
+
+.timebar{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:18px 0
+}
+
+.time{
+  border:1px solid #2b3852;
+  background:#111a2d;
+  color:#cbd5e1;
+  padding:10px 14px;
+  border-radius:9px;
+  cursor:pointer
+}
+
+.time.active{
+  background:#62e5ff;
+  color:#051018
 }
 
 .grid{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(260px,1fr));
-gap:18px
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:15px
 }
 
 .card{
-background:#111827;
-border:1px solid #263044;
-border-radius:14px;
-padding:20px;
-margin-bottom:18px
+  background:#10182a;
+  border:1px solid #293650;
+  border-radius:15px;
+  padding:18px
 }
 
 .card h3{
-margin-bottom:12px
+  margin:8px 0
 }
 
-.card p{
-color:#cbd5e1;
-margin:7px 0
+.fee{
+  font-size:25px;
+  font-weight:900;
+  margin:11px 0
 }
 
-.lobby-card{
-position:relative
+.green{
+  color:#72f0a7
 }
 
-.badge{
-display:inline-block;
-padding:5px 9px;
-border-radius:999px;
-font-size:12px;
-font-weight:700;
-background:#334155;
-margin-bottom:10px
-}
-
-.badge.open{
-background:#064e3b;
-color:#6ee7b7
-}
-
-.badge.closed{
-background:#450a0a;
-color:#fca5a5
-}
-
-.form-group{
-margin-bottom:15px
-}
-
-label{
-display:block;
-margin-bottom:7px;
-color:#cbd5e1;
-font-size:14px
-}
-
-input,select{
-width:100%;
-padding:12px;
-border-radius:8px;
-border:1px solid #334155;
-background:#0f172a;
-color:#fff;
-outline:none
-}
-
-input:focus,select:focus{
-border-color:#8b5cf6
-}
-
-input[readonly],
-input:disabled,
-select:disabled{
-opacity:.75;
-cursor:not-allowed;
-background:#111827
-}
-
-.form-grid{
-display:grid;
-grid-template-columns:
-repeat(2,1fr);
-gap:15px
-}
-
-.full{
-grid-column:1/-1
-}
-
-.message{
-padding:12px;
-border-radius:8px;
-margin:12px 0;
-display:none
-}
-
-.message.show{
-display:block
-}
-
-.message.success{
-background:#064e3b;
-color:#a7f3d0
-}
-
-.message.error{
-background:#450a0a;
-color:#fecaca
-}
-
-.stats{
-display:grid;
-grid-template-columns:
-repeat(3,1fr);
-gap:15px;
-margin-bottom:25px
-}
-
-.stat{
-background:#111827;
-border:1px solid #263044;
-padding:22px;
-border-radius:13px
-}
-
-.stat-number{
-font-size:32px;
-font-weight:800;
-margin-top:5px;
-color:#a78bfa
-}
-
-.table-wrap{
-overflow-x:auto
+.notice{
+  background:#171d2b;
+  border-left:4px solid #62e5ff;
+  padding:13px;
+  border-radius:7px;
+  color:#c5cede;
+  line-height:1.5
 }
 
 table{
-width:100%;
-border-collapse:collapse;
-min-width:850px
+  width:100%;
+  border-collapse:collapse;
+  background:#10182a;
+  margin-top:16px
 }
 
-th,td{
-padding:12px;
-border-bottom:1px solid #263044;
-text-align:left
+th,
+td{
+  text-align:left;
+  padding:12px;
+  border-bottom:1px solid #293650;
+  font-size:14px
 }
 
 th{
-background:#172033;
-color:#c4b5fd
-}
-
-td{
-color:#dbeafe
-}
-
-.rank{
-font-weight:800;
-font-size:18px
-}
-
-.admin-box{
-max-width:600px;
-margin:30px auto
-}
-
-.hidden{
-display:none!important
-}
-
-.top-actions{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-flex-wrap:wrap;
-margin-bottom:20px
-}
-
-.match-tabs{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-bottom:20px
-}
-
-.match-tabs button{
-border:1px solid #334155;
-background:#111827;
-color:#fff;
-padding:9px 13px;
-border-radius:7px
-}
-
-.match-tabs button.active{
-background:#7c3aed;
-border-color:#7c3aed
-}
-
-.score-table input{
-width:90px;
-padding:8px
+  color:#98a7be
 }
 
 footer{
-border-top:1px solid #263044;
-padding:25px;
-text-align:center;
-color:#64748b
+  padding:30px 5%;
+  border-top:1px solid #273149;
+  color:#7e8ba0
 }
 
-.danger-outline{
-border:1px solid #dc2626!important;
-background:transparent!important;
-color:#fca5a5!important
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:30;
+  align-items:center;
+  justify-content:center;
+  padding:20px
 }
 
-.registration-empty{
-text-align:center;
-padding:25px;
-color:#94a3b8
+.modal.show{
+  display:flex
 }
 
-.assignment-box{
-min-width:190px
+.box{
+  background:#111a2d;
+  border:1px solid #33415c;
+  border-radius:16px;
+  padding:23px;
+  max-width:600px;
+  width:100%;
+  max-height:90vh;
+  overflow:auto
 }
 
-.assignment-box select{
-padding:8px;
-font-size:13px
+.close{
+  float:right;
+  background:none;
+  border:0;
+  color:#fff;
+  font-size:22px;
+  cursor:pointer
 }
 
-.registration-actions{
-display:flex;
-gap:6px;
-flex-wrap:wrap
+input,
+select{
+  width:100%;
+  padding:11px;
+  border-radius:9px;
+  border:1px solid #33415c;
+  background:#0b1220;
+  color:#fff;
+  margin:6px 0 12px
 }
 
-.info-box{
-background:#0f172a;
-border:1px solid #334155;
-border-radius:9px;
-padding:13px;
-margin-bottom:15px
+label{
+  font-size:13px;
+  color:#aeb9cc
 }
 
-.info-box strong{
-color:#c4b5fd
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
 }
 
-.status-card{
-margin-top:20px
+.status{
+  padding:5px 8px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:700;
+  background:#26334b
 }
 
-.status-pending{
-color:#fbbf24;
-font-weight:800
+.status.pending{
+  color:#ffd56a
 }
 
-.status-confirmed{
-color:#6ee7b7;
-font-weight:800
+.status.confirmed{
+  color:#72f0a7
 }
 
-.status-rejected{
-color:#fca5a5;
-font-weight:800
+.status.rejected{
+  color:#ff8997
 }
 
-.live-dot{
-display:inline-block;
-width:9px;
-height:9px;
-border-radius:50%;
-background:#22c55e;
-margin-right:7px
+.hidden{
+  display:none!important
 }
 
-.leaderboard-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-flex-wrap:wrap
+.adminbar{
+  background:#0b1220;
+  border-bottom:1px solid #293650;
+  padding:10px 5%;
+  display:none;
+  justify-content:space-between;
+  align-items:center
 }
 
-.live-text{
-color:#6ee7b7;
-font-size:13px;
-font-weight:700
+.adminbar.show{
+  display:flex
 }
 
-.public-leaderboard-table{
-min-width:700px
+.dash{
+  display:none
 }
 
-.public-leaderboard-table th,
-.public-leaderboard-table td{
-text-align:center
+.dash.show{
+  display:block
 }
 
-.public-leaderboard-table th:nth-child(2),
-.public-leaderboard-table td:nth-child(2){
-text-align:left
+.statgrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px
 }
 
-.public-rank{
-font-weight:900;
-font-size:18px
+.stat{
+  background:#10182a;
+  border:1px solid #293650;
+  border-radius:13px;
+  padding:16px
 }
 
-.total-points{
-font-weight:900;
-color:#c4b5fd
-}
-
-.live-update{
-margin-top:10px;
-font-size:12px;
-color:#64748b
+.stat b{
+  display:block;
+  font-size:26px;
+  margin-top:6px
 }
 
 @media(max-width:700px){
 
-.nav{
-padding:12px 0;
-flex-direction:column
-}
+  h1{
+    font-size:34px
+  }
 
-nav{
-justify-content:center
-}
+  nav{
+    display:none
+  }
 
-.form-grid{
-grid-template-columns:1fr
-}
-
-.full{
-grid-column:auto
-}
-
-.stats{
-grid-template-columns:1fr
-}
-
-.hero{
-padding:30px 10px
-}
+  .row{
+    grid-template-columns:1fr
+  }
 
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-
 <header>
 
-<div class="container nav">
+  <div class="logo">
+    Scrim<span>Forge</span>
+  </div>
 
-<div class="logo">
-Scrim<span>Forge</span>
-</div>
-
-<nav>
-
-<button onclick="showPage('home')">
-Home
-</button>
-
-<button onclick="showPage('scrims')">
-Scrims
-</button>
-
-<button onclick="showPage('register')">
-Register
-</button>
-
-<button onclick="showPage('status')">
-Check Status
-</button>
-
-<button onclick="showPage('leaderboard')">
-Leaderboard
-</button>
-
-<button onclick="showPage('admin')">
-Admin
-</button>
-
-</nav>
-
-</div>
+  <nav>
+    <a href="#scrims">Daily Scrims</a>
+    <a href="#tournaments">Tournaments</a>
+    <a href="#results">Results</a>
+    <a href="#admin" onclick="openAdmin()">Admin</a>
+  </nav>
 
 </header>
 
 
-<main>
+<section class="hero">
 
+  <span class="pill">LIVE V2</span>
 
-<!-- =================================================
-HOME
-================================================= -->
+  <h1>
+    Find your lobby. Register. Get connected.
+  </h1>
 
-<section
-id="home"
-class="page active"
->
+  <p>
+    ScrimForge uses a shared server database, so registrations from customers appear in the admin dashboard on your device too.
+  </p>
 
-<div class="hero">
-
-<h1>
-Welcome to <span>ScrimForge</span>
-</h1>
-
-<p>
-Free Fire scrims, competitive lobbies,
-registrations and live leaderboards —
-all in one place.
-</p>
-
-<div class="hero-buttons">
-
-<button
-class="btn"
-onclick="showPage('scrims')"
->
-View Scrims
-</button>
-
-<button
-class="btn secondary"
-onclick="showPage('leaderboard')"
->
-Leaderboard
-</button>
-
-</div>
-
-</div>
-
-
-<div class="container">
-
-<h2 class="section-title">
-Available Lobbies
-</h2>
-
-<div
-id="homeLobbies"
-class="grid"
-></div>
-
-</div>
+  <a class="btn" href="#scrims">
+    Browse Today's Scrims
+  </a>
 
 </section>
 
 
+<section class="container" id="scrims">
 
-<!-- =================================================
-SCRIMS
-================================================= -->
+  <h2>🔥 Daily Scrims</h2>
 
-<section
-id="scrims"
-class="page"
->
+  <p class="sub">
+    Every session:
+    <b>12 teams · 6 matches · ~1.5–2 hours</b>.
+  </p>
 
-<div class="container">
+  <div class="timebar" id="times"></div>
 
-<div class="top-actions">
+  <div class="notice">
+    Choose a lobby and register.
+    Your registration is saved on the ScrimForge server as
+    <b>Pending</b> until an admin confirms it.
+  </div>
 
-<div>
-
-<h2 class="section-title">
-Available Scrims
-</h2>
-
-<p class="muted">
-Choose the scrim category you want to play.
-</p>
-
-</div>
-
-<button
-class="btn"
-onclick="loadPublicLobbies('scrimList')"
->
-Refresh
-</button>
-
-</div>
-
-<div
-id="scrimList"
-class="grid"
-></div>
-
-</div>
+  <div class="grid" id="lobbies"></div>
 
 </section>
 
 
+<section class="container" id="tournaments">
 
-<!-- =================================================
-REGISTER
-================================================= -->
+  <h2>🏆 Tournaments</h2>
 
-<section
-id="register"
-class="page"
->
+  <p class="sub">
+    Separate from daily scrims.
+  </p>
 
-<div class="container">
+  <div class="grid">
 
-<div class="card">
+    <div class="card">
 
-<h2 class="section-title">
-Scrim Registration
-</h2>
+      <span class="tag">
+        128 SLOTS
+      </span>
 
-<p class="muted">
-Select a scrim. Time and entry fee are fixed
-automatically by the selected scrim.
-</p>
+      <h3>
+        Open Cup
+      </h3>
 
+      <p class="muted">
+        Qualifiers → Finals
+      </p>
 
-<div
-id="registerMessage"
-class="message"
-></div>
+    </div>
 
 
-<form id="registrationForm">
+    <div class="card">
 
+      <span class="tag">
+        256 SLOTS
+      </span>
 
-<div class="form-group">
+      <h3>
+        Grand League
+      </h3>
 
-<label>
-Select Scrim
-</label>
+      <p class="muted">
+        Multi-stage competition
+      </p>
 
-<select
-id="regLobby"
-required
->
+    </div>
 
-<option value="">
-Select a scrim
-</option>
-
-</select>
-
-</div>
-
-
-<div class="form-grid">
-
-
-<div class="form-group">
-
-<label>
-Scrim Time
-</label>
-
-<input
-type="text"
-id="regTime"
-readonly
-placeholder="Automatically selected"
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Entry Fee
-</label>
-
-<input
-type="text"
-id="regFee"
-readonly
-placeholder="Automatically selected"
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Team Name
-</label>
-
-<input
-type="text"
-id="regTeam"
-placeholder="Your team name"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Captain Name
-</label>
-
-<input
-type="text"
-id="regCaptain"
-placeholder="Captain name"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-WhatsApp / Phone
-</label>
-
-<input
-type="text"
-id="regPhone"
-placeholder="Phone number"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Free Fire UID
-</label>
-
-<input
-type="text"
-id="regUid"
-placeholder="Captain UID"
-required
->
-
-</div>
-
-
-</div>
-
-
-<button
-class="btn"
-type="submit"
->
-Submit Registration
-</button>
-
-
-</form>
-
-</div>
-
-</div>
+  </div>
 
 </section>
 
 
+<section class="container" id="results">
 
-<!-- =================================================
-STATUS
-================================================= -->
+  <h2>
+    📊 Recent Scrim Results
+  </h2>
 
-<section
-id="status"
-class="page"
->
+  <table>
 
-<div class="container">
+    <thead>
 
-<div class="card">
+      <tr>
+        <th>Lobby</th>
+        <th>Winner</th>
+        <th>Kills</th>
+        <th>Points</th>
+      </tr>
 
-<h2 class="section-title">
-Check Registration Status
-</h2>
+    </thead>
 
-<p class="muted">
-Enter your registration reference to instantly
-see your current registration status and lobby.
-</p>
+    <tbody id="resultsBody"></tbody>
 
-<br>
-
-
-<div class="form-group">
-
-<label>
-Registration Reference
-</label>
-
-<input
-id="statusRef"
-placeholder="Example: SF-1234567890-1234"
->
-
-</div>
-
-
-<button
-class="btn"
-onclick="checkStatus()"
->
-Check Status
-</button>
-
-
-<div
-id="statusMessage"
-class="message"
-></div>
-
-
-<div
-id="statusResult"
-></div>
-
-
-</div>
-
-</div>
+  </table>
 
 </section>
 
 
+<div class="adminbar" id="adminbar">
 
-<!-- =================================================
-LEADERBOARD
-================================================= -->
+  <span>
+    🔐
+    <b id="adminName"></b>
+    — Admin Mode
+  </span>
 
-<section
-id="leaderboard"
-class="page"
->
-
-<div class="container">
-
-
-<div class="top-actions">
-
-<div>
-
-<h2 class="section-title">
-Live Leaderboard
-</h2>
-
-<p class="muted">
-Standings are automatically updated when the admin
-saves match results.
-</p>
-
-</div>
-
-<div class="live-text">
-<span class="live-dot"></span>
-LIVE
-</div>
+  <button
+    class="btn small secondary"
+    onclick="logout()"
+  >
+    Log out
+  </button>
 
 </div>
 
 
-<div class="card">
+<section class="container dash" id="adminDash">
 
-<div class="form-group">
+  <h2>
+    Admin Dashboard
+  </h2>
 
-<label>
-Select Scrim
-</label>
-
-<select
-id="publicLobbySelect"
->
-
-<option value="">
-Select a scrim
-</option>
-
-</select>
-
-</div>
+  <p class="sub">
+    Manage registrations and publish results from the server.
+  </p>
 
 
-<button
-class="btn"
-onclick="loadPublicLeaderboard()"
->
-View Leaderboard
-</button>
+  <div class="statgrid">
+
+    <div class="stat">
+
+      Pending
+
+      <b id="pendingCount">
+        0
+      </b>
+
+    </div>
 
 
-<div
-id="publicLeaderboard"
-style="margin-top:20px"
-></div>
+    <div class="stat">
+
+      Confirmed
+
+      <b id="confirmedCount">
+        0
+      </b>
+
+    </div>
 
 
-<div
-id="liveUpdateText"
-class="live-update"
-></div>
+    <div class="stat">
 
-</div>
+      Active Lobbies
 
-</div>
+      <b>
+        30
+      </b>
+
+    </div>
+
+  </div>
+
+
+  <h3 style="margin-top:28px">
+    Registrations
+  </h3>
+
+  <div id="adminRegs"></div>
+
+
+  <h3 style="margin-top:28px">
+    Add Result
+  </h3>
+
+
+  <div class="card">
+
+    <div class="row">
+
+      <div>
+
+        <label>
+          Lobby
+        </label>
+
+        <input
+          id="resLobby"
+          placeholder="6 PM · ₹45"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label>
+          Winner
+        </label>
+
+        <input
+          id="resWinner"
+          placeholder="Team name"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="row">
+
+      <div>
+
+        <label>
+          Kills
+        </label>
+
+        <input
+          id="resKills"
+          type="number"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label>
+          Points
+        </label>
+
+        <input
+          id="resPoints"
+          type="number"
+        >
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="btn"
+      onclick="addResult()"
+    >
+      Publish Result
+    </button>
+
+  </div>
 
 </section>
-
-
-
-<!-- =================================================
-ADMIN
-================================================= -->
-
-<section
-id="admin"
-class="page"
->
-
-<div class="container">
-
-
-<!-- LOGIN -->
-
-<div
-id="adminLoginBox"
-class="card admin-box"
->
-
-<h2 class="section-title">
-Admin Login
-</h2>
-
-<div
-id="loginMessage"
-class="message"
-></div>
-
-<form id="loginForm">
-
-<div class="form-group">
-
-<label>
-Email
-</label>
-
-<input
-type="email"
-id="loginEmail"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Password
-</label>
-
-<input
-type="password"
-id="loginPassword"
-required
->
-
-</div>
-
-
-<button
-class="btn"
-type="submit"
->
-Login
-</button>
-
-</form>
-
-</div>
-
-
-
-<!-- SETUP -->
-
-<div
-id="adminSetupBox"
-class="card admin-box hidden"
->
-
-<h2 class="section-title">
-Create Admin
-</h2>
-
-<p class="muted">
-No admin account exists yet.
-Create the first admin.
-</p>
-
-<br>
-
-<div
-id="setupMessage"
-class="message"
-></div>
-
-<form id="setupForm">
-
-<div class="form-group">
-
-<label>
-Name
-</label>
-
-<input
-id="setupName"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Email
-</label>
-
-<input
-type="email"
-id="setupEmail"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Password
-</label>
-
-<input
-type="password"
-id="setupPassword"
-minlength="6"
-required
->
-
-</div>
-
-
-<button
-class="btn"
-type="submit"
->
-Create Admin
-</button>
-
-</form>
-
-</div>
-
-
-
-<!-- DASHBOARD -->
-
-<div
-id="adminDashboard"
-class="hidden"
->
-
-
-<div class="top-actions">
-
-<div>
-
-<h2 class="section-title">
-Admin Dashboard
-</h2>
-
-<p class="muted">
-Logged in as
-<strong id="adminName"></strong>
-</p>
-
-</div>
-
-
-<button
-class="btn danger"
-onclick="logout()"
->
-Logout
-</button>
-
-</div>
-
-
-
-<!-- STATS -->
-
-<div class="stats">
-
-
-<div class="stat">
-
-<div class="muted">
-Pending Registrations
-</div>
-
-<div
-class="stat-number"
-id="pendingCount"
->
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="muted">
-Confirmed Registrations
-</div>
-
-<div
-class="stat-number"
-id="confirmedCount"
->
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="muted">
-Active Lobbies
-</div>
-
-<div
-class="stat-number"
-id="activeLobbyCount"
->
-0
-</div>
-
-</div>
-
-
-</div>
-
-
-
-<!-- CREATE LOBBY -->
-
-<div class="card">
-
-<h3>
-Create New Lobby
-</h3>
-
-<br>
-
-<div
-id="lobbyMessage"
-class="message"
-></div>
-
-
-<form id="lobbyForm">
-
-<div class="form-grid">
-
-
-<div class="form-group">
-
-<label>
-Lobby Name
-</label>
-
-<input
-id="lobbyName"
-placeholder="Example: Alpha Lobby"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Time
-</label>
-
-<input
-id="lobbyTime"
-placeholder="Example: 12 PM"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Entry Fee
-</label>
-
-<input
-id="lobbyFee"
-placeholder="Example: ₹50"
-required
->
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-Maximum Teams
-</label>
-
-<input
-type="number"
-id="lobbyMaxTeams"
-value="12"
-min="1"
-required
->
-
-</div>
-
-
-</div>
-
-
-<button
-class="btn"
-type="submit"
->
-Create Lobby
-</button>
-
-</form>
-
-</div>
-
-
-
-<!-- MANAGE LOBBIES -->
-
-<div class="card">
-
-<div class="top-actions">
-
-<h3>
-Manage Lobbies
-</h3>
-
-<button
-class="btn small"
-onclick="loadAdminLobbies()"
->
-Refresh
-</button>
-
-</div>
-
-
-<div
-id="adminLobbies"
-class="grid"
-></div>
-
-</div>
-
-
-
-<!-- REGISTRATIONS -->
-
-<div class="card">
-
-<div class="top-actions">
-
-<div>
-
-<h3>
-Registrations
-</h3>
-
-<p class="muted">
-Select the lobby and accept or reject registrations.
-</p>
-
-</div>
-
-
-<button
-class="btn small"
-onclick="loadRegistrations()"
->
-Refresh
-</button>
-
-</div>
-
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>ID</th>
-<th>Reference</th>
-<th>Team</th>
-<th>Captain</th>
-<th>Scrim</th>
-<th>Assign Lobby</th>
-<th>Action</th>
-
-</tr>
-
-</thead>
-
-
-<tbody
-id="registrationTable"
-></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
-
-<!-- SCORE ENTRY -->
-
-<div class="card">
-
-<h3>
-Match Score Entry
-</h3>
-
-<p class="muted">
-Enter the position and kills of each team.
-Booyah, placement points, kill points and total
-points are calculated automatically.
-</p>
-
-<br>
-
-
-<div class="form-group">
-
-<label>
-Select Lobby
-</label>
-
-<select
-id="scoreLobby"
->
-
-<option value="">
-Select lobby
-</option>
-
-</select>
-
-</div>
-
-
-<div class="match-tabs">
-
-
-<button
-type="button"
-class="active"
-onclick="selectScoreMatch(1,this)"
->
-Match 1
-</button>
-
-
-<button
-type="button"
-onclick="selectScoreMatch(2,this)"
->
-Match 2
-</button>
-
-
-<button
-type="button"
-onclick="selectScoreMatch(3,this)"
->
-Match 3
-</button>
-
-
-<button
-type="button"
-onclick="selectScoreMatch(4,this)"
->
-Match 4
-</button>
-
-
-<button
-type="button"
-onclick="selectScoreMatch(5,this)"
->
-Match 5
-</button>
-
-
-<button
-type="button"
-onclick="selectScoreMatch(6,this)"
->
-Match 6
-</button>
-
-
-</div>
-
-
-<div
-id="scoreEntryBody"
-></div>
-
-</div>
-
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-
 
 
 <footer>
-ScrimForge &copy; 2026
+
+  <b>
+    ScrimForge
+  </b>
+
+  <br>
+
+  <span class="muted">
+    V2 server-backed build.
+  </span>
+
 </footer>
 
+
+<div class="modal" id="modal">
+
+  <div class="box">
+
+    <button
+      class="close"
+      onclick="closeModal()"
+    >
+      ×
+    </button>
+
+    <div id="modalContent"></div>
+
+  </div>
+
+</div>
 
 
 <script>
 
+const fees = [
+  '25',
+  '30',
+  '45',
+  '50',
+  '75',
+  '100+'
+];
 
-let currentScoreMatch = 1;
+const times = [
+  '12 PM',
+  '3 PM',
+  '6 PM',
+  '9 PM',
+  '12 AM'
+];
 
-let cachedLobbies = [];
+let current = '12 PM';
 
-let leaderboardRefreshTimer = null;
-
-
-/* =====================================================
-PAGE NAVIGATION
-===================================================== */
-
-function showPage(pageId){
-
-document
-.querySelectorAll(".page")
-.forEach(
-p =>
-p.classList.remove("active")
-);
-
-const page =
-document.getElementById(pageId);
-
-if(page)
-page.classList.add("active");
+let regs = [];
 
 
-if(pageId==="home")
-loadPublicLobbies(
-"homeLobbies"
-);
-
-if(pageId==="scrims")
-loadPublicLobbies(
-"scrimList"
-);
-
-if(pageId==="register")
-loadRegistrationCategories();
-
-if(pageId==="leaderboard"){
-
-loadLeaderboardLobbyOptions();
-
-startLeaderboardAutoRefresh();
-
-}
-
-if(pageId==="admin")
-checkAdmin();
+const $ = id =>
+  document.getElementById(id);
 
 
-if(pageId!=="leaderboard"){
-stopLeaderboardAutoRefresh();
-}
+function esc(s){
 
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
+  return String(s).replace(
+    /[&<>"']/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[m])
+  );
 
 }
 
 
-/* =====================================================
-MESSAGES
-===================================================== */
+function renderTimes(){
 
-function showMessage(
-id,
-text,
-type="success"
+  $('times').innerHTML =
+    times.map(
+      t => `
+        <button
+          class="time ${t===current?'active':''}"
+          onclick="setTime('${t}')"
+        >
+          ${t}
+        </button>
+      `
+    ).join('');
+
+}
+
+
+function setTime(t){
+
+  current = t;
+
+  renderTimes();
+
+  render();
+
+}
+
+
+function render(){
+
+  $('lobbies').innerHTML =
+    fees.map(
+      fee => {
+
+        let filled =
+          regs.filter(
+            r =>
+              r.time === current &&
+              r.fee === fee &&
+              r.status === 'confirmed'
+          ).length;
+
+        let full =
+          filled >= 12;
+
+
+        return `
+          <div class="card">
+
+            <span class="tag">
+              ${current}
+            </span>
+
+            <h3>
+              ₹${fee} Scrim
+            </h3>
+
+            <div class="fee">
+              ₹${fee}
+            </div>
+
+            <p class="muted">
+              12 teams · 6 matches · ~1.5–2 hours
+            </p>
+
+            <p class="muted">
+              <b>${filled}/12</b>
+              teams confirmed
+            </p>
+
+            <button
+              class="btn"
+              ${full?'disabled':''}
+              onclick="registerLobby('${current}','${fee}')"
+            >
+              ${full?'FULL':'REGISTER'}
+            </button>
+
+          </div>
+        `;
+
+      }
+    ).join('');
+
+}
+
+
+function registerLobby(time,fee){
+
+  $('modalContent').innerHTML = `
+
+    <h2>
+      Register for Scrim
+    </h2>
+
+    <p class="sub">
+      Lobby:
+      <b>
+        ${time} · ₹${fee}
+      </b>
+    </p>
+
+    <div class="row">
+
+      <div>
+
+        <label>
+          Team name
+        </label>
+
+        <input id="rTeam">
+
+      </div>
+
+
+      <div>
+
+        <label>
+          Captain name
+        </label>
+
+        <input id="rCaptain">
+
+      </div>
+
+    </div>
+
+
+    <div class="row">
+
+      <div>
+
+        <label>
+          WhatsApp number
+        </label>
+
+        <input id="rPhone">
+
+      </div>
+
+
+      <div>
+
+        <label>
+          Game UID
+        </label>
+
+        <input id="rUid">
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="btn"
+      onclick="saveRegistration('${time}','${fee}')"
+    >
+      Submit Registration
+    </button>
+
+  `;
+
+  $('modal').classList.add('show');
+
+}
+
+
+async function saveRegistration(time,fee){
+
+  let body = {
+
+    time,
+
+    fee,
+
+    team:
+      $('rTeam').value.trim(),
+
+    captain:
+      $('rCaptain').value.trim(),
+
+    phone:
+      $('rPhone').value.trim(),
+
+    uid:
+      $('rUid').value.trim()
+
+  };
+
+
+  if(
+    Object.values(body).some(
+      v => !v
+    )
+  ){
+
+    alert(
+      'Please fill all fields.'
+    );
+
+    return;
+
+  }
+
+
+  let r =
+    await api(
+      '/api/registrations',
+      {
+        method:'POST',
+
+        headers:{
+          'Content-Type':
+            'application/json'
+        },
+
+        body:
+          JSON.stringify(body)
+      }
+    );
+
+
+  if(!r.ok){
+
+    alert(
+      r.error ||
+      'Could not register'
+    );
+
+    return;
+
+  }
+
+
+  $('modalContent').innerHTML = `
+
+    <h2>
+      Registration received ✅
+    </h2>
+
+    <p>
+      Your registration is
+      <b>Pending</b>
+      admin confirmation.
+    </p>
+
+    <p class="sub">
+      Reference:
+      <b>
+        ${esc(r.ref)}
+      </b>
+    </p>
+
+    <button
+      class="btn"
+      onclick="closeModal()"
+    >
+      Done
+    </button>
+
+  `;
+
+
+  await loadPublic();
+
+}
+
+
+async function api(url,opt={}){
+
+  let res =
+    await fetch(
+      url,
+      opt
+    );
+
+  let data = {};
+
+  try{
+
+    data =
+      await res.json();
+
+  }catch{}
+
+
+  if(!res.ok)
+    throw data;
+
+  return data;
+
+}
+
+
+async function loadPublic(){
+
+  regs =
+    await api(
+      '/api/public/lobbies'
+    ).catch(
+      () => []
+    );
+
+
+  render();
+
+
+  let results =
+    await api(
+      '/api/results'
+    ).catch(
+      () => []
+    );
+
+
+  $('resultsBody').innerHTML =
+    results.map(
+      r => `
+
+        <tr>
+
+          <td>
+            ${esc(r.lobby)}
+          </td>
+
+          <td>
+            ${esc(r.winner)}
+          </td>
+
+          <td>
+            ${r.kills}
+          </td>
+
+          <td>
+            ${r.points}
+          </td>
+
+        </tr>
+
+      `
+    ).join('');
+
+}
+
+
+async function openAdmin(){
+
+  try{
+
+    let m =
+      await api('/api/me');
+
+
+    if(m.loggedIn){
+
+      showDashboard(
+        m.name
+      );
+
+      return;
+
+    }
+
+
+    let e =
+      await api(
+        '/api/admin-exists'
+      );
+
+
+    e.exists
+      ? showLogin()
+      : showSetup();
+
+
+  }catch(err){
+
+    alert(
+      'Cannot connect to the ScrimForge server. Please open the website through the Node server, not as a local HTML file.'
+    );
+
+  }
+
+}
+
+
+function showLogin(){
+
+  $('modalContent').innerHTML = `
+
+    <h2>
+      Admin Login
+    </h2>
+
+    <label>
+      Email
+    </label>
+
+    <input
+      id="loginEmail"
+      type="email"
+      autocomplete="username"
+    >
+
+    <label>
+      Password
+    </label>
+
+    <input
+      id="loginPass"
+      type="password"
+      autocomplete="current-password"
+    >
+
+    <button
+      class="btn"
+      onclick="loginAdmin()"
+    >
+      Log in
+    </button>
+
+  `;
+
+  $('modal').classList.add('show');
+
+}
+
+
+function showSetup(){
+
+  $('modalContent').innerHTML = `
+
+    <h2>
+      Create First Admin
+    </h2>
+
+    <p class="sub">
+      This appears only while no admin account exists.
+      You can use the same email and password you used in your old V1 admin login.
+    </p>
+
+    <label>
+      Your name
+    </label>
+
+    <input id="setupName">
+
+
+    <label>
+      Admin email
+    </label>
+
+    <input
+      id="setupEmail"
+      type="email"
+    >
+
+
+    <label>
+      Password
+    </label>
+
+    <input
+      id="setupPass"
+      type="password"
+    >
+
+
+    <button
+      class="btn"
+      onclick="setupAdmin()"
+    >
+      Create Admin
+    </button>
+
+  `;
+
+  $('modal').classList.add('show');
+
+}
+
+
+async function setupAdmin(){
+
+  try{
+
+    let name =
+      $('setupName')
+        .value
+        .trim();
+
+    let email =
+      $('setupEmail')
+        .value
+        .trim();
+
+    let password =
+      $('setupPass')
+        .value;
+
+
+    if(
+      !name ||
+      !email ||
+      password.length < 6
+    ){
+
+      alert(
+        'Enter your name, email and a password of at least 6 characters.'
+      );
+
+      return;
+
+    }
+
+
+    let r =
+      await api(
+        '/api/setup-admin',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify({
+              name,
+              email,
+              password
+            })
+        }
+      );
+
+
+    closeModal();
+
+    showDashboard(
+      r.name
+    );
+
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Could not create admin'
+    );
+
+  }
+
+}
+
+
+async function loginAdmin(){
+
+  try{
+
+    let email =
+      $('loginEmail')
+        .value
+        .trim();
+
+    let password =
+      $('loginPass')
+        .value;
+
+
+    if(
+      !email ||
+      !password
+    ){
+
+      alert(
+        'Enter your admin email and password.'
+      );
+
+      return;
+
+    }
+
+
+    let r =
+      await api(
+        '/api/login',
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify({
+              email,
+              password
+            })
+        }
+      );
+
+
+    closeModal();
+
+    await showDashboard(
+      r.name
+    );
+
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Incorrect admin email or password.'
+    );
+
+  }
+
+}
+
+
+async function showDashboard(name){
+
+  $('adminDash')
+    .classList
+    .add('show');
+
+  $('adminbar')
+    .classList
+    .add('show');
+
+  $('adminName')
+    .textContent =
+      name;
+
+
+  closeModal();
+
+
+  await renderAdmin();
+
+
+  setTimeout(
+    () =>
+      $('adminDash')
+        .scrollIntoView({
+          behavior:'smooth',
+          block:'start'
+        }),
+    50
+  );
+
+}
+
+
+async function renderAdmin(){
+
+  try{
+
+    let s =
+      await api(
+        '/api/stats'
+      );
+
+
+    $('pendingCount')
+      .textContent =
+        s.pending;
+
+
+    $('confirmedCount')
+      .textContent =
+        s.confirmed;
+
+
+    regs =
+      await api(
+        '/api/registrations'
+      );
+
+
+    $('adminRegs').innerHTML =
+      regs.length
+
+      ?
+
+      regs.map(
+        r => `
+
+          <div
+            class="card"
+            style="margin:10px 0"
+          >
+
+            <div
+              style="
+                display:flex;
+                justify-content:space-between
+              "
+            >
+
+              <b>
+                ${esc(r.team)}
+              </b>
+
+              <span
+                class="status ${r.status}"
+              >
+                ${r.status.toUpperCase()}
+              </span>
+
+            </div>
+
+
+            <p class="muted">
+
+              ${esc(r.time)}
+              ·
+              ₹${esc(r.fee)}
+              ·
+              ${esc(r.captain)}
+              ·
+              Ref ${esc(r.ref)}
+
+            </p>
+
+
+            <p class="muted">
+
+              WhatsApp:
+              ${esc(r.phone)}
+              ·
+              UID:
+              ${esc(r.uid)}
+
+            </p>
+
+
+            ${
+              r.status === 'pending'
+
+              ?
+
+              `
+                <button
+                  class="btn small"
+                  onclick="updateReg(${r.id},'confirmed')"
+                >
+                  Confirm
+                </button>
+
+                <button
+                  class="btn small danger"
+                  onclick="updateReg(${r.id},'rejected')"
+                >
+                  Reject
+                </button>
+              `
+
+              :
+
+              ''
+            }
+
+
+            ${
+              r.status === 'confirmed'
+
+              ?
+
+              `
+                <button
+                  class="btn small danger"
+                  onclick="updateReg(${r.id},'rejected')"
+                >
+                  Cancel
+                </button>
+              `
+
+              :
+
+              ''
+            }
+
+          </div>
+
+        `
+      ).join('')
+
+      :
+
+      `
+        <div class="notice">
+          No registrations yet.
+        </div>
+      `;
+
+
+    render();
+
+
+  }catch(e){
+
+    alert(
+      'Admin session expired.'
+    );
+
+    logout();
+
+  }
+
+}
+
+
+async function updateReg(
+  id,
+  status
 ){
 
-const e =
-document.getElementById(id);
+  try{
 
-if(!e)return;
+    await api(
+      '/api/registrations/' +
+      id,
+      {
+        method:'PATCH',
 
-e.textContent =
-text;
+        headers:{
+          'Content-Type':
+            'application/json'
+        },
 
-e.className =
-"message show " + type;
-
-}
-
-
-/* =====================================================
-API
-===================================================== */
-
-async function api(
-url,
-options={}
-){
-
-const response =
-await fetch(
-url,
-{
-credentials:
-"same-origin",
-
-...options,
-
-headers:{
-"Content-Type":
-"application/json",
-
-...(options.headers||{})
-}
-
-}
-);
+        body:
+          JSON.stringify({
+            status
+          })
+      }
+    );
 
 
-let data = {};
-
-const contentType =
-response.headers.get(
-"content-type"
-) || "";
+    await renderAdmin();
 
 
-if(
-contentType.includes(
-"application/json"
-)
-){
+  }catch(e){
 
-try{
+    alert(
+      e.error ||
+      'Could not update'
+    );
 
-data =
-await response.json();
-
-}catch{
-
-data={};
-
-}
-
-}else{
-
-const text =
-await response.text();
-
-if(text)
-data={
-error:text
-};
+  }
 
 }
 
 
-if(!response.ok){
+async function addResult(){
 
-throw new Error(
-data.error ||
-data.message ||
-`Request failed (${response.status})`
-);
+  try{
 
-}
+    await api(
+      '/api/results',
+      {
+        method:'POST',
 
+        headers:{
+          'Content-Type':
+            'application/json'
+        },
 
-return data;
+        body:
+          JSON.stringify({
 
-}
+            lobby:
+              $('resLobby')
+                .value
+                .trim(),
 
+            winner:
+              $('resWinner')
+                .value
+                .trim(),
 
-/* =====================================================
-PUBLIC LOBBIES
-===================================================== */
+            kills:
+              $('resKills')
+                .value,
 
-async function loadPublicLobbies(
-targetId="homeLobbies"
-){
+            points:
+              $('resPoints')
+                .value
 
-const target =
-document.getElementById(
-targetId
-);
-
-if(!target)return;
-
-
-target.innerHTML =
-'<p class="muted">Loading lobbies...</p>';
-
-
-try{
-
-const lobbies =
-await api(
-"/api/public/lobbies"
-);
-
-cachedLobbies =
-Array.isArray(lobbies)
-? lobbies
-: [];
+          })
+        }
+      );
 
 
-if(!cachedLobbies.length){
-
-target.innerHTML =
-`
-<div class="card">
-<p class="muted">
-No lobbies available right now.
-</p>
-</div>
-`;
-
-return;
-
-}
+    $('resLobby').value = '';
+    $('resWinner').value = '';
+    $('resKills').value = '';
+    $('resPoints').value = '';
 
 
-target.innerHTML =
-cachedLobbies
-.map(lobby=>{
-
-const full =
-Number(
-lobby.confirmed||0
-) >=
-Number(
-lobby.max_teams||0
-);
-
-const open =
-lobby.status==="open";
+    await loadPublic();
 
 
-return `
-
-<div class="card lobby-card">
-
-<span class="badge ${
-open&&!full
-?"open"
-:"closed"
-}">
-
-${
-open&&!full
-?"OPEN"
-:"CLOSED"
-}
-
-</span>
+    alert(
+      'Result published.'
+    );
 
 
-<h3>
-${escapeHTML(lobby.name)}
-</h3>
+  }catch(e){
 
+    alert(
+      e.error ||
+      'Could not publish result'
+    );
 
-<p>
-<strong>Time:</strong>
-${escapeHTML(lobby.time)}
-</p>
-
-
-<p>
-<strong>Entry:</strong>
-${escapeHTML(lobby.fee)}
-</p>
-
-
-<p>
-<strong>Teams:</strong>
-${Number(lobby.confirmed||0)}
-/
-${Number(lobby.max_teams||0)}
-</p>
-
-
-<br>
-
-
-${
-open&&!full
-?
-`
-<button
-class="btn small"
-onclick="useLobby(${Number(lobby.id)})"
->
-Register
-</button>
-`
-:
-`
-<button
-class="btn small secondary"
-disabled
->
-${full?"FULL":"CLOSED"}
-</button>
-`
-}
-
-</div>
-
-`;
-
-})
-.join("");
-
-
-}catch(error){
-
-target.innerHTML =
-`
-<div class="card">
-<p class="muted">
-${escapeHTML(error.message)}
-</p>
-</div>
-`;
+  }
 
 }
 
-}
-
-
-/* =====================================================
-REGISTRATION CATEGORIES
-===================================================== */
-
-async function loadRegistrationCategories(
-selectedId=""
-){
-
-const select =
-document.getElementById(
-"regLobby"
-);
-
-if(!select)return;
-
-
-try{
-
-const lobbies =
-await api(
-"/api/public/lobbies"
-);
-
-cachedLobbies =
-Array.isArray(lobbies)
-? lobbies
-: [];
-
-
-select.innerHTML =
-`
-<option value="">
-Select a scrim
-</option>
-`;
-
-
-cachedLobbies.forEach(
-lobby=>{
-
-const full =
-Number(
-lobby.confirmed||0
-) >=
-Number(
-lobby.max_teams||0
-);
-
-const disabled =
-lobby.status!=="open" ||
-full;
-
-
-const option =
-document.createElement(
-"option"
-);
-
-
-option.value =
-String(lobby.id);
-
-
-/*
-IMPORTANT:
-Only lobby name is shown.
-Time and fee remain separate fixed fields.
-*/
-
-option.textContent =
-lobby.name +
-(full
-?" — FULL"
-:"");
-
-
-option.disabled =
-disabled;
-
-
-select.appendChild(
-option
-);
-
-});
-
-
-if(selectedId){
-
-select.value =
-String(selectedId);
-
-updateRegistrationLobbyDetails();
-
-}
-
-
-}catch(error){
-
-showMessage(
-"registerMessage",
-error.message,
-"error"
-);
-
-}
-
-}
-
-
-/* =====================================================
-CATEGORY SELECT
-===================================================== */
-
-document
-.getElementById("regLobby")
-.addEventListener(
-"change",
-updateRegistrationLobbyDetails
-);
-
-
-function updateRegistrationLobbyDetails(){
-
-const select =
-document.getElementById(
-"regLobby"
-);
-
-const lobby =
-cachedLobbies.find(
-x =>
-String(x.id) ===
-String(select.value)
-);
-
-
-const time =
-document.getElementById(
-"regTime"
-);
-
-const fee =
-document.getElementById(
-"regFee"
-);
-
-
-if(!lobby){
-
-time.value="";
-fee.value="";
-
-return;
-
-}
-
-
-time.value =
-lobby.time || "";
-
-fee.value =
-lobby.fee || "";
-
-}
-
-
-/* =====================================================
-USE LOBBY
-===================================================== */
-
-async function useLobby(id){
-
-showPage("register");
-
-await loadRegistrationCategories(
-id
-);
-
-const select =
-document.getElementById(
-"regLobby"
-);
-
-select.value =
-String(id);
-
-updateRegistrationLobbyDetails();
-
-}
-
-
-/* =====================================================
-REGISTRATION
-===================================================== */
-
-document
-.getElementById(
-"registrationForm"
-)
-.addEventListener(
-"submit",
-async e=>{
-
-e.preventDefault();
-
-
-const lobbyId =
-document.getElementById(
-"regLobby"
-).value;
-
-
-const lobby =
-cachedLobbies.find(
-x =>
-String(x.id) ===
-String(lobbyId)
-);
-
-
-if(!lobby){
-
-showMessage(
-"registerMessage",
-"Please select a valid scrim.",
-"error"
-);
-
-return;
-
-}
-
-
-try{
-
-
-const data =
-await api(
-"/api/registrations",
-{
-method:"POST",
-
-body:
-JSON.stringify({
-
-/*
-Only lobby ID and user details
-are trusted from browser.
-Server gets time + fee itself.
-*/
-
-lobbyId:
-Number(lobby.id),
-
-team:
-document
-.getElementById("regTeam")
-.value
-.trim(),
-
-captain:
-document
-.getElementById("regCaptain")
-.value
-.trim(),
-
-phone:
-document
-.getElementById("regPhone")
-.value
-.trim(),
-
-uid:
-document
-.getElementById("regUid")
-.value
-.trim()
-
-})
-
-}
-);
-
-
-showMessage(
-"registerMessage",
-`Registration submitted successfully. Reference: ${data.ref}. Status: PENDING`
-);
-
-
-e.target.reset();
-
-document.getElementById(
-"regTime"
-).value="";
-
-document.getElementById(
-"regFee"
-).value="";
-
-
-/*
-Automatically put reference into
-Check Status field.
-*/
-
-const statusRef =
-document.getElementById(
-"statusRef"
-);
-
-if(statusRef)
-statusRef.value =
-data.ref;
-
-
-}catch(error){
-
-showMessage(
-"registerMessage",
-error.message,
-"error"
-);
-
-}
-
-}
-);
-
-
-/* =====================================================
-STATUS
-===================================================== */
-
-async function checkStatus(){
-
-const input =
-document.getElementById(
-"statusRef"
-);
-
-const ref =
-input.value.trim();
-
-
-const result =
-document.getElementById(
-"statusResult"
-);
-
-
-if(!ref){
-
-showMessage(
-"statusMessage",
-"Please enter your registration reference.",
-"error"
-);
-
-result.innerHTML="";
-
-return;
-
-}
-
-
-try{
-
-const data =
-await api(
-`/api/registration-status/${encodeURIComponent(ref)}`
-);
-
-
-showMessage(
-"statusMessage",
-"Registration found.",
-"success"
-);
-
-
-let statusClass =
-"status-pending";
-
-
-if(data.status==="confirmed")
-statusClass =
-"status-confirmed";
-
-
-if(data.status==="rejected")
-statusClass =
-"status-rejected";
-
-
-result.innerHTML =
-`
-
-<div class="card status-card">
-
-<h3>
-${escapeHTML(
-data.team ||
-"Registration"
-)}
-</h3>
-
-
-<p>
-<strong>Reference:</strong>
-${escapeHTML(
-data.ref ||
-ref
-)}
-</p>
-
-
-<p>
-<strong>Captain:</strong>
-${escapeHTML(
-data.captain || ""
-)}
-</p>
-
-
-<p>
-<strong>Scrim Time:</strong>
-${escapeHTML(
-data.time || ""
-)}
-</p>
-
-
-<p>
-<strong>Entry Fee:</strong>
-${escapeHTML(
-data.fee || ""
-)}
-</p>
-
-
-<p>
-<strong>Status:</strong>
-
-<span class="${statusClass}">
-${escapeHTML(
-String(
-data.status ||
-"pending"
-).toUpperCase()
-)}
-</span>
-
-</p>
-
-
-<p>
-<strong>Assigned Lobby:</strong>
-${escapeHTML(
-data.lobby_name ||
-"Not assigned yet"
-)}
-</p>
-
-
-</div>
-
-`;
-
-
-}catch(error){
-
-showMessage(
-"statusMessage",
-error.message,
-"error"
-);
-
-result.innerHTML="";
-
-}
-
-}
-
-
-/* =====================================================
-ADMIN CHECK
-===================================================== */
-
-async function checkAdmin(){
-
-try{
-
-const exists =
-await api(
-"/api/admin-exists"
-);
-
-const me =
-await api(
-"/api/me"
-);
-
-
-document
-.getElementById(
-"adminLoginBox"
-)
-.classList
-.toggle(
-"hidden",
-!exists.exists ||
-me.loggedIn
-);
-
-
-document
-.getElementById(
-"adminSetupBox"
-)
-.classList
-.toggle(
-"hidden",
-exists.exists
-);
-
-
-document
-.getElementById(
-"adminDashboard"
-)
-.classList
-.toggle(
-"hidden",
-!me.loggedIn
-);
-
-
-if(!exists.exists)
-return;
-
-
-if(me.loggedIn)
-showAdminDashboard(
-me.name
-);
-
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-/* =====================================================
-ADMIN DASHBOARD
-===================================================== */
-
-function showAdminDashboard(
-name
-){
-
-document
-.getElementById(
-"adminLoginBox"
-)
-.classList.add(
-"hidden"
-);
-
-
-document
-.getElementById(
-"adminSetupBox"
-)
-.classList.add(
-"hidden"
-);
-
-
-document
-.getElementById(
-"adminDashboard"
-)
-.classList.remove(
-"hidden"
-);
-
-
-document
-.getElementById(
-"adminName"
-)
-.textContent =
-name || "Admin";
-
-
-loadAdminData();
-
-}
-
-
-/* =====================================================
-SETUP
-===================================================== */
-
-document
-.getElementById(
-"setupForm"
-)
-.addEventListener(
-"submit",
-async e=>{
-
-e.preventDefault();
-
-
-try{
-
-const d =
-await api(
-"/api/setup-admin",
-{
-method:"POST",
-
-body:
-JSON.stringify({
-
-name:
-document.getElementById(
-"setupName"
-).value,
-
-email:
-document.getElementById(
-"setupEmail"
-).value,
-
-password:
-document.getElementById(
-"setupPassword"
-).value
-
-})
-
-}
-);
-
-
-showAdminDashboard(
-d.name
-);
-
-
-}catch(error){
-
-showMessage(
-"setupMessage",
-error.message,
-"error"
-);
-
-}
-
-}
-);
-
-
-/* =====================================================
-LOGIN
-===================================================== */
-
-document
-.getElementById(
-"loginForm"
-)
-.addEventListener(
-"submit",
-async e=>{
-
-e.preventDefault();
-
-
-try{
-
-const d =
-await api(
-"/api/login",
-{
-method:"POST",
-
-body:
-JSON.stringify({
-
-email:
-document.getElementById(
-"loginEmail"
-).value,
-
-password:
-document.getElementById(
-"loginPassword"
-).value
-
-})
-
-}
-);
-
-
-showAdminDashboard(
-d.name
-);
-
-
-}catch(error){
-
-showMessage(
-"loginMessage",
-error.message,
-"error"
-);
-
-}
-
-}
-);
-
-
-/* =====================================================
-LOGOUT
-===================================================== */
 
 async function logout(){
 
-try{
+  await fetch(
+    '/api/logout',
+    {
+      method:'POST'
+    }
+  );
 
-await api(
-"/api/logout",
-{
-method:"POST"
-}
-);
-
-checkAdmin();
-
-
-}catch(error){
-
-alert(
-error.message
-);
-
-}
-
-}
-
-
-/* =====================================================
-ADMIN DATA
-===================================================== */
-
-async function loadAdminData(){
-
-await Promise.all([
-loadStats(),
-loadAdminLobbies(),
-loadRegistrations()
-]);
-
-await loadScoreLobbyOptions();
-
-}
-
-
-/* =====================================================
-STATS
-===================================================== */
-
-async function loadStats(){
-
-try{
-
-const s =
-await api(
-"/api/stats"
-);
-
-
-document.getElementById(
-"pendingCount"
-).textContent =
-s.pending ?? 0;
-
-
-document.getElementById(
-"confirmedCount"
-).textContent =
-s.confirmed ?? 0;
-
-
-document.getElementById(
-"activeLobbyCount"
-).textContent =
-s.activeLobbies ?? 0;
-
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-/* =====================================================
-CREATE LOBBY
-===================================================== */
-
-document
-.getElementById(
-"lobbyForm"
-)
-.addEventListener(
-"submit",
-async e=>{
-
-e.preventDefault();
-
-
-try{
-
-await api(
-"/api/lobbies",
-{
-method:"POST",
-
-body:
-JSON.stringify({
-
-name:
-document.getElementById(
-"lobbyName"
-).value,
-
-time:
-document.getElementById(
-"lobbyTime"
-).value,
-
-fee:
-document.getElementById(
-"lobbyFee"
-).value,
-
-maxTeams:
-Number(
-document.getElementById(
-"lobbyMaxTeams"
-).value
-)
-
-})
-}
-);
-
-
-showMessage(
-"lobbyMessage",
-"Lobby created successfully."
-);
-
-
-e.target.reset();
-
-
-document.getElementById(
-"lobbyMaxTeams"
-).value =
-12;
-
-
-await loadAdminLobbies();
-await loadStats();
-await loadScoreLobbyOptions();
-await loadRegistrationCategories();
-
-
-}catch(error){
-
-showMessage(
-"lobbyMessage",
-error.message,
-"error"
-);
-
-}
-
-}
-);
-
-
-/* =====================================================
-ADMIN LOBBIES
-===================================================== */
-
-async function loadAdminLobbies(){
-
-const target =
-document.getElementById(
-"adminLobbies"
-);
-
-
-try{
-
-const lobbies =
-await api(
-"/api/lobbies"
-);
-
-
-cachedLobbies =
-Array.isArray(lobbies)
-? lobbies
-: [];
-
-
-if(!lobbies.length){
-
-target.innerHTML =
-'<p class="muted">No lobbies created yet.</p>';
-
-return;
-
-}
-
-
-target.innerHTML =
-lobbies
-.map(
-lobby=>`
-
-<div class="card">
-
-<span class="badge ${
-lobby.status==="open"
-?"open"
-:"closed"
-}">
-
-${String(
-lobby.status || ""
-).toUpperCase()}
-
-</span>
-
-
-<h3>
-${escapeHTML(
-lobby.name
-)}
-</h3>
-
-
-<p>
-Time:
-${escapeHTML(
-lobby.time
-)}
-</p>
-
-
-<p>
-Fee:
-${escapeHTML(
-lobby.fee
-)}
-</p>
-
-
-<p>
-Teams:
-${Number(
-lobby.confirmed || 0
-)}
-/
-${Number(
-lobby.max_teams || 0
-)}
-</p>
-
-
-<br>
-
-
-<div
-style="
-display:flex;
-gap:8px;
-flex-wrap:wrap
-"
->
-
-
-<button
-class="btn small ${
-lobby.status==="open"
-?"danger"
-:"success"
-}"
-onclick="toggleLobby(
-${Number(lobby.id)},
-'${escapeAttribute(lobby.status)}'
-)"
->
-
-${
-lobby.status==="open"
-?"Close Lobby"
-:"Open Lobby"
-}
-
-</button>
-
-
-<button
-class="btn small danger-outline"
-onclick="deleteLobby(
-${Number(lobby.id)},
-'${escapeAttribute(lobby.name)}'
-)"
->
-Delete Scrim
-</button>
-
-
-</div>
-
-</div>
-
-`
-)
-.join("");
-
-
-}catch(error){
-
-target.innerHTML =
-`
-<p class="muted">
-${escapeHTML(
-error.message
-)}
-</p>
-`;
-
-}
-
-}
-
-
-/* =====================================================
-TOGGLE
-===================================================== */
-
-async function toggleLobby(
-id,
-currentStatus
-){
-
-try{
-
-await api(
-`/api/lobbies/${id}`,
-{
-method:"PATCH",
-
-body:
-JSON.stringify({
-
-status:
-currentStatus==="open"
-?"closed"
-:"open"
-
-})
-
-}
-);
-
-
-await loadAdminLobbies();
-await loadStats();
-await loadRegistrationCategories();
-await loadPublicLobbies(
-"homeLobbies"
-);
-await loadPublicLobbies(
-"scrimList"
-);
-
-
-}catch(error){
-
-alert(
-error.message
-);
-
-}
-
-}
-
-
-/* =====================================================
-DELETE
-===================================================== */
-
-async function deleteLobby(
-id,
-name
-){
-
-const ok =
-confirm(
-`Delete "${name}" permanently?\n\nThis deletes its registrations and scores.`
-);
-
-
-if(!ok)return;
-
-
-try{
-
-await api(
-`/api/lobbies/${id}`,
-{
-method:"DELETE"
-}
-);
-
-
-alert(
-"Scrim deleted successfully."
-);
-
-
-await loadAdminLobbies();
-await loadRegistrations();
-await loadStats();
-await loadScoreLobbyOptions();
-await loadRegistrationCategories();
-await loadPublicLobbies(
-"homeLobbies"
-);
-await loadPublicLobbies(
-"scrimList"
-);
-await loadLeaderboardLobbyOptions();
-
-
-}catch(error){
-
-alert(
-error.message
-);
-
-}
-
-}
-
-
-/* =====================================================
-GET ADMIN LOBBIES
-===================================================== */
-
-async function getAdminLobbies(){
-
-try{
-
-const lobbies =
-await api(
-"/api/lobbies"
-);
-
-cachedLobbies =
-Array.isArray(lobbies)
-? lobbies
-: [];
-
-
-return cachedLobbies;
-
-
-}catch(error){
-
-console.error(error);
-
-return [];
-
-}
-
-}
-
-
-/* =====================================================
-REGISTRATIONS
-===================================================== */
-
-async function loadRegistrations(){
-
-const tbody =
-document.getElementById(
-"registrationTable"
-);
-
-
-try{
-
-const rows =
-await api(
-"/api/registrations"
-);
-
-
-const activeRows =
-(Array.isArray(rows)
-? rows
-: [])
-.filter(
-row =>
-row.status !==
-"rejected"
-);
-
-
-if(!activeRows.length){
-
-tbody.innerHTML =
-`
-
-<tr>
-
-<td
-colspan="7"
-class="registration-empty"
->
-No active registrations.
-</td>
-
-</tr>
-
-`;
-
-return;
-
-}
-
-
-const lobbies =
-await getAdminLobbies();
-
-
-tbody.innerHTML =
-activeRows
-.map(
-row=>{
-
-const selectedLobby =
-row.lobby_id || "";
-
-
-const lobbyOptions =
-lobbies
-.map(
-lobby=>{
-
-const full =
-Number(
-lobby.confirmed || 0
-) >=
-Number(
-lobby.max_teams || 0
-);
-
-
-const selected =
-String(
-selectedLobby
-) ===
-String(
-lobby.id
-);
-
-
-return `
-
-<option
-value="${Number(lobby.id)}"
-${selected?"selected":""}
-${lobby.status!=="open"&&!selected?"disabled":""}
->
-
-${escapeHTML(
-lobby.name
-)}
-${
-full&&!selected
-?" — FULL"
-:""
-}
-
-</option>
-
-`;
-
-}
-)
-.join("");
-
-
-return `
-
-<tr>
-
-<td>
-${escapeHTML(
-row.id
-)}
-</td>
-
-
-<td>
-${escapeHTML(
-row.ref
-)}
-</td>
-
-
-<td>
-<strong>
-${escapeHTML(
-row.team
-)}
-</strong>
-</td>
-
-
-<td>
-${escapeHTML(
-row.captain
-)}
-</td>
-
-
-<td>
-
-${escapeHTML(
-row.time || ""
-)}
-
-<br>
-
-<small class="muted">
-${escapeHTML(
-row.fee || ""
-)}
-</small>
-
-</td>
-
-
-<td>
-
-<div
-class="assignment-box"
->
-
-<select
-id="assignLobby-${Number(row.id)}"
->
-
-<option value="">
-Select lobby
-</option>
-
-${lobbyOptions}
-
-</select>
-
-</div>
-
-</td>
-
-
-<td>
-
-<div
-class="registration-actions"
->
-
-
-<button
-class="btn small success"
-onclick="confirmRegistration(
-${Number(row.id)}
-)"
->
-Accept
-</button>
-
-
-<button
-class="btn small danger"
-onclick="rejectRegistration(
-${Number(row.id)}
-)"
->
-Reject
-</button>
-
-
-</div>
-
-</td>
-
-</tr>
-
-`;
-
-}
-)
-.join("");
-
-
-}catch(error){
-
-tbody.innerHTML =
-`
-
-<tr>
-
-<td
-colspan="7"
-class="registration-empty"
->
-
-${escapeHTML(
-error.message
-)}
-
-</td>
-
-</tr>
-
-`;
-
-}
-
-}
-
-
-/* =====================================================
-CONFIRM
-===================================================== */
-
-async function confirmRegistration(
-id
-){
-
-const select =
-document.getElementById(
-`assignLobby-${id}`
-);
-
-
-if(!select){
-
-alert(
-"Lobby selector not found."
-);
-
-return;
-
-}
-
-
-const lobbyId =
-select.value;
-
-
-if(!lobbyId){
-
-alert(
-"Please select a lobby before accepting."
-);
-
-return;
-
-}
-
-
-try{
-
-const data =
-await api(
-`/api/registrations/${id}`,
-{
-method:"PATCH",
-
-body:
-JSON.stringify({
-
-status:"confirmed",
-
-lobbyId:
-Number(lobbyId)
-
-})
-
-}
-);
-
-
-alert(
-`Registration confirmed and assigned to "${data.lobby_name}".`
-);
-
-
-await loadRegistrations();
-await loadStats();
-await loadAdminLobbies();
-await loadScoreLobbyOptions();
-await loadPublicLobbies(
-"homeLobbies"
-);
-await loadPublicLobbies(
-"scrimList"
-);
-
-
-}catch(error){
-
-alert(
-"Could not accept registration: " +
-error.message
-);
-
-}
-
-}
-
-
-/* =====================================================
-REJECT
-===================================================== */
-
-async function rejectRegistration(
-id
-){
-
-const ok =
-confirm(
-"Reject this registration?"
-);
-
-
-if(!ok)return;
-
-
-try{
-
-await api(
-`/api/registrations/${id}`,
-{
-method:"PATCH",
-
-body:
-JSON.stringify({
-status:"rejected"
-})
-
-}
-);
-
-
-alert(
-"Registration rejected."
-);
-
-
-await loadRegistrations();
-await loadStats();
-
-
-}catch(error){
-
-alert(
-"Could not reject registration: " +
-error.message
-);
-
-}
-
-}
-
-
-/* =====================================================
-SCORE LOBBY OPTIONS
-===================================================== */
-
-async function loadScoreLobbyOptions(){
-
-const select =
-document.getElementById(
-"scoreLobby"
-);
-
-
-try{
-
-const lobbies =
-await api(
-"/api/lobbies"
-);
-
-
-select.innerHTML =
-`
-<option value="">
-Select lobby
-</option>
-` +
-lobbies
-.map(
-x=>`
-
-<option
-value="${escapeAttribute(x.name)}"
->
-
-${escapeHTML(
-x.name
-)}
-
-</option>
-
-`
-)
-.join("");
-
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-/* =====================================================
-MATCH SELECT
-===================================================== */
-
-function selectScoreMatch(
-match,
-button
-){
-
-currentScoreMatch =
-match;
-
-
-document
-.querySelectorAll(
-".match-tabs button"
-)
-.forEach(
-b =>
-b.classList.remove(
-"active"
-)
-);
-
-
-if(button)
-button.classList.add(
-"active"
-);
-
-
-renderScoreEntry();
-
-}
-
-
-/* =====================================================
-SCORE ENTRY
-===================================================== */
-
-async function renderScoreEntry(){
-
-const body =
-document.getElementById(
-"scoreEntryBody"
-);
-
-
-const lobby =
-document.getElementById(
-"scoreLobby"
-).value;
-
-
-if(!lobby){
-
-body.innerHTML =
-`
-<p class="muted">
-Select a lobby first.
-</p>
-`;
-
-return;
-
-}
-
-
-body.innerHTML =
-`
-<p class="muted">
-Loading 12 teams...
-</p>
-`;
-
-
-try{
-
-
-const teams =
-await api(
-`/api/leaderboard/teams?lobby=${encodeURIComponent(
-lobby
-)}`
-);
-
-
-if(teams.length !== 12){
-
-body.innerHTML =
-`
-
-<div class="message show error">
-
-This lobby currently has
-<strong>
-${teams.length}/12
-</strong>
-confirmed teams.
-
-<br><br>
-
-Exactly 12 confirmed teams are required
-before match results can be entered.
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-/* ---------------------------------------------
-   LOAD EXISTING MATCH
---------------------------------------------- */
-
-let existing = [];
-
-
-try{
-
-existing =
-await api(
-`/api/leaderboard/match?lobby=${encodeURIComponent(
-lobby
-)}&match=${currentScoreMatch}`
-);
-
-}catch(error){
-
-existing = [];
-
-}
-
-
-const map =
-new Map(
-existing.map(
-r =>
-[
-String(r.team)
-.trim()
-.toLowerCase(),
-r
-]
-)
-);
-
-
-/* ---------------------------------------------
-   CREATE SCORE TABLE
---------------------------------------------- */
-
-body.innerHTML =
-`
-
-<div class="info-box">
-
-<strong>Match ${currentScoreMatch}</strong>
-
-<br>
-
-Enter only the team's
-<strong>Position</strong>
-and
-<strong>Kills</strong>.
-
-<br>
-
-Position 1 automatically receives
-<strong>1 Booyah</strong>.
-
-</div>
-
-
-<div class="table-wrap">
-
-<table class="score-table">
-
-<thead>
-
-<tr>
-
-<th>Team</th>
-
-<th>Position</th>
-
-<th>Kills</th>
-
-</tr>
-
-</thead>
-
-
-<tbody>
-
-${teams
-.map(
-(t,i)=>{
-
-const key =
-String(
-t.team
-)
-.trim()
-.toLowerCase();
-
-
-const old =
-map.get(key);
-
-
-return `
-
-<tr>
-
-<td>
-<strong>
-${escapeHTML(
-t.team
-)}
-</strong>
-</td>
-
-
-<td>
-
-<input
-type="number"
-min="1"
-max="12"
-class="score-position"
-data-team="${escapeAttribute(
-t.team
-)}"
-value="${
-old
-?old.position
-:i+1
-}"
->
-
-</td>
-
-
-<td>
-
-<input
-type="number"
-min="0"
-step="1"
-class="score-kills"
-data-team="${escapeAttribute(
-t.team
-)}"
-value="${
-old
-?old.kills
-:0
-}"
->
 
-</td>
+  $('adminDash')
+    .classList
+    .remove('show');
 
+  $('adminbar')
+    .classList
+    .remove('show');
 
-</tr>
+  location.hash = '';
 
-`;
-
-}
-)
-.join("")}
-
-</tbody>
-
-</table>
-
-</div>
-
-
-<br>
-
-
-<button
-class="btn success"
-onclick="saveCurrentMatch()"
->
-
-Save Match ${currentScoreMatch}
-
-</button>
-
-`;
-
-}
-
-
-/* =====================================================
-SCORE LOBBY CHANGE
-===================================================== */
-
-document
-.getElementById(
-"scoreLobby"
-)
-.addEventListener(
-"change",
-renderScoreEntry
-);
-
-
-/* =====================================================
-SAVE CURRENT MATCH
-===================================================== */
-
-async function saveCurrentMatch(){
-
-const lobby =
-document.getElementById(
-"scoreLobby"
-).value;
-
-
-if(!lobby){
-
-alert(
-"Please select a lobby."
-);
-
-return;
-
-}
-
-
-const entries = [];
-
-
-document
-.querySelectorAll(
-".score-position"
-)
-.forEach(
-input=>{
-
-const team =
-input.dataset.team;
-
-
-const killInput =
-document.querySelector(
-`.score-kills[data-team="${CSS.escape(team)}"]`
-);
-
-
-entries.push({
-
-team:
-
-team,
-
-position:
-Number(
-input.value
-),
-
-kills:
-Number(
-killInput.value
-)
-
-});
-
-}
-);
-
-
-/* ---------------------------------------------
-   CLIENT SIDE VALIDATION
---------------------------------------------- */
-
-const positions =
-entries.map(
-x =>
-x.position
-);
-
-
-const uniquePositions =
-new Set(
-positions
-);
-
-
-if(
-uniquePositions.size !== 12
-){
-
-alert(
-"Every position from 1 to 12 must be used exactly once."
-);
-
-return;
-
-}
-
-
-if(
-positions.some(
-x =>
-!Number.isInteger(x) ||
-x < 1 ||
-x > 12
-)
-){
-
-alert(
-"Positions must be whole numbers from 1 to 12."
-);
-
-return;
-
-}
-
-
-if(
-entries.some(
-x =>
-!Number.isInteger(x.kills) ||
-x.kills < 0
-)
-){
-
-alert(
-"Kills must be whole numbers of 0 or more."
-);
-
-return;
-
-}
-
-
-try{
-
-const data =
-await api(
-"/api/leaderboard/match",
-{
-method:"POST",
-
-body:
-JSON.stringify({
-
-lobby,
-
-matchNo:
-currentScoreMatch,
-
-entries
-
-})
-
-}
-);
-
-
-alert(
-`Match ${currentScoreMatch} saved successfully.`
-);
-
-
-renderScoreEntry();
-
-
-/*
-If admin is also viewing the public
-leaderboard in another tab/device,
-that page will automatically refresh.
-*/
-
-
-}catch(error){
-
-alert(
-error.message
-);
-
-}
-
-}
-
-
-/* =====================================================
-PUBLIC LEADERBOARD OPTIONS
-===================================================== */
-
-async function loadLeaderboardLobbyOptions(){
-
-const select =
-document.getElementById(
-"publicLobbySelect"
-);
-
-
-try{
-
-const lobbies =
-await api(
-"/api/public/lobbies"
-);
-
-
-select.innerHTML =
-`
-<option value="">
-Select a scrim
-</option>
-` +
-lobbies
-.map(
-x=>`
-
-<option
-value="${escapeAttribute(
-x.name
-)}"
->
-
-${escapeHTML(
-x.name
-)}
-
-</option>
-
-`
-)
-.join("");
-
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-/* =====================================================
-PUBLIC LEADERBOARD
-===================================================== */
-
-async function loadPublicLeaderboard(
-silent=false
-){
-
-const lobby =
-document.getElementById(
-"publicLobbySelect"
-).value;
-
-
-const target =
-document.getElementById(
-"publicLeaderboard"
-);
-
-
-if(!lobby){
-
-if(!silent){
-
-target.innerHTML =
-`
-
-<div class="message show error">
-Please select a scrim.
-</div>
-
-`;
-
-}
-
-return;
-
-}
-
-
-try{
-
-const data =
-await api(
-`/api/public-leaderboard?lobby=${encodeURIComponent(
-lobby
-)}`
-);
-
-
-const rows =
-Array.isArray(data.rows)
-? data.rows
-: [];
-
-
-renderOverallLeaderboard(
-target,
-rows,
-data.lobby
-);
-
-
-document.getElementById(
-"liveUpdateText"
-).textContent =
-"Automatically updating every 5 seconds.";
-
-
-}catch(error){
-
-if(!silent){
-
-target.innerHTML =
-`
-
-<div class="message show error">
-
-${escapeHTML(
-error.message
-)}
-
-</div>
-
-`;
-
-}
-
-}
-
-}
-
-
-/* =====================================================
-RENDER OVERALL LEADERBOARD
-===================================================== */
-
-function renderOverallLeaderboard(
-target,
-rows,
-lobby
-){
-
-if(!rows.length){
-
-target.innerHTML =
-`
-
-<div class="card">
-
-<div class="leaderboard-header">
-
-<h3>
-${escapeHTML(
-lobby?.name ||
-"Leaderboard"
-)}
-</h3>
-
-<span class="live-text">
-<span class="live-dot"></span>
-LIVE
-</span>
-
-</div>
-
-<br>
-
-<p class="muted">
-No match results have been entered yet.
-</p>
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-target.innerHTML =
-`
-
-<div class="card">
-
-
-<div class="leaderboard-header">
-
-<h3>
-${escapeHTML(
-lobby?.name ||
-"Overall Leaderboard"
-)}
-</h3>
-
-<span class="live-text">
-<span class="live-dot"></span>
-LIVE
-</span>
-
-</div>
-
-
-<br>
-
-
-<div class="table-wrap">
-
-<table
-class="public-leaderboard-table"
->
-
-<thead>
-
-<tr>
-
-<th>
-Rank
-</th>
-
-<th>
-Team
-</th>
-
-<th>
-Booyahs
-</th>
-
-<th>
-Kill Points
-</th>
-
-<th>
-Placement Points
-</th>
-
-<th>
-Total Points
-</th>
-
-</tr>
-
-</thead>
-
-
-<tbody>
-
-${rows
-.map(
-r=>`
-
-<tr>
-
-<td class="public-rank">
-#${escapeHTML(
-r.position
-)}
-</td>
-
-
-<td>
-<strong>
-${escapeHTML(
-r.team
-)}
-</strong>
-</td>
-
-
-<td>
-${escapeHTML(
-r.booyahs
-)}
-</td>
-
-
-<td>
-${escapeHTML(
-r.killPoints
-)}
-</td>
-
-
-<td>
-${escapeHTML(
-r.placementPoints
-)}
-</td>
-
-
-<td class="total-points">
-${escapeHTML(
-r.totalPoints
-)}
-</td>
-
-</tr>
-
-`
-)
-.join("")}
-
-</tbody>
-
-</table>
-
-</div>
-
-
-</div>
-
-`;
-
-}
-
-
-/* =====================================================
-LIVE AUTO REFRESH
-===================================================== */
-
-function startLeaderboardAutoRefresh(){
-
-stopLeaderboardAutoRefresh();
-
-
-leaderboardRefreshTimer =
-setInterval(
-async()=>{
-
-const page =
-document.getElementById(
-"leaderboard"
-);
-
-
-if(
-page &&
-page.classList.contains(
-"active"
-)
-){
-
-const lobby =
-document.getElementById(
-"publicLobbySelect"
-).value;
-
-
-if(lobby){
-
-await loadPublicLeaderboard(
-true
-);
-
-}
-
-}
-
-},
-5000
-);
-
-}
-
-
-function stopLeaderboardAutoRefresh(){
-
-if(
-leaderboardRefreshTimer
-){
-
-clearInterval(
-leaderboardRefreshTimer
-);
-
-leaderboardRefreshTimer =
-null;
-
 }
 
-}
-
-
-/* =====================================================
-SECURITY
-===================================================== */
-
-function escapeHTML(v){
-
-return String(
-v ?? ""
-)
-
-.replaceAll(
-"&",
-"&amp;"
-)
-
-.replaceAll(
-"<",
-"&lt;"
-)
-
-.replaceAll(
-">",
-"&gt;"
-)
 
-.replaceAll(
-'"',
-"&quot;"
-)
+function closeModal(){
 
-.replaceAll(
-"'",
-"&#039;"
-);
+  $('modal')
+    .classList
+    .remove('show');
 
 }
 
 
-function escapeAttribute(v){
+renderTimes();
 
-return escapeHTML(v);
-
-}
-
-
-/* =====================================================
-INITIAL LOAD
-===================================================== */
-
-document.addEventListener(
-"DOMContentLoaded",
-async()=>{
-
-await loadPublicLobbies(
-"homeLobbies"
-);
-
-await loadRegistrationCategories();
-
-}
-);
+loadPublic();
 
 </script>
 
