@@ -6,79 +6,499 @@
   <title>ScrimForge</title>
 
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,Helvetica,sans-serif;background:#0b0f19;color:#fff;min-height:100vh}
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    .container{width:min(1200px,94%);margin:auto}
-    header{background:#111827;border-bottom:1px solid #263044;position:sticky;top:0;z-index:100}
-    .nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .logo{font-size:25px;font-weight:800;color:#7c3aed}
-    .logo span{color:#fff}
-    nav{display:flex;gap:8px;flex-wrap:wrap}
-    nav button{border:0;background:transparent;color:#cbd5e1;padding:10px 13px;border-radius:8px}
-    nav button:hover{background:#1e293b;color:#fff}
-    main{padding:35px 0 60px}
-    .page{display:none}
-    .page.active{display:block}
-    .hero{text-align:center;padding:50px 15px}
-    .hero h1{font-size:clamp(36px,7vw,70px);margin-bottom:15px}
-    .hero h1 span{color:#8b5cf6}
-    .hero p{color:#94a3b8;max-width:650px;margin:auto;line-height:1.7}
-    .hero-buttons{margin-top:28px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-    .btn{border:0;border-radius:9px;padding:12px 18px;font-weight:700;background:#7c3aed;color:#fff}
-    .btn:hover{background:#6d28d9}
-    .btn.secondary{background:#1e293b}
-    .btn.success{background:#059669}
-    .btn.danger{background:#dc2626}
-    .btn.small{padding:8px 12px;font-size:13px}
-    .section-title{margin-bottom:20px;font-size:28px}
-    .muted{color:#94a3b8}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-    .card{background:#111827;border:1px solid #263044;border-radius:14px;padding:20px;margin-bottom:18px}
-    .card h3{margin-bottom:12px}
-    .card p{color:#cbd5e1;margin:7px 0}
-    .lobby-card{position:relative}
-    .badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#334155;margin-bottom:10px}
-    .badge.open{background:#064e3b;color:#6ee7b7}
-    .badge.closed{background:#450a0a;color:#fca5a5}
-    .form-group{margin-bottom:15px}
-    label{display:block;margin-bottom:7px;color:#cbd5e1;font-size:14px}
-    input,select{width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
-    input:focus,select:focus{border-color:#8b5cf6}
-    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
-    .full{grid-column:1/-1}
-    .message{padding:12px;border-radius:8px;margin:12px 0;display:none}
-    .message.show{display:block}
-    .message.success{background:#064e3b;color:#a7f3d0}
-    .message.error{background:#450a0a;color:#fecaca}
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px}
-    .stat{background:#111827;border:1px solid #263044;padding:22px;border-radius:13px}
-    .stat-number{font-size:32px;font-weight:800;margin-top:5px;color:#a78bfa}
-    .table-wrap{overflow-x:auto}
-    table{width:100%;border-collapse:collapse;min-width:750px}
-    th,td{padding:12px;border-bottom:1px solid #263044;text-align:left}
-    th{background:#172033;color:#c4b5fd}
-    td{color:#dbeafe}
-    .rank{font-weight:800;font-size:18px}
-    .admin-box{max-width:600px;margin:30px auto}
-    .hidden{display:none!important}
-    .top-actions{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:20px}
-    .match-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-    .match-tabs button{border:1px solid #334155;background:#111827;color:#fff;padding:9px 13px;border-radius:7px}
-    .match-tabs button.active{background:#7c3aed;border-color:#7c3aed}
-    .score-table input{width:90px;padding:8px}
-    footer{border-top:1px solid #263044;padding:25px;text-align:center;color:#64748b}
-    .danger-outline{border:1px solid #dc2626!important;background:transparent!important;color:#fca5a5!important}
-    .danger-outline:hover{background:#450a0a!important;color:#fff!important}
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0
+    }
+
+    body{
+      font-family:Arial,Helvetica,sans-serif;
+      background:#0b0f19;
+      color:#fff;
+      min-height:100vh
+    }
+
+    button,input,select{
+      font:inherit
+    }
+
+    button{
+      cursor:pointer
+    }
+
+    .container{
+      width:min(1200px,94%);
+      margin:auto
+    }
+
+    header{
+      background:#111827;
+      border-bottom:1px solid #263044;
+      position:sticky;
+      top:0;
+      z-index:100
+    }
+
+    .nav{
+      min-height:70px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px
+    }
+
+    .logo{
+      font-size:25px;
+      font-weight:800;
+      color:#7c3aed
+    }
+
+    .logo span{
+      color:#fff
+    }
+
+    nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap
+    }
+
+    nav button{
+      border:0;
+      background:transparent;
+      color:#cbd5e1;
+      padding:10px 13px;
+      border-radius:8px
+    }
+
+    nav button:hover{
+      background:#1e293b;
+      color:#fff
+    }
+
+    main{
+      padding:35px 0 60px
+    }
+
+    .page{
+      display:none
+    }
+
+    .page.active{
+      display:block
+    }
+
+    .hero{
+      text-align:center;
+      padding:50px 15px
+    }
+
+    .hero h1{
+      font-size:clamp(36px,7vw,70px);
+      margin-bottom:15px
+    }
+
+    .hero h1 span{
+      color:#8b5cf6
+    }
+
+    .hero p{
+      color:#94a3b8;
+      max-width:650px;
+      margin:auto;
+      line-height:1.7
+    }
+
+    .hero-buttons{
+      margin-top:28px;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap
+    }
+
+    .btn{
+      border:0;
+      border-radius:9px;
+      padding:12px 18px;
+      font-weight:700;
+      background:#7c3aed;
+      color:#fff
+    }
+
+    .btn:hover{
+      background:#6d28d9
+    }
+
+    .btn.secondary{
+      background:#1e293b
+    }
+
+    .btn.success{
+      background:#059669
+    }
+
+    .btn.danger{
+      background:#dc2626
+    }
+
+    .btn.small{
+      padding:8px 12px;
+      font-size:13px
+    }
+
+    .section-title{
+      margin-bottom:20px;
+      font-size:28px
+    }
+
+    .muted{
+      color:#94a3b8
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:18px
+    }
+
+    .card{
+      background:#111827;
+      border:1px solid #263044;
+      border-radius:14px;
+      padding:20px;
+      margin-bottom:18px
+    }
+
+    .card h3{
+      margin-bottom:12px
+    }
+
+    .card p{
+      color:#cbd5e1;
+      margin:7px 0
+    }
+
+    .lobby-card{
+      position:relative
+    }
+
+    .badge{
+      display:inline-block;
+      padding:5px 9px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      background:#334155;
+      margin-bottom:10px
+    }
+
+    .badge.open{
+      background:#064e3b;
+      color:#6ee7b7
+    }
+
+    .badge.closed{
+      background:#450a0a;
+      color:#fca5a5
+    }
+
+    .form-group{
+      margin-bottom:15px
+    }
+
+    label{
+      display:block;
+      margin-bottom:7px;
+      color:#cbd5e1;
+      font-size:14px
+    }
+
+    input,select{
+      width:100%;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid #334155;
+      background:#0f172a;
+      color:#fff;
+      outline:none
+    }
+
+    input:focus,select:focus{
+      border-color:#8b5cf6
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:15px
+    }
+
+    .full{
+      grid-column:1/-1
+    }
+
+    .message{
+      padding:12px;
+      border-radius:8px;
+      margin:12px 0;
+      display:none
+    }
+
+    .message.show{
+      display:block
+    }
+
+    .message.success{
+      background:#064e3b;
+      color:#a7f3d0
+    }
+
+    .message.error{
+      background:#450a0a;
+      color:#fecaca
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:15px;
+      margin-bottom:25px
+    }
+
+    .stat{
+      background:#111827;
+      border:1px solid #263044;
+      padding:22px;
+      border-radius:13px
+    }
+
+    .stat-number{
+      font-size:32px;
+      font-weight:800;
+      margin-top:5px;
+      color:#a78bfa
+    }
+
+    .table-wrap{
+      overflow-x:auto
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:750px
+    }
+
+    th,td{
+      padding:12px;
+      border-bottom:1px solid #263044;
+      text-align:left
+    }
+
+    th{
+      background:#172033;
+      color:#c4b5fd
+    }
+
+    td{
+      color:#dbeafe
+    }
+
+    .rank{
+      font-weight:800;
+      font-size:18px
+    }
+
+    .admin-box{
+      max-width:600px;
+      margin:30px auto
+    }
+
+    .hidden{
+      display:none!important
+    }
+
+    .top-actions{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      flex-wrap:wrap;
+      margin-bottom:20px
+    }
+
+    .match-tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:20px
+    }
+
+    .match-tabs button{
+      border:1px solid #334155;
+      background:#111827;
+      color:#fff;
+      padding:9px 13px;
+      border-radius:7px
+    }
+
+    .match-tabs button.active{
+      background:#7c3aed;
+      border-color:#7c3aed
+    }
+
+    .score-table input{
+      width:90px;
+      padding:8px
+    }
+
+    footer{
+      border-top:1px solid #263044;
+      padding:25px;
+      text-align:center;
+      color:#64748b
+    }
+
+    .danger-outline{
+      border:1px solid #dc2626!important;
+      background:transparent!important;
+      color:#fca5a5!important
+    }
+
+    .danger-outline:hover{
+      background:#450a0a!important;
+      color:#fff!important
+    }
+
+    /* STATUS VIEW */
+
+    .status-card{
+      max-width:750px;
+      margin:0 auto 20px
+    }
+
+    .status-result-card{
+      max-width:750px;
+      margin:20px auto
+    }
+
+    .status-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      flex-wrap:wrap;
+      margin-bottom:20px
+    }
+
+    .status-badge{
+      display:inline-block;
+      padding:7px 13px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800
+    }
+
+    .status-pending{
+      background:#78350f;
+      color:#fde68a
+    }
+
+    .status-confirmed{
+      background:#064e3b;
+      color:#6ee7b7
+    }
+
+    .status-rejected{
+      background:#450a0a;
+      color:#fca5a5
+    }
+
+    .status-info{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:20px
+    }
+
+    .status-info-item{
+      background:#0f172a;
+      border:1px solid #263044;
+      border-radius:10px;
+      padding:14px
+    }
+
+    .status-info-item .label{
+      color:#64748b;
+      font-size:12px;
+      margin-bottom:5px
+    }
+
+    .status-info-item .value{
+      color:#fff;
+      font-weight:700;
+      word-break:break-word
+    }
+
+    .reference-box{
+      background:#0f172a;
+      border:1px dashed #7c3aed;
+      border-radius:10px;
+      padding:14px;
+      margin-top:15px
+    }
+
+    .reference-box strong{
+      color:#c4b5fd
+    }
+
+    .status-help{
+      background:#0f172a;
+      border:1px solid #263044;
+      border-radius:10px;
+      padding:14px;
+      margin-top:15px;
+      color:#94a3b8;
+      line-height:1.6
+    }
 
     @media(max-width:700px){
-      .nav{padding:12px 0;flex-direction:column}
-      nav{justify-content:center}
-      .form-grid{grid-template-columns:1fr}
-      .full{grid-column:auto}
-      .stats{grid-template-columns:1fr}
-      .hero{padding:30px 10px}
+
+      .nav{
+        padding:12px 0;
+        flex-direction:column
+      }
+
+      nav{
+        justify-content:center
+      }
+
+      .form-grid{
+        grid-template-columns:1fr
+      }
+
+      .full{
+        grid-column:auto
+      }
+
+      .stats{
+        grid-template-columns:1fr
+      }
+
+      .hero{
+        padding:30px 10px
+      }
+
+      .status-info{
+        grid-template-columns:1fr
+      }
+
+      .status-header{
+        align-items:flex-start
+      }
+
     }
   </style>
 </head>
@@ -87,7 +507,10 @@
 
 <header>
   <div class="container nav">
-    <div class="logo">Scrim<span>Forge</span></div>
+
+    <div class="logo">
+      Scrim<span>Forge</span>
+    </div>
 
     <nav>
       <button onclick="showPage('home')">Home</button>
@@ -97,14 +520,21 @@
       <button onclick="showPage('leaderboard')">Leaderboard</button>
       <button onclick="showPage('admin')">Admin</button>
     </nav>
+
   </div>
 </header>
 
 <main>
 
+<!-- HOME -->
+
 <section id="home" class="page active">
+
   <div class="hero">
-    <h1>Welcome to <span>ScrimForge</span></h1>
+
+    <h1>
+      Welcome to <span>ScrimForge</span>
+    </h1>
 
     <p>
       Free Fire scrims, competitive lobbies,
@@ -112,45 +542,81 @@
     </p>
 
     <div class="hero-buttons">
-      <button class="btn" onclick="showPage('scrims')">
+
+      <button
+        class="btn"
+        onclick="showPage('scrims')"
+      >
         View Scrims
       </button>
 
-      <button class="btn secondary" onclick="showPage('leaderboard')">
+      <button
+        class="btn secondary"
+        onclick="showPage('leaderboard')"
+      >
         Leaderboard
       </button>
+
     </div>
+
   </div>
 
   <div class="container">
-    <h2 class="section-title">Available Lobbies</h2>
-    <div id="homeLobbies" class="grid"></div>
+
+    <h2 class="section-title">
+      Available Lobbies
+    </h2>
+
+    <div
+      id="homeLobbies"
+      class="grid"
+    ></div>
+
   </div>
+
 </section>
 
 
+<!-- SCRIMS -->
+
 <section id="scrims" class="page">
+
   <div class="container">
 
     <div class="top-actions">
+
       <div>
-        <h2 class="section-title">Available Scrims</h2>
+
+        <h2 class="section-title">
+          Available Scrims
+        </h2>
 
         <p class="muted">
           Choose a lobby and register your team.
         </p>
+
       </div>
 
-      <button class="btn" onclick="loadPublicLobbies('scrimList')">
+      <button
+        class="btn"
+        onclick="loadPublicLobbies('scrimList')"
+      >
         Refresh
       </button>
+
     </div>
 
-    <div id="scrimList" class="grid"></div>
+    <div
+      id="scrimList"
+      class="grid"
+    ></div>
 
   </div>
+
 </section>
 
+
+<!-- REGISTER -->
 
 <section id="register" class="page">
 
@@ -167,75 +633,111 @@
         pending until it is confirmed by the admin.
       </p>
 
-      <div id="registerMessage" class="message"></div>
+      <div
+        id="registerMessage"
+        class="message"
+      ></div>
 
       <form id="registrationForm">
 
         <div class="form-grid">
 
           <div class="form-group">
-            <label>Scrim Time</label>
+
+            <label>
+              Scrim Time
+            </label>
+
             <input
               type="text"
               id="regTime"
               placeholder="Example: 12 PM"
               required
             />
+
           </div>
 
           <div class="form-group">
-            <label>Entry Fee</label>
+
+            <label>
+              Entry Fee
+            </label>
+
             <input
               type="text"
               id="regFee"
               placeholder="Example: ₹50"
               required
             />
+
           </div>
 
           <div class="form-group">
-            <label>Team Name</label>
+
+            <label>
+              Team Name
+            </label>
+
             <input
               type="text"
               id="regTeam"
               placeholder="Your team name"
               required
             />
+
           </div>
 
           <div class="form-group">
-            <label>Captain Name</label>
+
+            <label>
+              Captain Name
+            </label>
+
             <input
               type="text"
               id="regCaptain"
               placeholder="Captain name"
               required
             />
+
           </div>
 
           <div class="form-group">
-            <label>WhatsApp / Phone</label>
+
+            <label>
+              WhatsApp / Phone
+            </label>
+
             <input
               type="text"
               id="regPhone"
               placeholder="Phone number"
               required
             />
+
           </div>
 
           <div class="form-group">
-            <label>Free Fire UID</label>
+
+            <label>
+              Free Fire UID
+            </label>
+
             <input
               type="text"
               id="regUid"
               placeholder="Captain UID"
               required
             />
+
           </div>
 
         </div>
 
-        <button class="btn" type="submit">
+        <button
+          class="btn"
+          type="submit"
+        >
           Submit Registration
         </button>
 
@@ -248,15 +750,27 @@
 </section>
 
 
+<!-- STATUS -->
+
 <section id="status" class="page">
 
   <div class="container">
 
-    <div class="card">
+    <div class="card status-card">
 
       <h2 class="section-title">
-        Check Registration
+        Check Registration Status
       </h2>
+
+      <p class="muted">
+        Enter your registration reference to check
+        your registration and lobby details.
+      </p>
+
+      <div
+        id="statusMessage"
+        class="message"
+      ></div>
 
       <div class="form-group">
 
@@ -267,27 +781,88 @@
         <input
           id="statusRef"
           placeholder="Example: SF-1234567890-1234"
+          autocomplete="off"
         />
 
       </div>
 
-      <button
-        class="btn"
-        onclick="checkStatus()"
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+        "
       >
-        Check Status
-      </button>
 
-      <div id="statusMessage" class="message"></div>
+        <button
+          class="btn"
+          onclick="checkStatus()"
+        >
+          Check Status
+        </button>
 
-      <div id="statusResult"></div>
+        <button
+          id="copyRefBtn"
+          class="btn secondary hidden"
+          onclick="copyReference()"
+        >
+          Copy Reference
+        </button>
+
+      </div>
+
+      <div class="status-help">
+
+        <strong>Tip:</strong>
+        After registration, your reference is automatically
+        saved on this device. You can use
+        <strong>View My Status</strong> without typing it again.
+
+      </div>
 
     </div>
+
+
+    <div
+      id="latestStatusCard"
+      class="card hidden"
+      style="max-width:750px;margin:0 auto 20px"
+    >
+
+      <div class="top-actions">
+
+        <div>
+
+          <h3>
+            Your Latest Registration
+          </h3>
+
+          <p class="muted">
+            Your most recently submitted registration.
+          </p>
+
+        </div>
+
+        <button
+          class="btn small"
+          onclick="loadSavedStatus()"
+        >
+          View Status
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div id="statusResult"></div>
 
   </div>
 
 </section>
 
+
+<!-- LEADERBOARD -->
 
 <section id="leaderboard" class="page">
 
@@ -372,17 +947,25 @@
 </section>
 
 
+<!-- ADMIN -->
+
 <section id="admin" class="page">
 
   <div class="container">
 
-    <div id="adminLoginBox" class="card admin-box">
+    <div
+      id="adminLoginBox"
+      class="card admin-box"
+    >
 
       <h2 class="section-title">
         Admin Login
       </h2>
 
-      <div id="loginMessage" class="message"></div>
+      <div
+        id="loginMessage"
+        class="message"
+      ></div>
 
       <form id="loginForm">
 
@@ -400,7 +983,6 @@
 
         </div>
 
-
         <div class="form-group">
 
           <label>
@@ -415,7 +997,10 @@
 
         </div>
 
-        <button class="btn" type="submit">
+        <button
+          class="btn"
+          type="submit"
+        >
           Login
         </button>
 
@@ -424,7 +1009,10 @@
     </div>
 
 
-    <div id="adminSetupBox" class="card admin-box hidden">
+    <div
+      id="adminSetupBox"
+      class="card admin-box hidden"
+    >
 
       <h2 class="section-title">
         Create Admin
@@ -436,7 +1024,10 @@
 
       <br />
 
-      <div id="setupMessage" class="message"></div>
+      <div
+        id="setupMessage"
+        class="message"
+      ></div>
 
       <form id="setupForm">
 
@@ -453,7 +1044,6 @@
 
         </div>
 
-
         <div class="form-group">
 
           <label>
@@ -467,7 +1057,6 @@
           />
 
         </div>
-
 
         <div class="form-group">
 
@@ -484,7 +1073,10 @@
 
         </div>
 
-        <button class="btn" type="submit">
+        <button
+          class="btn"
+          type="submit"
+        >
           Create Admin
         </button>
 
@@ -493,7 +1085,10 @@
     </div>
 
 
-    <div id="adminDashboard" class="hidden">
+    <div
+      id="adminDashboard"
+      class="hidden"
+    >
 
       <div class="top-actions">
 
@@ -571,6 +1166,8 @@
 
       </div>
 
+
+      <!-- CREATE LOBBY -->
 
       <div class="card">
 
@@ -652,7 +1249,10 @@
 
           </div>
 
-          <button class="btn" type="submit">
+          <button
+            class="btn"
+            type="submit"
+          >
             Create Lobby
           </button>
 
@@ -660,6 +1260,8 @@
 
       </div>
 
+
+      <!-- MANAGE LOBBIES -->
 
       <div class="card">
 
@@ -693,6 +1295,8 @@
 
       </div>
 
+
+      <!-- REGISTRATIONS -->
 
       <div class="card">
 
@@ -743,6 +1347,8 @@
 
       </div>
 
+
+      <!-- SCORE ENTRY -->
 
       <div class="card">
 
@@ -849,7 +1455,9 @@ function showPage(pageId){
 
   document
     .querySelectorAll(".page")
-    .forEach(p => p.classList.remove("active"));
+    .forEach(p =>
+      p.classList.remove("active")
+    );
 
   const page =
     document.getElementById(pageId);
@@ -866,6 +1474,10 @@ function showPage(pageId){
     loadPublicLobbies("scrimList");
   }
 
+  if(pageId === "status"){
+    prepareStatusPage();
+  }
+
   if(pageId === "leaderboard"){
     loadLeaderboardLobbyOptions();
   }
@@ -878,6 +1490,7 @@ function showPage(pageId){
     top:0,
     behavior:"smooth"
   });
+
 }
 
 
@@ -898,6 +1511,7 @@ function showMessage(
 
   e.className =
     "message show " + type;
+
 }
 
 
@@ -937,6 +1551,7 @@ async function api(
   }
 
   return data;
+
 }
 
 
@@ -971,6 +1586,7 @@ async function loadPublicLobbies(
         </div>`;
 
       return;
+
     }
 
     target.innerHTML =
@@ -1069,13 +1685,16 @@ function useLobby(
   fee
 ){
 
-  document.getElementById("regTime").value =
-    time;
+  document
+    .getElementById("regTime")
+    .value = time;
 
-  document.getElementById("regFee").value =
-    fee;
+  document
+    .getElementById("regFee")
+    .value = fee;
 
   showPage("register");
+
 }
 
 
@@ -1134,15 +1753,62 @@ document
             }
           );
 
+
+        /* Save latest registration reference */
+
+        localStorage.setItem(
+          "scrimforge_latest_ref",
+          data.ref
+        );
+
+
         showMessage(
           "registerMessage",
-          `Registration submitted successfully. Your reference is ${data.ref}`,
+          "Registration submitted successfully.",
           "success"
         );
+
+
+        const message =
+          document.getElementById(
+            "registerMessage"
+          );
+
+
+        message.innerHTML = `
+
+          <div>
+            Registration submitted successfully.
+          </div>
+
+          <div class="reference-box">
+
+            <strong>
+              Your Registration Reference:
+            </strong>
+
+            <br>
+
+            ${escapeHTML(data.ref)}
+
+          </div>
+
+          <br>
+
+          <button
+            class="btn small"
+            onclick="openLatestStatus()"
+          >
+            View My Status
+          </button>
+
+        `;
+
 
         document
           .getElementById("registrationForm")
           .reset();
+
 
       }catch(error){
 
@@ -1158,7 +1824,94 @@ document
   );
 
 
-/* STATUS */
+/* STATUS PAGE */
+
+function prepareStatusPage(){
+
+  const ref =
+    localStorage.getItem(
+      "scrimforge_latest_ref"
+    );
+
+  const latestCard =
+    document.getElementById(
+      "latestStatusCard"
+    );
+
+  if(ref){
+
+    latestCard.classList.remove(
+      "hidden"
+    );
+
+  }else{
+
+    latestCard.classList.add(
+      "hidden"
+    );
+
+  }
+
+}
+
+
+/* OPEN LATEST STATUS */
+
+function openLatestStatus(){
+
+  showPage("status");
+
+  const ref =
+    localStorage.getItem(
+      "scrimforge_latest_ref"
+    );
+
+  if(!ref){
+
+    return;
+
+  }
+
+  document
+    .getElementById("statusRef")
+    .value = ref;
+
+  fetchRegistrationStatus(ref);
+
+}
+
+
+/* LOAD SAVED STATUS */
+
+function loadSavedStatus(){
+
+  const ref =
+    localStorage.getItem(
+      "scrimforge_latest_ref"
+    );
+
+  if(!ref){
+
+    showMessage(
+      "statusMessage",
+      "No saved registration was found on this device.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  document
+    .getElementById("statusRef")
+    .value = ref;
+
+  fetchRegistrationStatus(ref);
+
+}
+
+
+/* CHECK STATUS */
 
 async function checkStatus(){
 
@@ -1177,14 +1930,40 @@ async function checkStatus(){
     );
 
     return;
+
   }
 
+  await fetchRegistrationStatus(ref);
+
+}
+
+
+/* FETCH REGISTRATION STATUS */
+
+async function fetchRegistrationStatus(ref){
+
   try{
+
+    showMessage(
+      "statusMessage",
+      "Checking registration...",
+      "success"
+    );
+
 
     const data =
       await api(
         `/api/registration-status/${encodeURIComponent(ref)}`
       );
+
+
+    /* Save this reference */
+
+    localStorage.setItem(
+      "scrimforge_latest_ref",
+      data.ref
+    );
+
 
     showMessage(
       "statusMessage",
@@ -1192,48 +1971,246 @@ async function checkStatus(){
       "success"
     );
 
+
+    const status =
+      String(data.status || "")
+        .toLowerCase();
+
+
+    let statusClass =
+      "status-pending";
+
+    let statusText =
+      "PENDING";
+
+
+    if(status === "confirmed"){
+
+      statusClass =
+        "status-confirmed";
+
+      statusText =
+        "CONFIRMED";
+
+    }
+
+
+    if(status === "rejected"){
+
+      statusClass =
+        "status-rejected";
+
+      statusText =
+        "REJECTED";
+
+    }
+
+
     document
       .getElementById("statusResult")
       .innerHTML = `
 
-        <div class="card">
+        <div class="card status-result-card">
 
-          <h3>
-            ${escapeHTML(data.team)}
-          </h3>
+          <div class="status-header">
 
-          <p>
-            <strong>Reference:</strong>
+            <div>
+
+              <h3>
+                ${escapeHTML(data.team)}
+              </h3>
+
+              <p class="muted">
+                Registration Details
+              </p>
+
+            </div>
+
+            <span class="
+              status-badge
+              ${statusClass}
+            ">
+              ${statusText}
+            </span>
+
+          </div>
+
+
+          <div class="status-info">
+
+
+            <div class="status-info-item">
+
+              <div class="label">
+                Registration Reference
+              </div>
+
+              <div class="value">
+                ${escapeHTML(data.ref)}
+              </div>
+
+            </div>
+
+
+            <div class="status-info-item">
+
+              <div class="label">
+                Team
+              </div>
+
+              <div class="value">
+                ${escapeHTML(data.team)}
+              </div>
+
+            </div>
+
+
+            <div class="status-info-item">
+
+              <div class="label">
+                Scrim Time
+              </div>
+
+              <div class="value">
+                ${escapeHTML(data.time)}
+              </div>
+
+            </div>
+
+
+            <div class="status-info-item">
+
+              <div class="label">
+                Entry Fee
+              </div>
+
+              <div class="value">
+                ${escapeHTML(data.fee)}
+              </div>
+
+            </div>
+
+
+            <div class="status-info-item">
+
+              <div class="label">
+                Registration Status
+              </div>
+
+              <div class="value">
+                ${escapeHTML(data.status)}
+              </div>
+
+            </div>
+
+
+            <div class="status-info-item">
+
+              <div class="label">
+                Assigned Lobby
+              </div>
+
+              <div class="value">
+
+                ${
+                  data.lobby_name
+                    ? escapeHTML(data.lobby_name)
+                    : "Not assigned yet"
+                }
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="reference-box">
+
+            <strong>
+              Registration Reference
+            </strong>
+
+            <br>
+
             ${escapeHTML(data.ref)}
-          </p>
 
-          <p>
-            <strong>Time:</strong>
-            ${escapeHTML(data.time)}
-          </p>
+            <br><br>
 
-          <p>
-            <strong>Fee:</strong>
-            ${escapeHTML(data.fee)}
-          </p>
+            <button
+              class="btn small secondary"
+              onclick="copyReference()"
+            >
+              Copy Reference
+            </button>
 
-          <p>
-            <strong>Status:</strong>
-            ${escapeHTML(data.status)}
-          </p>
+          </div>
 
-          <p>
-            <strong>Lobby:</strong>
-            ${
-              data.lobby_name
-                ? escapeHTML(data.lobby_name)
-                : "Not assigned yet"
-            }
-          </p>
+
+          ${
+            status === "pending"
+
+            ? `
+              <div
+                class="message show"
+                style="margin-top:18px"
+              >
+                Your registration is pending admin
+                confirmation. Check again later for
+                the latest status.
+              </div>
+            `
+
+            : ""
+          }
+
+
+          ${
+            status === "confirmed"
+
+            ? `
+              <div
+                class="message show success"
+                style="margin-top:18px"
+              >
+                Your registration has been confirmed.
+                Check your assigned lobby details above.
+              </div>
+            `
+
+            : ""
+          }
+
+
+          ${
+            status === "rejected"
+
+            ? `
+              <div
+                class="message show error"
+                style="margin-top:18px"
+              >
+                This registration has been rejected.
+                Please contact the ScrimForge admin if
+                you need clarification.
+              </div>
+            `
+
+            : ""
+          }
+
 
         </div>
 
       `;
+
+
+    document
+      .getElementById("copyRefBtn")
+      .classList
+      .remove("hidden");
+
 
   }catch(error){
 
@@ -1243,9 +2220,66 @@ async function checkStatus(){
       "error"
     );
 
+
     document
       .getElementById("statusResult")
       .innerHTML = "";
+
+  }
+
+}
+
+
+/* COPY REFERENCE */
+
+async function copyReference(){
+
+  const ref =
+    document
+      .getElementById("statusRef")
+      .value
+      .trim();
+
+
+  if(!ref){
+
+    showMessage(
+      "statusMessage",
+      "No registration reference available to copy.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await navigator.clipboard.writeText(ref);
+
+    showMessage(
+      "statusMessage",
+      "Registration reference copied.",
+      "success"
+    );
+
+  }catch(error){
+
+    const input =
+      document.getElementById(
+        "statusRef"
+      );
+
+    input.select();
+
+    document.execCommand("copy");
+
+    showMessage(
+      "statusMessage",
+      "Registration reference copied.",
+      "success"
+    );
 
   }
 
@@ -1259,10 +2293,15 @@ async function checkAdmin(){
   try{
 
     const exists =
-      await api("/api/admin-exists");
+      await api(
+        "/api/admin-exists"
+      );
 
     const me =
-      await api("/api/me");
+      await api(
+        "/api/me"
+      );
+
 
     document
       .getElementById("adminLoginBox")
@@ -1272,6 +2311,7 @@ async function checkAdmin(){
         !exists.exists || me.loggedIn
       );
 
+
     document
       .getElementById("adminSetupBox")
       .classList
@@ -1279,6 +2319,7 @@ async function checkAdmin(){
         "hidden",
         exists.exists
       );
+
 
     document
       .getElementById("adminDashboard")
@@ -1288,7 +2329,9 @@ async function checkAdmin(){
         !me.loggedIn
       );
 
+
     if(!exists.exists) return;
+
 
     if(me.loggedIn){
 
@@ -1311,15 +2354,18 @@ function showAdminDashboard(name){
 
   document
     .getElementById("adminLoginBox")
-    .classList.add("hidden");
+    .classList
+    .add("hidden");
 
   document
     .getElementById("adminSetupBox")
-    .classList.add("hidden");
+    .classList
+    .add("hidden");
 
   document
     .getElementById("adminDashboard")
-    .classList.remove("hidden");
+    .classList
+    .remove("hidden");
 
   document
     .getElementById("adminName")
@@ -1327,6 +2373,7 @@ function showAdminDashboard(name){
     name || "Admin";
 
   loadAdminData();
+
 }
 
 
@@ -1370,9 +2417,11 @@ document
             }
           );
 
+
         showAdminDashboard(
           data.name
         );
+
 
       }catch(error){
 
@@ -1423,9 +2472,11 @@ document
             }
           );
 
+
         showAdminDashboard(
           data.name
         );
+
 
       }catch(error){
 
@@ -1491,20 +2542,24 @@ async function loadStats(){
         "/api/stats"
       );
 
+
     document
       .getElementById("pendingCount")
       .textContent =
       stats.pending;
+
 
     document
       .getElementById("confirmedCount")
       .textContent =
       stats.confirmed;
 
+
     document
       .getElementById("activeLobbyCount")
       .textContent =
       stats.activeLobbies;
+
 
   }catch(error){
 
@@ -1561,23 +2616,28 @@ document
           }
         );
 
+
         showMessage(
           "lobbyMessage",
           "Lobby created successfully.",
           "success"
         );
 
+
         document
           .getElementById("lobbyForm")
           .reset();
+
 
         document
           .getElementById("lobbyMaxTeams")
           .value = 12;
 
+
         loadAdminLobbies();
         loadStats();
         loadScoreLobbyOptions();
+
 
       }catch(error){
 
@@ -1602,12 +2662,14 @@ async function loadAdminLobbies(){
       "adminLobbies"
     );
 
+
   try{
 
     const lobbies =
       await api(
         "/api/lobbies"
       );
+
 
     if(!lobbies.length){
 
@@ -1617,7 +2679,9 @@ async function loadAdminLobbies(){
         </p>`;
 
       return;
+
     }
+
 
     target.innerHTML =
       lobbies
@@ -1635,32 +2699,39 @@ async function loadAdminLobbies(){
 
             </span>
 
+
             <h3>
               ${escapeHTML(lobby.name)}
             </h3>
+
 
             <p>
               Time:
               ${escapeHTML(lobby.time)}
             </p>
 
+
             <p>
               Fee:
               ${escapeHTML(lobby.fee)}
             </p>
+
 
             <p>
               Teams:
               ${lobby.confirmed}/${lobby.max_teams}
             </p>
 
+
             <br />
+
 
             <div style="
               display:flex;
               gap:8px;
               flex-wrap:wrap;
             ">
+
 
               <button
                 class="btn small ${
@@ -1683,8 +2754,6 @@ async function loadAdminLobbies(){
               </button>
 
 
-              <!-- DELETE SCRIM BUTTON -->
-
               <button
                 class="btn small danger-outline"
                 onclick="deleteLobby(
@@ -1695,12 +2764,14 @@ async function loadAdminLobbies(){
                 Delete Scrim
               </button>
 
+
             </div>
 
           </div>
 
         `)
         .join("");
+
 
   }catch(error){
 
@@ -1740,16 +2811,20 @@ async function toggleLobby(
       }
     );
 
+
     await loadAdminLobbies();
     await loadStats();
+
 
     await loadPublicLobbies(
       "homeLobbies"
     );
 
+
     await loadPublicLobbies(
       "scrimList"
     );
+
 
   }catch(error){
 
@@ -1775,9 +2850,11 @@ async function deleteLobby(
       `This cannot be undone.`
     );
 
+
   if(!confirmed){
     return;
   }
+
 
   try{
 
@@ -1788,24 +2865,30 @@ async function deleteLobby(
       }
     );
 
+
     alert(
       "Scrim deleted successfully."
     );
+
 
     await loadAdminLobbies();
     await loadRegistrations();
     await loadStats();
     await loadScoreLobbyOptions();
 
+
     await loadPublicLobbies(
       "homeLobbies"
     );
+
 
     await loadPublicLobbies(
       "scrimList"
     );
 
+
     await loadLeaderboardLobbyOptions();
+
 
   }catch(error){
 
@@ -1825,12 +2908,14 @@ async function loadRegistrations(){
       "registrationTable"
     );
 
+
   try{
 
     const rows =
       await api(
         "/api/registrations"
       );
+
 
     if(!rows.length){
 
@@ -1842,12 +2927,15 @@ async function loadRegistrations(){
         </tr>`;
 
       return;
+
     }
+
 
     const lobbies =
       await api(
         "/api/lobbies"
       );
+
 
     tbody.innerHTML =
       rows
@@ -1872,6 +2960,7 @@ async function loadRegistrations(){
               `)
               .join("");
 
+
           return `
 
             <tr>
@@ -1880,29 +2969,36 @@ async function loadRegistrations(){
                 ${row.id}
               </td>
 
+
               <td>
                 ${escapeHTML(row.ref)}
               </td>
+
 
               <td>
                 ${escapeHTML(row.team)}
               </td>
 
+
               <td>
                 ${escapeHTML(row.captain)}
               </td>
+
 
               <td>
                 ${escapeHTML(row.fee)}
               </td>
 
+
               <td>
                 ${escapeHTML(row.time)}
               </td>
 
+
               <td>
                 ${escapeHTML(row.status)}
               </td>
+
 
               <td>
 
@@ -1933,6 +3029,7 @@ async function loadRegistrations(){
 
               </td>
 
+
               <td>
 
                 <div style="
@@ -1940,6 +3037,7 @@ async function loadRegistrations(){
                   gap:6px;
                   flex-wrap:wrap;
                 ">
+
 
                   ${
                     row.status !== "confirmed"
@@ -1982,6 +3080,7 @@ async function loadRegistrations(){
                     : ""
                   }
 
+
                 </div>
 
               </td>
@@ -1992,6 +3091,7 @@ async function loadRegistrations(){
 
         })
         .join("");
+
 
   }catch(error){
 
@@ -2006,6 +3106,8 @@ async function loadRegistrations(){
 
 }
 
+
+/* UPDATE REGISTRATION */
 
 async function updateRegistration(
   id,
@@ -2026,8 +3128,10 @@ async function updateRegistration(
       }
     );
 
+
     await loadRegistrations();
     await loadStats();
+
 
   }catch(error){
 
@@ -2038,12 +3142,15 @@ async function updateRegistration(
 }
 
 
+/* ASSIGN LOBBY */
+
 async function assignLobby(
   registrationId,
   lobbyId
 ){
 
   if(!lobbyId) return;
+
 
   try{
 
@@ -2059,7 +3166,9 @@ async function assignLobby(
       }
     );
 
+
     await loadRegistrations();
+
 
   }catch(error){
 
@@ -2081,12 +3190,14 @@ async function loadScoreLobbyOptions(){
       "scoreLobby"
     );
 
+
   try{
 
     const lobbies =
       await api(
         "/api/lobbies"
       );
+
 
     select.innerHTML =
       `<option value="">
@@ -2104,6 +3215,7 @@ async function loadScoreLobbyOptions(){
 
         `)
         .join("");
+
 
   }catch(error){
 
@@ -2124,6 +3236,7 @@ function selectScoreMatch(
   currentScoreMatch =
     match;
 
+
   document
     .querySelectorAll(
       ".match-tabs button"
@@ -2132,14 +3245,18 @@ function selectScoreMatch(
       btn.classList.remove("active")
     );
 
+
   if(button){
     button.classList.add("active");
   }
+
 
   renderScoreEntry();
 
 }
 
+
+/* RENDER SCORE ENTRY */
 
 async function renderScoreEntry(){
 
@@ -2148,12 +3265,14 @@ async function renderScoreEntry(){
       "scoreEntryBody"
     );
 
+
   const lobby =
     document
       .getElementById(
         "scoreLobby"
       )
       .value;
+
 
   if(!lobby){
 
@@ -2163,12 +3282,15 @@ async function renderScoreEntry(){
       </p>`;
 
     return;
+
   }
+
 
   body.innerHTML =
     `<p class="muted">
       Loading teams...
     </p>`;
+
 
   try{
 
@@ -2176,6 +3298,7 @@ async function renderScoreEntry(){
       await api(
         `/api/leaderboard/teams?lobby=${encodeURIComponent(lobby)}`
       );
+
 
     if(teams.length !== 12){
 
@@ -2191,9 +3314,12 @@ async function renderScoreEntry(){
         </div>`;
 
       return;
+
     }
 
+
     let existing = [];
+
 
     try{
 
@@ -2204,6 +3330,7 @@ async function renderScoreEntry(){
 
     }catch(e){}
 
+
     const existingMap =
       new Map(
         existing.map(row => [
@@ -2211,6 +3338,7 @@ async function renderScoreEntry(){
           row
         ])
       );
+
 
     body.innerHTML = `
 
@@ -2249,6 +3377,7 @@ async function renderScoreEntry(){
                       team.team
                     );
 
+
                   return `
 
                     <tr>
@@ -2256,6 +3385,7 @@ async function renderScoreEntry(){
                       <td>
                         ${escapeHTML(team.team)}
                       </td>
+
 
                       <td>
 
@@ -2273,6 +3403,7 @@ async function renderScoreEntry(){
                         />
 
                       </td>
+
 
                       <td>
 
@@ -2304,7 +3435,9 @@ async function renderScoreEntry(){
 
       </div>
 
+
       <br />
+
 
       <button
         class="btn success"
@@ -2314,6 +3447,7 @@ async function renderScoreEntry(){
       </button>
 
     `;
+
 
   }catch(error){
 
@@ -2335,12 +3469,15 @@ document
   );
 
 
+/* SAVE MATCH */
+
 async function saveCurrentMatch(){
 
   const lobby =
     document
       .getElementById("scoreLobby")
       .value;
+
 
   if(!lobby){
 
@@ -2349,14 +3486,18 @@ async function saveCurrentMatch(){
     );
 
     return;
+
   }
+
 
   const positionInputs =
     document.querySelectorAll(
       ".score-position"
     );
 
+
   const entries = [];
+
 
   positionInputs.forEach(
     input => {
@@ -2364,10 +3505,12 @@ async function saveCurrentMatch(){
       const team =
         input.dataset.team;
 
+
       const killInput =
         document.querySelector(
           `.score-kills[data-team="${CSS.escape(team)}"]`
         );
+
 
       entries.push({
 
@@ -2385,6 +3528,7 @@ async function saveCurrentMatch(){
 
     }
   );
+
 
   try{
 
@@ -2407,11 +3551,14 @@ async function saveCurrentMatch(){
       }
     );
 
+
     alert(
       `Match ${currentScoreMatch} saved successfully.`
     );
 
+
     renderScoreEntry();
+
 
   }catch(error){
 
@@ -2431,12 +3578,14 @@ async function loadLeaderboardLobbyOptions(){
       "publicLobbySelect"
     );
 
+
   try{
 
     const lobbies =
       await api(
         "/api/public/lobbies"
       );
+
 
     select.innerHTML =
       `<option value="">
@@ -2454,6 +3603,7 @@ async function loadLeaderboardLobbyOptions(){
 
         `)
         .join("");
+
 
   }catch(error){
 
@@ -2475,6 +3625,7 @@ async function loadPublicLeaderboard(){
       )
       .value;
 
+
   const match =
     document
       .getElementById(
@@ -2482,10 +3633,12 @@ async function loadPublicLeaderboard(){
       )
       .value;
 
+
   const target =
     document.getElementById(
       "publicLeaderboard"
     );
+
 
   if(!lobby){
 
@@ -2495,11 +3648,14 @@ async function loadPublicLeaderboard(){
       </div>`;
 
     return;
+
   }
+
 
   try{
 
     let rows;
+
 
     if(match === "overall"){
 
@@ -2508,10 +3664,12 @@ async function loadPublicLeaderboard(){
           `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
         );
 
+
       renderOverallLeaderboard(
         target,
         rows
       );
+
 
     }else{
 
@@ -2520,6 +3678,7 @@ async function loadPublicLeaderboard(){
           `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
         );
 
+
       renderMatchLeaderboard(
         target,
         rows,
@@ -2527,6 +3686,7 @@ async function loadPublicLeaderboard(){
       );
 
     }
+
 
   }catch(error){
 
@@ -2539,6 +3699,8 @@ async function loadPublicLeaderboard(){
 
 }
 
+
+/* OVERALL LEADERBOARD */
 
 function renderOverallLeaderboard(
   target,
@@ -2555,7 +3717,9 @@ function renderOverallLeaderboard(
       </div>`;
 
     return;
+
   }
+
 
   target.innerHTML = `
 
@@ -2666,6 +3830,8 @@ function renderOverallLeaderboard(
 }
 
 
+/* MATCH LEADERBOARD */
+
 function renderMatchLeaderboard(
   target,
   rows,
@@ -2683,7 +3849,9 @@ function renderMatchLeaderboard(
       </div>`;
 
     return;
+
   }
+
 
   target.innerHTML = `
 
@@ -2730,6 +3898,7 @@ function renderMatchLeaderboard(
             </tr>
 
           </thead>
+
 
           <tbody>
 
@@ -2816,6 +3985,8 @@ document.addEventListener(
     loadPublicLobbies(
       "homeLobbies"
     );
+
+    prepareStatusPage();
 
   }
 );
