@@ -1,1323 +1,1044 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ScrimForge</title>
-
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-
-    body{
-      font-family:Arial,Helvetica,sans-serif;
-      background:#0b0f19;
-      color:#fff;
-      min-height:100vh
-    }
-
-    button,input,select{
-      font:inherit
-    }
-
-    button{
-      cursor:pointer
-    }
-
-    .container{
-      width:min(1200px,94%);
-      margin:auto
-    }
-
-    header{
-      background:#111827;
-      border-bottom:1px solid #263044;
-      position:sticky;
-      top:0;
-      z-index:100
-    }
-
-    .nav{
-      min-height:70px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:20px
-    }
-
-    .logo{
-      font-size:25px;
-      font-weight:800;
-      color:#7c3aed
-    }
-
-    .logo span{
-      color:#fff
-    }
-
-    nav{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap
-    }
-
-    nav button{
-      border:0;
-      background:transparent;
-      color:#cbd5e1;
-      padding:10px 13px;
-      border-radius:8px
-    }
-
-    nav button:hover{
-      background:#1e293b;
-      color:#fff
-    }
-
-    main{
-      padding:35px 0 60px
-    }
-
-    .page{
-      display:none
-    }
-
-    .page.active{
-      display:block
-    }
-
-    .hero{
-      text-align:center;
-      padding:50px 15px
-    }
-
-    .hero h1{
-      font-size:clamp(36px,7vw,70px);
-      margin-bottom:15px
-    }
-
-    .hero h1 span{
-      color:#8b5cf6
-    }
-
-    .hero p{
-      color:#94a3b8;
-      max-width:650px;
-      margin:auto;
-      line-height:1.7
-    }
-
-    .hero-buttons{
-      margin-top:28px;
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:wrap
-    }
-
-    .btn{
-      border:0;
-      border-radius:9px;
-      padding:12px 18px;
-      font-weight:700;
-      background:#7c3aed;
-      color:#fff
-    }
-
-    .btn:hover{
-      background:#6d28d9
-    }
-
-    .btn.secondary{
-      background:#1e293b
-    }
-
-    .btn.success{
-      background:#059669
-    }
-
-    .btn.danger{
-      background:#dc2626
-    }
-
-    .btn.small{
-      padding:8px 12px;
-      font-size:13px
-    }
-
-    .section-title{
-      margin-bottom:20px;
-      font-size:28px
-    }
-
-    .muted{
-      color:#94a3b8
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:18px
-    }
-
-    .card{
-      background:#111827;
-      border:1px solid #263044;
-      border-radius:14px;
-      padding:20px;
-      margin-bottom:18px
-    }
-
-    .card h3{
-      margin-bottom:12px
-    }
-
-    .card p{
-      color:#cbd5e1;
-      margin:7px 0
-    }
-
-    .lobby-card{
-      position:relative
-    }
-
-    .badge{
-      display:inline-block;
-      padding:5px 9px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:700;
-      background:#334155;
-      margin-bottom:10px
-    }
-
-    .badge.open{
-      background:#064e3b;
-      color:#6ee7b7
-    }
-
-    .badge.closed{
-      background:#450a0a;
-      color:#fca5a5
-    }
-
-    .form-group{
-      margin-bottom:15px
-    }
-
-    label{
-      display:block;
-      margin-bottom:7px;
-      color:#cbd5e1;
-      font-size:14px
-    }
-
-    input,select{
-      width:100%;
-      padding:12px;
-      border-radius:8px;
-      border:1px solid #334155;
-      background:#0f172a;
-      color:#fff;
-      outline:none
-    }
-
-    input:focus,select:focus{
-      border-color:#8b5cf6
-    }
-
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:15px
-    }
-
-    .full{
-      grid-column:1/-1
-    }
-
-    .message{
-      padding:12px;
-      border-radius:8px;
-      margin:12px 0;
-      display:none
-    }
-
-    .message.show{
-      display:block
-    }
-
-    .message.success{
-      background:#064e3b;
-      color:#a7f3d0
-    }
-
-    .message.error{
-      background:#450a0a;
-      color:#fecaca
-    }
-
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:15px;
-      margin-bottom:25px
-    }
-
-    .stat{
-      background:#111827;
-      border:1px solid #263044;
-      padding:22px;
-      border-radius:13px
-    }
-
-    .stat-number{
-      font-size:32px;
-      font-weight:800;
-      margin-top:5px;
-      color:#a78bfa
-    }
-
-    .table-wrap{
-      overflow-x:auto
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:750px
-    }
-
-    th,td{
-      padding:12px;
-      border-bottom:1px solid #263044;
-      text-align:left
-    }
-
-    th{
-      background:#172033;
-      color:#c4b5fd
-    }
-
-    td{
-      color:#dbeafe
-    }
-
-    .rank{
-      font-weight:800;
-      font-size:18px
-    }
-
-    .admin-box{
-      max-width:600px;
-      margin:30px auto
-    }
-
-    .hidden{
-      display:none!important
-    }
-
-    .top-actions{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:15px;
-      flex-wrap:wrap;
-      margin-bottom:20px
-    }
-
-    .match-tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-bottom:20px
-    }
-
-    .match-tabs button{
-      border:1px solid #334155;
-      background:#111827;
-      color:#fff;
-      padding:9px 13px;
-      border-radius:7px
-    }
-
-    .match-tabs button.active{
-      background:#7c3aed;
-      border-color:#7c3aed
-    }
-
-    .score-table input{
-      width:90px;
-      padding:8px
-    }
-
-    footer{
-      border-top:1px solid #263044;
-      padding:25px;
-      text-align:center;
-      color:#64748b
-    }
-
-    .danger-outline{
-      border:1px solid #dc2626!important;
-      background:transparent!important;
-      color:#fca5a5!important
-    }
-
-    .registration-empty{
-      text-align:center;
-      padding:25px;
-      color:#94a3b8
-    }
-
-    @media(max-width:700px){
-      .nav{
-        padding:12px 0;
-        flex-direction:column
-      }
-
-      nav{
-        justify-content:center
-      }
-
-      .form-grid{
-        grid-template-columns:1fr
-      }
-
-      .full{
-        grid-column:auto
-      }
-
-      .stats{
-        grid-template-columns:1fr
-      }
-
-      .hero{
-        padding:30px 10px
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ScrimForge</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#0b0f19;color:#fff;min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.container{width:min(1200px,94%);margin:auto}
+
+header{background:#111827;border-bottom:1px solid #263044;position:sticky;top:0;z-index:100}
+.nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-size:25px;font-weight:800;color:#7c3aed}
+.logo span{color:#fff}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav button{border:0;background:transparent;color:#cbd5e1;padding:10px 13px;border-radius:8px}
+nav button:hover{background:#1e293b;color:#fff}
+
+main{padding:35px 0 60px}
+.page{display:none}
+.page.active{display:block}
+
+.hero{text-align:center;padding:50px 15px}
+.hero h1{font-size:clamp(36px,7vw,70px);margin-bottom:15px}
+.hero h1 span{color:#8b5cf6}
+.hero p{color:#94a3b8;max-width:650px;margin:auto;line-height:1.7}
+
+.hero-buttons{margin-top:28px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+.btn{border:0;border-radius:9px;padding:12px 18px;font-weight:700;background:#7c3aed;color:#fff}
+.btn:hover{background:#6d28d9}
+.btn.secondary{background:#1e293b}
+.btn.success{background:#059669}
+.btn.danger{background:#dc2626}
+.btn.small{padding:8px 12px;font-size:13px}
+
+.section-title{margin-bottom:20px;font-size:28px}
+.muted{color:#94a3b8}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+
+.card{
+  background:#111827;
+  border:1px solid #263044;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:18px
+}
+
+.card h3{margin-bottom:12px}
+.card p{color:#cbd5e1;margin:7px 0}
+
+.lobby-card{position:relative}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  background:#334155;
+  margin-bottom:10px
+}
+
+.badge.open{background:#064e3b;color:#6ee7b7}
+.badge.closed{background:#450a0a;color:#fca5a5}
+
+.form-group{margin-bottom:15px}
+
+label{
+  display:block;
+  margin-bottom:7px;
+  color:#cbd5e1;
+  font-size:14px
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #334155;
+  background:#0f172a;
+  color:#fff;
+  outline:none
+}
+
+input:focus,select:focus{border-color:#8b5cf6}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px
+}
+
+.message{
+  padding:12px;
+  border-radius:8px;
+  margin:12px 0;
+  display:none
+}
+
+.message.show{display:block}
+.message.success{background:#064e3b;color:#a7f3d0}
+.message.error{background:#450a0a;color:#fecaca}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:25px
+}
+
+.stat{
+  background:#111827;
+  border:1px solid #263044;
+  padding:22px;
+  border-radius:13px
+}
+
+.stat-number{
+  font-size:32px;
+  font-weight:800;
+  margin-top:5px;
+  color:#a78bfa
+}
+
+.table-wrap{overflow-x:auto}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #263044;
+  text-align:left
+}
+
+th{background:#172033;color:#c4b5fd}
+td{color:#dbeafe}
+
+.rank{font-weight:800;font-size:18px}
+
+.admin-box{
+  max-width:600px;
+  margin:30px auto
+}
+
+.hidden{display:none!important}
+
+.top-actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:20px
+}
+
+.match-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:20px
+}
+
+.match-tabs button{
+  border:1px solid #334155;
+  background:#111827;
+  color:#fff;
+  padding:9px 13px;
+  border-radius:7px
+}
+
+.match-tabs button.active{
+  background:#7c3aed;
+  border-color:#7c3aed
+}
+
+.score-table input{
+  width:90px;
+  padding:8px
+}
+
+.registration-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap
+}
+
+.lobby-select{
+  min-width:190px
+}
+
+.danger-outline{
+  border:1px solid #dc2626!important;
+  background:transparent!important;
+  color:#fca5a5!important
+}
+
+.registration-empty{
+  text-align:center;
+  padding:25px;
+  color:#94a3b8
+}
+
+footer{
+  border-top:1px solid #263044;
+  padding:25px;
+  text-align:center;
+  color:#64748b
+}
+
+@media(max-width:700px){
+  .nav{
+    padding:12px 0;
+    flex-direction:column
+  }
+
+  nav{justify-content:center}
+
+  .form-grid{grid-template-columns:1fr}
+
+  .stats{grid-template-columns:1fr}
+
+  .hero{padding:30px 10px}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="container nav">
+<div class="container nav">
 
-    <div class="logo">
-      Scrim<span>Forge</span>
-    </div>
+<div class="logo">
+Scrim<span>Forge</span>
+</div>
 
-    <nav>
-      <button onclick="showPage('home')">Home</button>
-      <button onclick="showPage('scrims')">Scrims</button>
-      <button onclick="showPage('register')">Register</button>
-      <button onclick="showPage('status')">Check Status</button>
-      <button onclick="showPage('leaderboard')">Leaderboard</button>
-      <button onclick="showPage('admin')">Admin</button>
-    </nav>
+<nav>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('scrims')">Scrims</button>
+<button onclick="showPage('register')">Register</button>
+<button onclick="showPage('status')">Check Status</button>
+<button onclick="showPage('leaderboard')">Leaderboard</button>
+<button onclick="showPage('admin')">Admin</button>
+</nav>
 
-  </div>
+</div>
 </header>
 
 
 <main>
 
-<!-- =====================================================
-     HOME
-===================================================== -->
+<!-- ================= HOME ================= -->
 
 <section id="home" class="page active">
 
-  <div class="hero">
+<div class="hero">
 
-    <h1>
-      Welcome to <span>ScrimForge</span>
-    </h1>
+<h1>
+Welcome to <span>ScrimForge</span>
+</h1>
 
-    <p>
-      Free Fire scrims, competitive lobbies,
-      registrations and live leaderboards —
-      all in one place.
-    </p>
+<p>
+Free Fire scrims, competitive lobbies,
+registrations and live leaderboards —
+all in one place.
+</p>
 
-    <div class="hero-buttons">
+<div class="hero-buttons">
 
-      <button
-        class="btn"
-        onclick="showPage('scrims')">
-        View Scrims
-      </button>
+<button
+class="btn"
+onclick="showPage('scrims')">
+View Scrims
+</button>
 
-      <button
-        class="btn secondary"
-        onclick="showPage('leaderboard')">
-        Leaderboard
-      </button>
+<button
+class="btn secondary"
+onclick="showPage('leaderboard')">
+Leaderboard
+</button>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
-  <div class="container">
+<div class="container">
 
-    <h2 class="section-title">
-      Available Lobbies
-    </h2>
+<h2 class="section-title">
+Available Lobbies
+</h2>
 
-    <div
-      id="homeLobbies"
-      class="grid">
-    </div>
+<div
+id="homeLobbies"
+class="grid">
+</div>
 
-  </div>
+</div>
 
 </section>
 
 
-<!-- =====================================================
-     SCRIMS
-===================================================== -->
+<!-- ================= SCRIMS ================= -->
 
 <section id="scrims" class="page">
 
-  <div class="container">
+<div class="container">
 
-    <div class="top-actions">
+<div class="top-actions">
 
-      <div>
+<div>
 
-        <h2 class="section-title">
-          Available Scrims
-        </h2>
+<h2 class="section-title">
+Available Scrims
+</h2>
 
-        <p class="muted">
-          Choose a lobby and register your team.
-        </p>
+<p class="muted">
+Choose a lobby and register your team.
+</p>
 
-      </div>
+</div>
 
-      <button
-        class="btn"
-        onclick="loadPublicLobbies('scrimList')">
-        Refresh
-      </button>
+<button
+class="btn"
+onclick="loadPublicLobbies('scrimList')">
+Refresh
+</button>
 
-    </div>
+</div>
 
-    <div
-      id="scrimList"
-      class="grid">
-    </div>
+<div
+id="scrimList"
+class="grid">
+</div>
 
-  </div>
+</div>
 
 </section>
 
 
-<!-- =====================================================
-     REGISTRATION
-===================================================== -->
+<!-- ================= REGISTRATION ================= -->
 
 <section id="register" class="page">
 
-  <div class="container">
+<div class="container">
 
-    <div class="card">
+<div class="card">
 
-      <h2 class="section-title">
-        Scrim Registration
-      </h2>
+<h2 class="section-title">
+Scrim Registration
+</h2>
 
-      <p class="muted">
-        Submit your team details.
-        Registration will remain pending until
-        it is confirmed by the admin.
-      </p>
+<p class="muted">
+Submit your team details.
+Registration will remain pending until
+it is confirmed by the admin.
+</p>
 
-      <div
-        id="registerMessage"
-        class="message">
-      </div>
+<div
+id="registerMessage"
+class="message">
+</div>
 
-      <form id="registrationForm">
+<form id="registrationForm">
 
-        <div class="form-grid">
+<div class="form-grid">
 
-          <div class="form-group">
+<div class="form-group">
+<label>Scrim Time</label>
+<input
+type="text"
+id="regTime"
+placeholder="Example: 12 PM"
+required>
+</div>
 
-            <label>
-              Scrim Time
-            </label>
+<div class="form-group">
+<label>Entry Fee</label>
+<input
+type="text"
+id="regFee"
+placeholder="Example: ₹50"
+required>
+</div>
 
-            <input
-              type="text"
-              id="regTime"
-              placeholder="Example: 12 PM"
-              required>
+<div class="form-group">
+<label>Team Name</label>
+<input
+type="text"
+id="regTeam"
+placeholder="Your team name"
+required>
+</div>
 
-          </div>
+<div class="form-group">
+<label>Captain Name</label>
+<input
+type="text"
+id="regCaptain"
+placeholder="Captain name"
+required>
+</div>
 
+<div class="form-group">
+<label>WhatsApp / Phone</label>
+<input
+type="text"
+id="regPhone"
+placeholder="Phone number"
+required>
+</div>
 
-          <div class="form-group">
+<div class="form-group">
+<label>Free Fire UID</label>
+<input
+type="text"
+id="regUid"
+placeholder="Captain UID"
+required>
+</div>
 
-            <label>
-              Entry Fee
-            </label>
+</div>
 
-            <input
-              type="text"
-              id="regFee"
-              placeholder="Example: ₹50"
-              required>
+<button
+class="btn"
+type="submit">
+Submit Registration
+</button>
 
-          </div>
+</form>
 
+</div>
 
-          <div class="form-group">
-
-            <label>
-              Team Name
-            </label>
-
-            <input
-              type="text"
-              id="regTeam"
-              placeholder="Your team name"
-              required>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Captain Name
-            </label>
-
-            <input
-              type="text"
-              id="regCaptain"
-              placeholder="Captain name"
-              required>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              WhatsApp / Phone
-            </label>
-
-            <input
-              type="text"
-              id="regPhone"
-              placeholder="Phone number"
-              required>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Free Fire UID
-            </label>
-
-            <input
-              type="text"
-              id="regUid"
-              placeholder="Captain UID"
-              required>
-
-          </div>
-
-        </div>
-
-        <button
-          class="btn"
-          type="submit">
-          Submit Registration
-        </button>
-
-      </form>
-
-    </div>
-
-  </div>
+</div>
 
 </section>
 
 
-<!-- =====================================================
-     STATUS
-===================================================== -->
+<!-- ================= STATUS ================= -->
 
 <section id="status" class="page">
 
-  <div class="container">
+<div class="container">
 
-    <div class="card">
+<div class="card">
 
-      <h2 class="section-title">
-        Check Registration
-      </h2>
+<h2 class="section-title">
+Check Registration
+</h2>
 
-      <div class="form-group">
+<div class="form-group">
 
-        <label>
-          Registration Reference
-        </label>
+<label>
+Registration Reference
+</label>
 
-        <input
-          id="statusRef"
-          placeholder="Example: SF-1234567890-1234">
+<input
+id="statusRef"
+placeholder="Example: SF-1234567890-1234">
 
-      </div>
+</div>
 
-      <button
-        class="btn"
-        onclick="checkStatus()">
-        Check Status
-      </button>
+<button
+class="btn"
+onclick="checkStatus()">
+Check Status
+</button>
 
-      <div
-        id="statusMessage"
-        class="message">
-      </div>
+<div
+id="statusMessage"
+class="message">
+</div>
 
-      <div
-        id="statusResult">
-      </div>
+<div
+id="statusResult">
+</div>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </section>
 
 
-<!-- =====================================================
-     LEADERBOARD
-===================================================== -->
+<!-- ================= LEADERBOARD ================= -->
 
 <section id="leaderboard" class="page">
 
-  <div class="container">
+<div class="container">
 
-    <div class="top-actions">
+<div class="top-actions">
 
-      <div>
+<div>
 
-        <h2 class="section-title">
-          Leaderboard
-        </h2>
+<h2 class="section-title">
+Leaderboard
+</h2>
 
-        <p class="muted">
-          View the live standings of a scrim lobby.
-        </p>
+<p class="muted">
+View the live standings of a scrim lobby.
+</p>
 
-      </div>
+</div>
 
-    </div>
+</div>
 
+<div class="card">
 
-    <div class="card">
+<div class="form-grid">
 
-      <div class="form-grid">
+<div class="form-group">
 
-        <div class="form-group">
+<label>
+Select Lobby
+</label>
 
-          <label>
-            Select Lobby
-          </label>
+<select id="publicLobbySelect">
 
-          <select id="publicLobbySelect">
+<option value="">
+Select a lobby
+</option>
 
-            <option value="">
-              Select a lobby
-            </option>
+</select>
 
-          </select>
+</div>
 
-        </div>
+<div class="form-group">
 
+<label>
+Select Match
+</label>
 
-        <div class="form-group">
+<select id="publicMatchSelect">
 
-          <label>
-            Select Match
-          </label>
+<option value="overall">
+Overall
+</option>
 
-          <select id="publicMatchSelect">
+<option value="1">Match 1</option>
+<option value="2">Match 2</option>
+<option value="3">Match 3</option>
+<option value="4">Match 4</option>
+<option value="5">Match 5</option>
+<option value="6">Match 6</option>
 
-            <option value="overall">
-              Overall
-            </option>
+</select>
 
-            <option value="1">
-              Match 1
-            </option>
+</div>
 
-            <option value="2">
-              Match 2
-            </option>
+</div>
 
-            <option value="3">
-              Match 3
-            </option>
+<button
+class="btn"
+onclick="loadPublicLeaderboard()">
+View Leaderboard
+</button>
 
-            <option value="4">
-              Match 4
-            </option>
+</div>
 
-            <option value="5">
-              Match 5
-            </option>
+<div
+id="publicLeaderboard">
+</div>
 
-            <option value="6">
-              Match 6
-            </option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-      <button
-        class="btn"
-        onclick="loadPublicLeaderboard()">
-        View Leaderboard
-      </button>
-
-    </div>
-
-
-    <div
-      id="publicLeaderboard">
-    </div>
-
-  </div>
+</div>
 
 </section>
 
 
-<!-- =====================================================
-     ADMIN
-===================================================== -->
+<!-- ================= ADMIN ================= -->
 
 <section id="admin" class="page">
 
-  <div class="container">
+<div class="container">
 
 
-    <!-- ADMIN LOGIN -->
+<!-- ADMIN LOGIN -->
 
-    <div
-      id="adminLoginBox"
-      class="card admin-box">
+<div
+id="adminLoginBox"
+class="card admin-box">
 
-      <h2 class="section-title">
-        Admin Login
-      </h2>
+<h2 class="section-title">
+Admin Login
+</h2>
 
-      <div
-        id="loginMessage"
-        class="message">
-      </div>
+<div
+id="loginMessage"
+class="message">
+</div>
 
-      <form id="loginForm">
+<form id="loginForm">
 
-        <div class="form-group">
+<div class="form-group">
 
-          <label>
-            Email
-          </label>
+<label>
+Email
+</label>
 
-          <input
-            type="email"
-            id="loginEmail"
-            required>
+<input
+type="email"
+id="loginEmail"
+required>
 
-        </div>
+</div>
 
+<div class="form-group">
 
-        <div class="form-group">
+<label>
+Password
+</label>
 
-          <label>
-            Password
-          </label>
+<input
+type="password"
+id="loginPassword"
+required>
 
-          <input
-            type="password"
-            id="loginPassword"
-            required>
+</div>
 
-        </div>
+<button
+class="btn"
+type="submit">
+Login
+</button>
 
-        <button
-          class="btn"
-          type="submit">
-          Login
-        </button>
+</form>
 
-      </form>
+</div>
 
-    </div>
 
+<!-- ADMIN SETUP -->
 
-    <!-- ADMIN SETUP -->
+<div
+id="adminSetupBox"
+class="card admin-box hidden">
 
-    <div
-      id="adminSetupBox"
-      class="card admin-box hidden">
+<h2 class="section-title">
+Create Admin
+</h2>
 
-      <h2 class="section-title">
-        Create Admin
-      </h2>
+<p class="muted">
+No admin account exists yet.
+Create the first admin.
+</p>
 
-      <p class="muted">
-        No admin account exists yet.
-        Create the first admin.
-      </p>
+<br>
 
-      <br>
+<div
+id="setupMessage"
+class="message">
+</div>
 
-      <div
-        id="setupMessage"
-        class="message">
-      </div>
+<form id="setupForm">
 
-      <form id="setupForm">
+<div class="form-group">
+<label>Name</label>
+<input id="setupName" required>
+</div>
 
-        <div class="form-group">
+<div class="form-group">
+<label>Email</label>
+<input type="email" id="setupEmail" required>
+</div>
 
-          <label>
-            Name
-          </label>
+<div class="form-group">
+<label>Password</label>
+<input
+type="password"
+id="setupPassword"
+minlength="6"
+required>
+</div>
 
-          <input
-            id="setupName"
-            required>
+<button
+class="btn"
+type="submit">
+Create Admin
+</button>
 
-        </div>
+</form>
 
+</div>
 
-        <div class="form-group">
 
-          <label>
-            Email
-          </label>
+<!-- ADMIN DASHBOARD -->
 
-          <input
-            type="email"
-            id="setupEmail"
-            required>
+<div
+id="adminDashboard"
+class="hidden">
 
-        </div>
 
+<div class="top-actions">
 
-        <div class="form-group">
+<div>
 
-          <label>
-            Password
-          </label>
+<h2 class="section-title">
+Admin Dashboard
+</h2>
 
-          <input
-            type="password"
-            id="setupPassword"
-            minlength="6"
-            required>
+<p class="muted">
+Logged in as
+<strong id="adminName"></strong>
+</p>
 
-        </div>
+</div>
 
+<button
+class="btn danger"
+onclick="logout()">
+Logout
+</button>
 
-        <button
-          class="btn"
-          type="submit">
-          Create Admin
-        </button>
+</div>
 
-      </form>
 
-    </div>
+<!-- STATS -->
 
+<div class="stats">
 
-    <!-- ADMIN DASHBOARD -->
+<div class="stat">
 
-    <div
-      id="adminDashboard"
-      class="hidden">
+<div class="muted">
+Pending Registrations
+</div>
 
+<div
+class="stat-number"
+id="pendingCount">
+0
+</div>
 
-      <div class="top-actions">
+</div>
 
-        <div>
+<div class="stat">
 
-          <h2 class="section-title">
-            Admin Dashboard
-          </h2>
+<div class="muted">
+Confirmed Registrations
+</div>
 
-          <p class="muted">
-            Logged in as
-            <strong id="adminName"></strong>
-          </p>
+<div
+class="stat-number"
+id="confirmedCount">
+0
+</div>
 
-        </div>
+</div>
 
-        <button
-          class="btn danger"
-          onclick="logout()">
-          Logout
-        </button>
+<div class="stat">
 
-      </div>
+<div class="muted">
+Active Lobbies
+</div>
 
+<div
+class="stat-number"
+id="activeLobbyCount">
+0
+</div>
 
-      <!-- STATS -->
+</div>
 
-      <div class="stats">
+</div>
 
-        <div class="stat">
 
-          <div class="muted">
-            Pending Registrations
-          </div>
+<!-- CREATE LOBBY -->
 
-          <div
-            class="stat-number"
-            id="pendingCount">
-            0
-          </div>
+<div class="card">
 
-        </div>
+<h3>
+Create New Lobby
+</h3>
 
+<br>
 
-        <div class="stat">
+<div
+id="lobbyMessage"
+class="message">
+</div>
 
-          <div class="muted">
-            Confirmed Registrations
-          </div>
+<form id="lobbyForm">
 
-          <div
-            class="stat-number"
-            id="confirmedCount">
-            0
-          </div>
+<div class="form-grid">
 
-        </div>
+<div class="form-group">
 
+<label>
+Lobby Name
+</label>
 
-        <div class="stat">
+<input
+id="lobbyName"
+placeholder="Example: 12 PM ₹50"
+required>
 
-          <div class="muted">
-            Active Lobbies
-          </div>
+</div>
 
-          <div
-            class="stat-number"
-            id="activeLobbyCount">
-            0
-          </div>
+<div class="form-group">
 
-        </div>
+<label>
+Time
+</label>
 
-      </div>
+<input
+id="lobbyTime"
+placeholder="Example: 12 PM"
+required>
 
+</div>
 
-      <!-- CREATE LOBBY -->
+<div class="form-group">
 
-      <div class="card">
+<label>
+Entry Fee
+</label>
 
-        <h3>
-          Create New Lobby
-        </h3>
+<input
+id="lobbyFee"
+placeholder="Example: ₹50"
+required>
 
-        <br>
+</div>
 
-        <div
-          id="lobbyMessage"
-          class="message">
-        </div>
+<div class="form-group">
 
-        <form id="lobbyForm">
+<label>
+Maximum Teams
+</label>
 
-          <div class="form-grid">
+<input
+type="number"
+id="lobbyMaxTeams"
+value="12"
+min="1"
+required>
 
-            <div class="form-group">
+</div>
 
-              <label>
-                Lobby Name
-              </label>
+</div>
 
-              <input
-                id="lobbyName"
-                placeholder="Example: 12 PM ₹50"
-                required>
+<button
+class="btn"
+type="submit">
+Create Lobby
+</button>
 
-            </div>
+</form>
 
+</div>
 
-            <div class="form-group">
 
-              <label>
-                Time
-              </label>
+<!-- MANAGE LOBBIES -->
 
-              <input
-                id="lobbyTime"
-                placeholder="Example: 12 PM"
-                required>
+<div class="card">
 
-            </div>
+<div class="top-actions">
 
+<h3>
+Manage Lobbies
+</h3>
 
-            <div class="form-group">
+<button
+class="btn small"
+onclick="loadAdminLobbies()">
+Refresh
+</button>
 
-              <label>
-                Entry Fee
-              </label>
+</div>
 
-              <input
-                id="lobbyFee"
-                placeholder="Example: ₹50"
-                required>
+<p
+class="muted"
+style="margin-bottom:15px">
 
-            </div>
+Delete removes the scrim and its
+associated registration/score records
+permanently.
 
+</p>
 
-            <div class="form-group">
+<div
+id="adminLobbies"
+class="grid">
+</div>
 
-              <label>
-                Maximum Teams
-              </label>
+</div>
 
-              <input
-                type="number"
-                id="lobbyMaxTeams"
-                value="12"
-                min="1"
-                required>
 
-            </div>
+<!-- PENDING REGISTRATIONS -->
 
-          </div>
+<div class="card">
 
-          <button
-            class="btn"
-            type="submit">
-            Create Lobby
-          </button>
+<div class="top-actions">
 
-        </form>
+<div>
 
-      </div>
+<h3>
+Pending Registrations
+</h3>
 
+<p class="muted">
+Select a lobby for the registration,
+then confirm or reject it.
+</p>
 
-      <!-- MANAGE LOBBIES -->
+</div>
 
-      <div class="card">
+<button
+class="btn small"
+onclick="loadRegistrations()">
+Refresh
+</button>
 
-        <div class="top-actions">
+</div>
 
-          <h3>
-            Manage Lobbies
-          </h3>
 
-          <button
-            class="btn small"
-            onclick="loadAdminLobbies()">
-            Refresh
-          </button>
+<div class="table-wrap">
 
-        </div>
+<table>
 
-        <p
-          class="muted"
-          style="margin-bottom:15px">
+<thead>
 
-          Delete removes the scrim and its
-          associated registration/score records
-          permanently.
+<tr>
 
-        </p>
+<th>ID</th>
 
-        <div
-          id="adminLobbies"
-          class="grid">
-        </div>
+<th>Reference</th>
 
-      </div>
+<th>Team</th>
 
+<th>Captain</th>
 
-      <!-- =================================================
-           PENDING REGISTRATIONS
-      ================================================== -->
+<th>Fee</th>
 
-      <div class="card">
+<th>Time</th>
 
-        <div class="top-actions">
+<th>Lobby</th>
 
-          <div>
+<th>Action</th>
 
-            <h3>
-              Pending Registrations
-            </h3>
+</tr>
 
-            <p class="muted">
-              New registrations waiting for admin action.
-            </p>
+</thead>
 
-          </div>
+<tbody
+id="registrationTable">
+</tbody>
 
-          <button
-            class="btn small"
-            onclick="loadRegistrations()">
-            Refresh
-          </button>
+</table>
 
-        </div>
+</div>
 
+</div>
 
-        <div class="table-wrap">
 
-          <table>
+<!-- MATCH SCORE ENTRY -->
 
-            <thead>
+<div class="card">
 
-              <tr>
+<h3>
+Match Score Entry
+</h3>
 
-                <th>
-                  ID
-                </th>
+<p class="muted">
+Enter results for each match.
+A lobby has 6 matches and 12 teams.
+</p>
 
-                <th>
-                  Reference
-                </th>
+<br>
 
-                <th>
-                  Team
-                </th>
+<div class="form-group">
 
-                <th>
-                  Captain
-                </th>
+<label>
+Select Lobby
+</label>
 
-                <th>
-                  Fee
-                </th>
+<select id="scoreLobby">
 
-                <th>
-                  Time
-                </th>
+<option value="">
+Select lobby
+</option>
 
-                <th>
-                  Action
-                </th>
+</select>
 
-              </tr>
+</div>
 
-            </thead>
+<div class="match-tabs">
 
+<button
+type="button"
+class="active"
+onclick="selectScoreMatch(1,this)">
+Match 1
+</button>
 
-            <tbody
-              id="registrationTable">
-            </tbody>
+<button
+type="button"
+onclick="selectScoreMatch(2,this)">
+Match 2
+</button>
 
-          </table>
+<button
+type="button"
+onclick="selectScoreMatch(3,this)">
+Match 3
+</button>
 
-        </div>
+<button
+type="button"
+onclick="selectScoreMatch(4,this)">
+Match 4
+</button>
 
-      </div>
+<button
+type="button"
+onclick="selectScoreMatch(5,this)">
+Match 5
+</button>
 
+<button
+type="button"
+onclick="selectScoreMatch(6,this)">
+Match 6
+</button>
 
-      <!-- =================================================
-           MATCH SCORE ENTRY
-      ================================================== -->
+</div>
 
-      <div class="card">
+<div
+id="scoreEntryBody">
+</div>
 
-        <h3>
-          Match Score Entry
-        </h3>
+</div>
 
-        <p class="muted">
-          Enter results for each match.
-          A lobby has 6 matches and 12 teams.
-        </p>
+</div>
 
-        <br>
-
-
-        <div class="form-group">
-
-          <label>
-            Select Lobby
-          </label>
-
-          <select id="scoreLobby">
-
-            <option value="">
-              Select lobby
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="match-tabs">
-
-          <button
-            type="button"
-            class="active"
-            onclick="selectScoreMatch(1,this)">
-            Match 1
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(2,this)">
-            Match 2
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(3,this)">
-            Match 3
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(4,this)">
-            Match 4
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(5,this)">
-            Match 5
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(6,this)">
-            Match 6
-          </button>
-
-        </div>
-
-
-        <div
-          id="scoreEntryBody">
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
+</div>
 
 </section>
 
@@ -1325,7 +1046,7 @@
 
 
 <footer>
-  ScrimForge &copy; 2026
+ScrimForge &copy; 2026
 </footer>
 
 
@@ -1340,46 +1061,35 @@ let currentScoreMatch = 1;
 
 function showPage(pageId){
 
-  document
-    .querySelectorAll(".page")
-    .forEach(
-      p =>
-        p.classList.remove("active")
-    );
+document
+.querySelectorAll(".page")
+.forEach(
+p => p.classList.remove("active")
+);
 
-  const page =
-    document.getElementById(
-      pageId
-    );
+const page =
+document.getElementById(pageId);
 
-  if(page)
-    page.classList.add("active");
+if(page)
+page.classList.add("active");
 
 
-  if(pageId === "home")
-    loadPublicLobbies(
-      "homeLobbies"
-    );
+if(pageId === "home")
+loadPublicLobbies("homeLobbies");
 
+if(pageId === "scrims")
+loadPublicLobbies("scrimList");
 
-  if(pageId === "scrims")
-    loadPublicLobbies(
-      "scrimList"
-    );
+if(pageId === "leaderboard")
+loadLeaderboardLobbyOptions();
 
+if(pageId === "admin")
+checkAdmin();
 
-  if(pageId === "leaderboard")
-    loadLeaderboardLobbyOptions();
-
-
-  if(pageId === "admin")
-    checkAdmin();
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
@@ -1389,23 +1099,22 @@ function showPage(pageId){
 ===================================================== */
 
 function showMessage(
-  id,
-  text,
-  type="success"
+id,
+text,
+type="success"
 ){
 
-  const e =
-    document.getElementById(id);
+const e =
+document.getElementById(id);
 
-  if(!e)
-    return;
+if(!e)
+return;
 
-  e.textContent =
-    text;
+e.textContent =
+text;
 
-  e.className =
-    "message show " +
-    type;
+e.className =
+"message show " + type;
 
 }
 
@@ -1415,48 +1124,47 @@ function showMessage(
 ===================================================== */
 
 async function api(
-  url,
-  options={}
+url,
+options={}
 ){
 
-  const response =
-    await fetch(
-      url,
-      {
-        credentials:"same-origin",
-        ...options,
+const response =
+await fetch(
+url,
+{
+credentials:"same-origin",
+...options,
 
-        headers:{
-          "Content-Type":
-            "application/json",
+headers:{
+"Content-Type":
+"application/json",
 
-          ...(options.headers || {})
-        }
-      }
-    );
+...(options.headers || {})
+}
 
+}
+);
 
-  let data = {};
+let data = {};
 
-  try{
+try{
 
-    data =
-      await response.json();
+data =
+await response.json();
 
-  }catch(e){}
-
-
-  if(!response.ok){
-
-    throw new Error(
-      data.error ||
-      "Request failed"
-    );
-
-  }
+}catch(e){}
 
 
-  return data;
+if(!response.ok){
+
+throw new Error(
+data.error ||
+"Request failed"
+);
+
+}
+
+return data;
 
 }
 
@@ -1466,156 +1174,147 @@ async function api(
 ===================================================== */
 
 async function loadPublicLobbies(
-  targetId="homeLobbies"
+targetId="homeLobbies"
 ){
 
-  const target =
-    document.getElementById(
-      targetId
-    );
+const target =
+document.getElementById(targetId);
 
-  if(!target)
-    return;
+if(!target)
+return;
 
+target.innerHTML =
+'<p class="muted">Loading lobbies...</p>';
 
-  target.innerHTML =
-    '<p class="muted">Loading lobbies...</p>';
+try{
 
+const lobbies =
+await api(
+"/api/public/lobbies"
+);
 
-  try{
+if(!lobbies.length){
 
-    const lobbies =
-      await api(
-        "/api/public/lobbies"
-      );
+target.innerHTML =
+`
+<div class="card">
+<p class="muted">
+No lobbies available right now.
+</p>
+</div>
+`;
 
+return;
 
-    if(!lobbies.length){
-
-      target.innerHTML =
-        '<div class="card"><p class="muted">No lobbies available right now.</p></div>';
-
-      return;
-
-    }
-
-
-    target.innerHTML =
-      lobbies
-        .map(
-          lobby => {
-
-            const full =
-              Number(
-                lobby.confirmed
-              ) >=
-              Number(
-                lobby.max_teams
-              );
+}
 
 
-            return `
+target.innerHTML =
+lobbies
+.map(
+lobby => {
 
-              <div class="card lobby-card">
+const full =
+Number(lobby.confirmed) >=
+Number(lobby.max_teams);
 
-                <span class="badge ${
-                  lobby.status === "open"
-                    ? "open"
-                    : "closed"
-                }">
+return `
 
-                  ${
-                    lobby.status === "open"
-                      ? "OPEN"
-                      : "CLOSED"
-                  }
+<div class="card lobby-card">
 
-                </span>
+<span class="badge ${
+lobby.status === "open"
+? "open"
+: "closed"
+}">
 
+${
+lobby.status === "open"
+? "OPEN"
+: "CLOSED"
+}
 
-                <h3>
-                  ${escapeHTML(lobby.name)}
-                </h3>
+</span>
 
+<h3>
+${escapeHTML(lobby.name)}
+</h3>
 
-                <p>
-                  <strong>Time:</strong>
-                  ${escapeHTML(lobby.time)}
-                </p>
+<p>
+<strong>Time:</strong>
+${escapeHTML(lobby.time)}
+</p>
 
+<p>
+<strong>Entry:</strong>
+${escapeHTML(lobby.fee)}
+</p>
 
-                <p>
-                  <strong>Entry:</strong>
-                  ${escapeHTML(lobby.fee)}
-                </p>
+<p>
+<strong>Teams:</strong>
+${lobby.confirmed}/${lobby.max_teams}
+</p>
 
+<br>
 
-                <p>
-                  <strong>Teams:</strong>
-                  ${lobby.confirmed}/${lobby.max_teams}
-                </p>
+${
+lobby.status === "open" && !full
 
+? `
 
-                <br>
+<button
+class="btn small"
+onclick="useLobby(
+'${escapeAttribute(lobby.time)}',
+'${escapeAttribute(lobby.fee)}'
+)">
 
+Register
 
-                ${
-                  lobby.status === "open" &&
-                  !full
+</button>
 
-                    ? `
+`
 
-                      <button
-                        class="btn small"
-                        onclick="useLobby(
-                          '${escapeAttribute(lobby.time)}',
-                          '${escapeAttribute(lobby.fee)}'
-                        )">
+: `
 
-                        Register
+<button
+class="btn small secondary"
+disabled>
 
-                      </button>
+${
+full
+? "FULL"
+: "CLOSED"
+}
 
-                    `
+</button>
 
-                    : `
+`
 
-                      <button
-                        class="btn small secondary"
-                        disabled>
+}
 
-                        ${
-                          full
-                            ? "FULL"
-                            : "CLOSED"
-                        }
+</div>
 
-                      </button>
+`;
 
-                    `
-                }
+}
+)
+.join("");
 
-              </div>
+}catch(error){
 
-            `;
+target.innerHTML =
+`
+<div class="card">
 
-          }
-        )
-        .join("");
+<p class="muted">
+${escapeHTML(error.message)}
+</p>
 
+</div>
+`;
 
-  }catch(error){
-
-    target.innerHTML =
-      `
-        <div class="card">
-          <p class="muted">
-            ${escapeHTML(error.message)}
-          </p>
-        </div>
-      `;
-
-  }
+}
 
 }
 
@@ -1625,23 +1324,21 @@ async function loadPublicLobbies(
 ===================================================== */
 
 function useLobby(
-  time,
-  fee
+time,
+fee
 ){
 
-  document.getElementById(
-    "regTime"
-  ).value =
-    time;
+document.getElementById(
+"regTime"
+).value =
+time;
 
-  document.getElementById(
-    "regFee"
-  ).value =
-    fee;
+document.getElementById(
+"regFee"
+).value =
+fee;
 
-  showPage(
-    "register"
-  );
+showPage("register");
 
 }
 
@@ -1651,197 +1348,172 @@ function useLobby(
 ===================================================== */
 
 document
-  .getElementById(
-    "registrationForm"
-  )
-  .addEventListener(
-    "submit",
-    async e => {
+.getElementById("registrationForm")
+.addEventListener(
+"submit",
+async e => {
 
-      e.preventDefault();
+e.preventDefault();
 
+try{
 
-      try{
+const data =
+await api(
+"/api/registrations",
+{
+method:"POST",
 
-        const data =
-          await api(
-            "/api/registrations",
-            {
-              method:"POST",
+body:
+JSON.stringify({
 
-              body:
-                JSON.stringify({
+time:
+document
+.getElementById("regTime")
+.value,
 
-                  time:
-                    document
-                      .getElementById(
-                        "regTime"
-                      )
-                      .value,
+fee:
+document
+.getElementById("regFee")
+.value,
 
-                  fee:
-                    document
-                      .getElementById(
-                        "regFee"
-                      )
-                      .value,
+team:
+document
+.getElementById("regTeam")
+.value,
 
-                  team:
-                    document
-                      .getElementById(
-                        "regTeam"
-                      )
-                      .value,
+captain:
+document
+.getElementById("regCaptain")
+.value,
 
-                  captain:
-                    document
-                      .getElementById(
-                        "regCaptain"
-                      )
-                      .value,
+phone:
+document
+.getElementById("regPhone")
+.value,
 
-                  phone:
-                    document
-                      .getElementById(
-                        "regPhone"
-                      )
-                      .value,
+uid:
+document
+.getElementById("regUid")
+.value
 
-                  uid:
-                    document
-                      .getElementById(
-                        "regUid"
-                      )
-                      .value
+})
 
-                })
+}
+);
 
-            }
-          );
+showMessage(
+"registerMessage",
+`Registration submitted successfully. Your reference is ${data.ref}`
+);
 
+e.target.reset();
 
-        showMessage(
-          "registerMessage",
-          `Registration submitted successfully. Your reference is ${data.ref}`
-        );
+}catch(error){
 
+showMessage(
+"registerMessage",
+error.message,
+"error"
+);
 
-        e.target.reset();
+}
 
-
-      }catch(error){
-
-        showMessage(
-          "registerMessage",
-          error.message,
-          "error"
-        );
-
-      }
-
-    }
-  );
+}
+);
 
 
 /* =====================================================
-   CHECK REGISTRATION STATUS
+   CHECK STATUS
 ===================================================== */
 
 async function checkStatus(){
 
-  const ref =
-    document
-      .getElementById(
-        "statusRef"
-      )
-      .value
-      .trim();
+const ref =
+document
+.getElementById("statusRef")
+.value
+.trim();
 
+if(!ref){
 
-  if(!ref){
+showMessage(
+"statusMessage",
+"Please enter your registration reference.",
+"error"
+);
 
-    showMessage(
-      "statusMessage",
-      "Please enter your registration reference.",
-      "error"
-    );
+return;
 
-    return;
+}
 
-  }
+try{
 
+const data =
+await api(
+`/api/registration-status/${encodeURIComponent(ref)}`
+);
 
-  try{
+showMessage(
+"statusMessage",
+"Registration found."
+);
 
-    const data =
-      await api(
-        `/api/registration-status/${encodeURIComponent(ref)}`
-      );
+document.getElementById(
+"statusResult"
+).innerHTML = `
 
+<div class="card">
 
-    showMessage(
-      "statusMessage",
-      "Registration found."
-    );
+<h3>
+${escapeHTML(data.team)}
+</h3>
 
+<p>
+<strong>Reference:</strong>
+${escapeHTML(data.ref)}
+</p>
 
-    document.getElementById(
-      "statusResult"
-    ).innerHTML = `
+<p>
+<strong>Time:</strong>
+${escapeHTML(data.time)}
+</p>
 
-      <div class="card">
+<p>
+<strong>Fee:</strong>
+${escapeHTML(data.fee)}
+</p>
 
-        <h3>
-          ${escapeHTML(data.team)}
-        </h3>
+<p>
+<strong>Status:</strong>
+${escapeHTML(data.status)}
+</p>
 
-        <p>
-          <strong>Reference:</strong>
-          ${escapeHTML(data.ref)}
-        </p>
+<p>
+<strong>Lobby:</strong>
+${
+data.lobby_name
+? escapeHTML(data.lobby_name)
+: "Not assigned yet"
+}
+</p>
 
-        <p>
-          <strong>Time:</strong>
-          ${escapeHTML(data.time)}
-        </p>
+</div>
 
-        <p>
-          <strong>Fee:</strong>
-          ${escapeHTML(data.fee)}
-        </p>
+`;
 
-        <p>
-          <strong>Status:</strong>
-          ${escapeHTML(data.status)}
-        </p>
+}catch(error){
 
-        <p>
-          <strong>Lobby:</strong>
-          ${
-            data.lobby_name
-              ? escapeHTML(data.lobby_name)
-              : "Not assigned yet"
-          }
-        </p>
+showMessage(
+"statusMessage",
+error.message,
+"error"
+);
 
-      </div>
+document.getElementById(
+"statusResult"
+).innerHTML = "";
 
-    `;
-
-
-  }catch(error){
-
-    showMessage(
-      "statusMessage",
-      error.message,
-      "error"
-    );
-
-    document.getElementById(
-      "statusResult"
-    ).innerHTML = "";
-
-  }
+}
 
 }
 
@@ -1852,68 +1524,56 @@ async function checkStatus(){
 
 async function checkAdmin(){
 
-  try{
+try{
 
-    const exists =
-      await api(
-        "/api/admin-exists"
-      );
+const exists =
+await api(
+"/api/admin-exists"
+);
 
-    const me =
-      await api(
-        "/api/me"
-      );
+const me =
+await api(
+"/api/me"
+);
 
+document
+.getElementById("adminLoginBox")
+.classList
+.toggle(
+"hidden",
+!exists.exists ||
+me.loggedIn
+);
 
-    document
-      .getElementById(
-        "adminLoginBox"
-      )
-      .classList
-      .toggle(
-        "hidden",
-        !exists.exists ||
-        me.loggedIn
-      );
+document
+.getElementById("adminSetupBox")
+.classList
+.toggle(
+"hidden",
+exists.exists
+);
 
+document
+.getElementById("adminDashboard")
+.classList
+.toggle(
+"hidden",
+!me.loggedIn
+);
 
-    document
-      .getElementById(
-        "adminSetupBox"
-      )
-      .classList
-      .toggle(
-        "hidden",
-        exists.exists
-      );
+if(!exists.exists)
+return;
 
+if(me.loggedIn)
+showAdminDashboard(
+me.name
+);
 
-    document
-      .getElementById(
-        "adminDashboard"
-      )
-      .classList
-      .toggle(
-        "hidden",
-        !me.loggedIn
-      );
+}catch(error){
 
+console.error(error);
 
-    if(!exists.exists)
-      return;
-
-
-    if(me.loggedIn)
-      showAdminDashboard(
-        me.name
-      );
-
-
-  }catch(error){
-
-    console.error(error);
-
-  }
+}
 
 }
 
@@ -1923,43 +1583,30 @@ async function checkAdmin(){
 ===================================================== */
 
 function showAdminDashboard(
-  name
+name
 ){
 
-  document
-    .getElementById(
-      "adminLoginBox"
-    )
-    .classList
-    .add("hidden");
+document
+.getElementById("adminLoginBox")
+.classList
+.add("hidden");
 
+document
+.getElementById("adminSetupBox")
+.classList
+.add("hidden");
 
-  document
-    .getElementById(
-      "adminSetupBox"
-    )
-    .classList
-    .add("hidden");
+document
+.getElementById("adminDashboard")
+.classList
+.remove("hidden");
 
+document
+.getElementById("adminName")
+.textContent =
+name || "Admin";
 
-  document
-    .getElementById(
-      "adminDashboard"
-    )
-    .classList
-    .remove("hidden");
-
-
-  document
-    .getElementById(
-      "adminName"
-    )
-    .textContent =
-      name ||
-      "Admin";
-
-
-  loadAdminData();
+loadAdminData();
 
 }
 
@@ -1969,59 +1616,54 @@ function showAdminDashboard(
 ===================================================== */
 
 document
-  .getElementById(
-    "setupForm"
-  )
-  .addEventListener(
-    "submit",
-    async e => {
+.getElementById("setupForm")
+.addEventListener(
+"submit",
+async e => {
 
-      e.preventDefault();
+e.preventDefault();
 
+try{
 
-      try{
+const d =
+await api(
+"/api/setup-admin",
+{
+method:"POST",
 
-        const d =
-          await api(
-            "/api/setup-admin",
-            {
-              method:"POST",
+body:
+JSON.stringify({
 
-              body:
-                JSON.stringify({
+name:
+setupName.value,
 
-                  name:
-                    setupName.value,
+email:
+setupEmail.value,
 
-                  email:
-                    setupEmail.value,
+password:
+setupPassword.value
 
-                  password:
-                    setupPassword.value
+})
 
-                })
+}
+);
 
-            }
-          );
+showAdminDashboard(
+d.name
+);
 
+}catch(x){
 
-        showAdminDashboard(
-          d.name
-        );
+showMessage(
+"setupMessage",
+x.message,
+"error"
+);
 
+}
 
-      }catch(x){
-
-        showMessage(
-          "setupMessage",
-          x.message,
-          "error"
-        );
-
-      }
-
-    }
-  );
+}
+);
 
 
 /* =====================================================
@@ -2029,56 +1671,51 @@ document
 ===================================================== */
 
 document
-  .getElementById(
-    "loginForm"
-  )
-  .addEventListener(
-    "submit",
-    async e => {
+.getElementById("loginForm")
+.addEventListener(
+"submit",
+async e => {
 
-      e.preventDefault();
+e.preventDefault();
 
+try{
 
-      try{
+const d =
+await api(
+"/api/login",
+{
+method:"POST",
 
-        const d =
-          await api(
-            "/api/login",
-            {
-              method:"POST",
+body:
+JSON.stringify({
 
-              body:
-                JSON.stringify({
+email:
+loginEmail.value,
 
-                  email:
-                    loginEmail.value,
+password:
+loginPassword.value
 
-                  password:
-                    loginPassword.value
+})
 
-                })
+}
+);
 
-            }
-          );
+showAdminDashboard(
+d.name
+);
 
+}catch(x){
 
-        showAdminDashboard(
-          d.name
-        );
+showMessage(
+"loginMessage",
+x.message,
+"error"
+);
 
+}
 
-      }catch(x){
-
-        showMessage(
-          "loginMessage",
-          x.message,
-          "error"
-        );
-
-      }
-
-    }
-  );
+}
+);
 
 
 /* =====================================================
@@ -2087,48 +1724,45 @@ document
 
 async function logout(){
 
-  try{
+try{
 
-    await api(
-      "/api/logout",
-      {
-        method:"POST"
-      }
-    );
+await api(
+"/api/logout",
+{
+method:"POST"
+}
+);
 
+checkAdmin();
 
-    checkAdmin();
+}catch(e){
 
+alert(
+e.message
+);
 
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
+}
 
 }
 
 
 /* =====================================================
-   LOAD ADMIN DATA
+   ADMIN DATA
 ===================================================== */
 
 async function loadAdminData(){
 
-  await Promise.all([
+await Promise.all([
 
-    loadStats(),
+loadStats(),
 
-    loadAdminLobbies(),
+loadAdminLobbies(),
 
-    loadRegistrations()
+loadRegistrations()
 
-  ]);
+]);
 
-
-  await loadScoreLobbyOptions();
+await loadScoreLobbyOptions();
 
 }
 
@@ -2139,31 +1773,27 @@ async function loadAdminData(){
 
 async function loadStats(){
 
-  try{
+try{
 
-    const s =
-      await api(
-        "/api/stats"
-      );
+const s =
+await api(
+"/api/stats"
+);
 
+pendingCount.textContent =
+s.pending;
 
-    pendingCount.textContent =
-      s.pending;
+confirmedCount.textContent =
+s.confirmed;
 
+activeLobbyCount.textContent =
+s.activeLobbies;
 
-    confirmedCount.textContent =
-      s.confirmed;
+}catch(e){
 
+console.error(e);
 
-    activeLobbyCount.textContent =
-      s.activeLobbies;
-
-
-  }catch(e){
-
-    console.error(e);
-
-  }
+}
 
 }
 
@@ -2173,78 +1803,68 @@ async function loadStats(){
 ===================================================== */
 
 document
-  .getElementById(
-    "lobbyForm"
-  )
-  .addEventListener(
-    "submit",
-    async e => {
+.getElementById("lobbyForm")
+.addEventListener(
+"submit",
+async e => {
 
-      e.preventDefault();
+e.preventDefault();
 
+try{
 
-      try{
+await api(
+"/api/lobbies",
+{
+method:"POST",
 
-        await api(
-          "/api/lobbies",
-          {
-            method:"POST",
+body:
+JSON.stringify({
 
-            body:
-              JSON.stringify({
+name:
+lobbyName.value,
 
-                name:
-                  lobbyName.value,
+time:
+lobbyTime.value,
 
-                time:
-                  lobbyTime.value,
+fee:
+lobbyFee.value,
 
-                fee:
-                  lobbyFee.value,
+maxTeams:
+Number(
+lobbyMaxTeams.value
+)
 
-                maxTeams:
-                  Number(
-                    lobbyMaxTeams.value
-                  )
+})
 
-              })
+}
+);
 
-          }
-        );
+showMessage(
+"lobbyMessage",
+"Lobby created successfully."
+);
 
+e.target.reset();
 
-        showMessage(
-          "lobbyMessage",
-          "Lobby created successfully."
-        );
+lobbyMaxTeams.value =
+12;
 
+loadAdminLobbies();
+loadStats();
+loadScoreLobbyOptions();
 
-        e.target.reset();
+}catch(x){
 
+showMessage(
+"lobbyMessage",
+x.message,
+"error"
+);
 
-        lobbyMaxTeams.value =
-          12;
+}
 
-
-        loadAdminLobbies();
-
-        loadStats();
-
-        loadScoreLobbyOptions();
-
-
-      }catch(x){
-
-        showMessage(
-          "lobbyMessage",
-          x.message,
-          "error"
-        );
-
-      }
-
-    }
-  );
+}
+);
 
 
 /* =====================================================
@@ -2253,135 +1873,124 @@ document
 
 async function loadAdminLobbies(){
 
-  const target =
-    document.getElementById(
-      "adminLobbies"
-    );
+const target =
+document.getElementById(
+"adminLobbies"
+);
 
+try{
 
-  try{
+const lobbies =
+await api(
+"/api/lobbies"
+);
 
-    const lobbies =
-      await api(
-        "/api/lobbies"
-      );
+if(!lobbies.length){
 
+target.innerHTML =
+'<p class="muted">No lobbies created yet.</p>';
 
-    if(!lobbies.length){
+return;
 
-      target.innerHTML =
-        '<p class="muted">No lobbies created yet.</p>';
+}
 
-      return;
+target.innerHTML =
+lobbies
+.map(
+lobby => `
 
-    }
+<div class="card">
 
+<span class="badge ${
+lobby.status === "open"
+? "open"
+: "closed"
+}">
 
-    target.innerHTML =
-      lobbies
-        .map(
-          lobby => `
+${lobby.status.toUpperCase()}
 
-            <div class="card">
+</span>
 
-              <span class="badge ${
-                lobby.status === "open"
-                  ? "open"
-                  : "closed"
-              }">
+<h3>
+${escapeHTML(lobby.name)}
+</h3>
 
-                ${lobby.status.toUpperCase()}
+<p>
+Time:
+${escapeHTML(lobby.time)}
+</p>
 
-              </span>
+<p>
+Fee:
+${escapeHTML(lobby.fee)}
+</p>
 
+<p>
+Teams:
+${lobby.confirmed}/${lobby.max_teams}
+</p>
 
-              <h3>
-                ${escapeHTML(lobby.name)}
-              </h3>
+<br>
 
+<div
+style="
+display:flex;
+gap:8px;
+flex-wrap:wrap
+">
 
-              <p>
-                Time:
-                ${escapeHTML(lobby.time)}
-              </p>
+<button
+class="btn small ${
+lobby.status === "open"
+? "danger"
+: "success"
+}"
+onclick="
+toggleLobby(
+${lobby.id},
+'${lobby.status}'
+)
+">
 
+${
+lobby.status === "open"
+? "Close Lobby"
+: "Open Lobby"
+}
 
-              <p>
-                Fee:
-                ${escapeHTML(lobby.fee)}
-              </p>
+</button>
 
+<button
+class="btn small danger-outline"
+onclick="
+deleteLobby(
+${lobby.id},
+'${escapeAttribute(lobby.name)}'
+)
+">
 
-              <p>
-                Teams:
-                ${lobby.confirmed}/${lobby.max_teams}
-              </p>
+Delete Scrim
 
+</button>
 
-              <br>
+</div>
 
+</div>
 
-              <div
-                style="
-                  display:flex;
-                  gap:8px;
-                  flex-wrap:wrap
-                ">
+`
+)
+.join("");
 
-                <button
-                  class="btn small ${
-                    lobby.status === "open"
-                      ? "danger"
-                      : "success"
-                  }"
-                  onclick="
-                    toggleLobby(
-                      ${lobby.id},
-                      '${lobby.status}'
-                    )
-                  ">
+}catch(e){
 
-                  ${
-                    lobby.status === "open"
-                      ? "Close Lobby"
-                      : "Open Lobby"
-                  }
+target.innerHTML =
+`
+<p class="muted">
+${escapeHTML(e.message)}
+</p>
+`;
 
-                </button>
-
-
-                <button
-                  class="btn small danger-outline"
-                  onclick="
-                    deleteLobby(
-                      ${lobby.id},
-                      '${escapeAttribute(lobby.name)}'
-                    )
-                  ">
-
-                  Delete Scrim
-
-                </button>
-
-              </div>
-
-            </div>
-
-          `
-        )
-        .join("");
-
-
-  }catch(e){
-
-    target.innerHTML =
-      `
-        <p class="muted">
-          ${escapeHTML(e.message)}
-        </p>
-      `;
-
-  }
+}
 
 }
 
@@ -2391,51 +2000,48 @@ async function loadAdminLobbies(){
 ===================================================== */
 
 async function toggleLobby(
-  id,
-  currentStatus
+id,
+currentStatus
 ){
 
-  try{
+try{
 
-    await api(
-      `/api/lobbies/${id}`,
-      {
-        method:"PATCH",
+await api(
+`/api/lobbies/${id}`,
+{
+method:"PATCH",
 
-        body:
-          JSON.stringify({
+body:
+JSON.stringify({
 
-            status:
-              currentStatus === "open"
-                ? "closed"
-                : "open"
+status:
+currentStatus === "open"
+? "closed"
+: "open"
 
-          })
+})
 
-      }
-    );
+}
+);
 
+loadAdminLobbies();
+loadStats();
 
-    loadAdminLobbies();
+loadPublicLobbies(
+"homeLobbies"
+);
 
-    loadStats();
+loadPublicLobbies(
+"scrimList"
+);
 
-    loadPublicLobbies(
-      "homeLobbies"
-    );
+}catch(e){
 
-    loadPublicLobbies(
-      "scrimList"
-    );
+alert(
+e.message
+);
 
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
+}
 
 }
 
@@ -2445,283 +2051,423 @@ async function toggleLobby(
 ===================================================== */
 
 async function deleteLobby(
-  id,
-  name
+id,
+name
 ){
 
-  const ok =
-    confirm(
-      `Delete "${name}" permanently?\n\nThis will delete the scrim and its linked registrations and match scores. This cannot be undone.`
-    );
+const ok =
+confirm(
+`Delete "${name}" permanently?\n\nThis will delete the scrim and its linked registrations and match scores. This cannot be undone.`
+);
 
+if(!ok)
+return;
 
-  if(!ok)
-    return;
+try{
 
+await api(
+`/api/lobbies/${id}`,
+{
+method:"DELETE"
+}
+);
 
-  try{
+alert(
+"Scrim deleted successfully."
+);
 
-    await api(
-      `/api/lobbies/${id}`,
-      {
-        method:"DELETE"
-      }
-    );
+await loadAdminLobbies();
+await loadRegistrations();
+await loadStats();
+await loadScoreLobbyOptions();
 
+await loadPublicLobbies(
+"homeLobbies"
+);
 
-    alert(
-      "Scrim deleted successfully."
-    );
+await loadPublicLobbies(
+"scrimList"
+);
 
+await loadLeaderboardLobbyOptions();
 
-    await loadAdminLobbies();
+}catch(e){
 
-    await loadRegistrations();
+alert(
+e.message
+);
 
-    await loadStats();
-
-    await loadScoreLobbyOptions();
-
-    await loadPublicLobbies(
-      "homeLobbies"
-    );
-
-    await loadPublicLobbies(
-      "scrimList"
-    );
-
-    await loadLeaderboardLobbyOptions();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
+}
 
 }
 
 
 /* =====================================================
    PENDING REGISTRATIONS
+   OLD LOBBY ASSIGNMENT RESTORED
 ===================================================== */
 
 async function loadRegistrations(){
 
-  const tbody =
-    document.getElementById(
-      "registrationTable"
-    );
+const tbody =
+document.getElementById(
+"registrationTable"
+);
+
+try{
+
+const [rows,lobbies] =
+await Promise.all([
+
+api(
+"/api/registrations"
+),
+
+api(
+"/api/lobbies"
+)
+
+]);
 
 
-  try{
-
-    const rows =
-      await api(
-        "/api/registrations"
-      );
-
-
-    /*
-      IMPORTANT:
-
-      The registration panel only shows
-      PENDING registrations.
-
-      Confirmed and rejected registrations
-      remain stored in the backend but are
-      removed from this admin queue.
-    */
-
-    const pendingRows =
-      rows.filter(
-        row =>
-          row.status ===
-          "pending"
-      );
+const pendingRows =
+rows.filter(
+row =>
+row.status === "pending"
+);
 
 
-    if(!pendingRows.length){
+if(!pendingRows.length){
 
-      tbody.innerHTML = `
+tbody.innerHTML = `
 
-        <tr>
+<tr>
 
-          <td
-            colspan="7"
-            class="registration-empty">
+<td
+colspan="8"
+class="registration-empty">
 
-            No pending registrations.
+No pending registrations.
 
-          </td>
+</td>
 
-        </tr>
+</tr>
 
-      `;
+`;
 
-      return;
+return;
 
-    }
-
-
-    tbody.innerHTML =
-      pendingRows
-        .map(
-          row => `
-
-            <tr>
-
-              <td>
-                ${row.id}
-              </td>
+}
 
 
-              <td>
-                ${escapeHTML(row.ref)}
-              </td>
+tbody.innerHTML =
+pendingRows
+.map(
+row => `
+
+<tr>
+
+<td>
+${row.id}
+</td>
+
+<td>
+${escapeHTML(row.ref)}
+</td>
+
+<td>
+
+<strong>
+${escapeHTML(row.team)}
+</strong>
+
+</td>
+
+<td>
+${escapeHTML(row.captain)}
+</td>
+
+<td>
+${escapeHTML(row.fee)}
+</td>
+
+<td>
+${escapeHTML(row.time)}
+</td>
 
 
-              <td>
-                <strong>
-                  ${escapeHTML(row.team)}
-                </strong>
-              </td>
+<!-- OLD LOBBY ASSIGNMENT -->
+
+<td>
+
+<select
+id="registrationLobby-${row.id}"
+class="lobby-select">
+
+<option value="">
+Select Lobby
+</option>
+
+${
+lobbies
+.map(
+lobby => `
+
+<option
+value="${lobby.id}">
+
+${escapeHTML(lobby.name)}
+(${lobby.confirmed}/${lobby.max_teams})
+
+</option>
+
+`
+)
+.join("")
+}
+
+</select>
+
+</td>
 
 
-              <td>
-                ${escapeHTML(row.captain)}
-              </td>
+<!-- ACTIONS -->
 
+<td>
 
-              <td>
-                ${escapeHTML(row.fee)}
-              </td>
+<div class="registration-actions">
 
+<button
+class="btn small success"
+onclick="
+confirmRegistration(
+${row.id}
+)
+">
 
-              <td>
-                ${escapeHTML(row.time)}
-              </td>
+Confirm
 
+</button>
 
-              <td>
+<button
+class="btn small danger"
+onclick="
+updateRegistration(
+${row.id},
+'rejected'
+)
+">
 
-                <div
-                  style="
-                    display:flex;
-                    gap:6px;
-                    flex-wrap:wrap
-                  ">
+Reject
 
-                  <button
-                    class="btn small success"
-                    onclick="
-                      updateRegistration(
-                        ${row.id},
-                        'confirmed'
-                      )
-                    ">
+</button>
 
-                    Confirm
+</div>
 
-                  </button>
+</td>
 
+</tr>
 
-                  <button
-                    class="btn small danger"
-                    onclick="
-                      updateRegistration(
-                        ${row.id},
-                        'rejected'
-                      )
-                    ">
+`
+)
+.join("");
 
-                    Reject
+}catch(e){
 
-                  </button>
+tbody.innerHTML = `
 
-                </div>
+<tr>
 
-              </td>
+<td
+colspan="8"
+class="registration-empty">
 
-            </tr>
+${escapeHTML(e.message)}
 
-          `
-        )
-        .join("");
+</td>
 
+</tr>
 
-  }catch(e){
+`;
 
-    tbody.innerHTML = `
-
-      <tr>
-
-        <td
-          colspan="7"
-          class="registration-empty">
-
-          ${escapeHTML(e.message)}
-
-        </td>
-
-      </tr>
-
-    `;
-
-  }
+}
 
 }
 
 
 /* =====================================================
-   CONFIRM / REJECT REGISTRATION
+   CONFIRM + ASSIGN LOBBY
+===================================================== */
+
+async function confirmRegistration(
+id
+){
+
+const lobbySelect =
+document.getElementById(
+`registrationLobby-${id}`
+);
+
+if(!lobbySelect){
+
+alert(
+"Lobby selector not found."
+);
+
+return;
+
+}
+
+
+const lobbyId =
+lobbySelect.value;
+
+
+if(!lobbyId){
+
+alert(
+"Please select a lobby before confirming the registration."
+);
+
+return;
+
+}
+
+
+const selectedOption =
+lobbySelect.options[
+lobbySelect.selectedIndex
+];
+
+const lobbyName =
+selectedOption.textContent.trim();
+
+
+const ok =
+confirm(
+`Assign this registration to:\n\n${lobbyName}\n\nThen confirm the registration?`
+);
+
+if(!ok)
+return;
+
+
+try{
+
+/*
+  IMPORTANT:
+
+  Lobby assignment is kept as the
+  OLD separate endpoint.
+*/
+
+await api(
+`/api/registrations/${id}/lobby`,
+{
+method:"PATCH",
+
+body:
+JSON.stringify({
+
+lobbyId:
+Number(lobbyId)
+
+})
+
+}
+);
+
+
+/*
+  After the lobby is assigned,
+  confirm the registration.
+*/
+
+await api(
+`/api/registrations/${id}`,
+{
+method:"PATCH",
+
+body:
+JSON.stringify({
+
+status:
+"confirmed"
+
+})
+
+}
+);
+
+
+alert(
+`Registration confirmed and assigned to ${lobbyName}.`
+);
+
+
+await loadRegistrations();
+
+await loadStats();
+
+await loadAdminLobbies();
+
+await loadScoreLobbyOptions();
+
+await loadPublicLobbies(
+"homeLobbies"
+);
+
+await loadPublicLobbies(
+"scrimList"
+);
+
+
+}catch(e){
+
+alert(
+e.message
+);
+
+}
+
+}
+
+
+/* =====================================================
+   REJECT REGISTRATION
 ===================================================== */
 
 async function updateRegistration(
-  id,
-  status
+id,
+status
 ){
 
-  try{
+try{
 
-    await api(
-      `/api/registrations/${id}`,
-      {
-        method:"PATCH",
+await api(
+`/api/registrations/${id}`,
+{
+method:"PATCH",
 
-        body:
-          JSON.stringify({
-            status
-          })
+body:
+JSON.stringify({
+status
+})
 
-      }
-    );
+}
+);
 
+await loadRegistrations();
 
-    /*
-      Immediately reload the pending
-      registration queue.
+await loadStats();
 
-      Because loadRegistrations()
-      only displays pending rows,
-      the confirmed/rejected row
-      disappears automatically.
-    */
+}catch(e){
 
-    await loadRegistrations();
+alert(
+e.message
+);
 
-    await loadStats();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
+}
 
 }
 
@@ -2732,43 +2478,42 @@ async function updateRegistration(
 
 async function loadScoreLobbyOptions(){
 
-  const select =
-    document.getElementById(
-      "scoreLobby"
-    );
+const select =
+document.getElementById(
+"scoreLobby"
+);
 
+try{
 
-  try{
+const l =
+await api(
+"/api/lobbies"
+);
 
-    const l =
-      await api(
-        "/api/lobbies"
-      );
+select.innerHTML =
+'<option value="">Select lobby</option>' +
 
+l
+.map(
+x =>
+`
 
-    select.innerHTML =
-      '<option value="">Select lobby</option>' +
+<option
+value="${escapeAttribute(x.name)}">
 
-      l
-        .map(
-          x =>
-            `
-              <option
-                value="${escapeAttribute(x.name)}">
+${escapeHTML(x.name)}
 
-                ${escapeHTML(x.name)}
+</option>
 
-              </option>
-            `
-        )
-        .join("");
+`
+)
+.join("");
 
+}catch(e){
 
-  }catch(e){
+console.error(e);
 
-    console.error(e);
-
-  }
+}
 
 }
 
@@ -2778,33 +2523,30 @@ async function loadScoreLobbyOptions(){
 ===================================================== */
 
 function selectScoreMatch(
-  match,
-  button
+match,
+button
 ){
 
-  currentScoreMatch =
-    match;
+currentScoreMatch =
+match;
 
+document
+.querySelectorAll(
+".match-tabs button"
+)
+.forEach(
+b =>
+b.classList.remove(
+"active"
+)
+);
 
-  document
-    .querySelectorAll(
-      ".match-tabs button"
-    )
-    .forEach(
-      b =>
-        b.classList.remove(
-          "active"
-        )
-    );
+if(button)
+button.classList.add(
+"active"
+);
 
-
-  if(button)
-    button.classList.add(
-      "active"
-    );
-
-
-  renderScoreEntry();
+renderScoreEntry();
 
 }
 
@@ -2815,208 +2557,206 @@ function selectScoreMatch(
 
 async function renderScoreEntry(){
 
-  const body =
-    document.getElementById(
-      "scoreEntryBody"
-    );
+const body =
+document.getElementById(
+"scoreEntryBody"
+);
 
+const lobby =
+document.getElementById(
+"scoreLobby"
+).value;
 
-  const lobby =
-    document.getElementById(
-      "scoreLobby"
-    ).value;
 
+if(!lobby){
 
-  if(!lobby){
+body.innerHTML =
+'<p class="muted">Select a lobby first.</p>';
 
-    body.innerHTML =
-      '<p class="muted">Select a lobby first.</p>';
+return;
 
-    return;
+}
 
-  }
 
+body.innerHTML =
+'<p class="muted">Loading teams...</p>';
 
-  body.innerHTML =
-    '<p class="muted">Loading teams...</p>';
 
+try{
 
-  try{
+const teams =
+await api(
+`/api/leaderboard/teams?lobby=${encodeURIComponent(lobby)}`
+);
 
-    const teams =
-      await api(
-        `/api/leaderboard/teams?lobby=${encodeURIComponent(lobby)}`
-      );
 
+if(teams.length !== 12){
 
-    if(teams.length !== 12){
+body.innerHTML =
+`
 
-      body.innerHTML =
-        `
-          <div class="message show error">
+<div class="message show error">
 
-            This lobby currently has
-            ${teams.length}/12 confirmed teams.
+This lobby currently has
+${teams.length}/12 confirmed teams.
 
-            Exactly 12 teams are required
-            to enter match results.
+Exactly 12 teams are required
+to enter match results.
 
-          </div>
-        `;
+</div>
 
-      return;
+`;
 
-    }
+return;
 
+}
 
-    let existing = [];
 
+let existing = [];
 
-    try{
 
-      existing =
-        await api(
-          `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${currentScoreMatch}`
-        );
+try{
 
-    }catch(e){}
+existing =
+await api(
+`/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${currentScoreMatch}`
+);
 
+}catch(e){}
 
-    const map =
-      new Map(
-        existing.map(
-          r =>
-            [
-              r.team,
-              r
-            ]
-        )
-      );
 
+const map =
+new Map(
+existing.map(
+r =>
+[
+r.team,
+r
+]
+)
+);
 
-    body.innerHTML = `
 
-      <div class="table-wrap">
+body.innerHTML = `
 
-        <table class="score-table">
+<div class="table-wrap">
 
-          <thead>
+<table class="score-table">
 
-            <tr>
+<thead>
 
-              <th>
-                Team
-              </th>
+<tr>
 
-              <th>
-                Position
-              </th>
+<th>
+Team
+</th>
 
-              <th>
-                Kills
-              </th>
+<th>
+Position
+</th>
 
-            </tr>
+<th>
+Kills
+</th>
 
-          </thead>
+</tr>
 
+</thead>
 
-          <tbody>
+<tbody>
 
-            ${
+${
 
-              teams
-                .map(
-                  (t,i) => {
+teams
+.map(
+(t,i) => {
 
-                    const old =
-                      map.get(
-                        t.team
-                      );
+const old =
+map.get(
+t.team
+);
 
+return `
 
-                    return `
+<tr>
 
-                      <tr>
+<td>
+${escapeHTML(t.team)}
+</td>
 
-                        <td>
-                          ${escapeHTML(t.team)}
-                        </td>
+<td>
 
+<input
+type="number"
+min="1"
+max="12"
+class="score-position"
+data-team="${escapeAttribute(t.team)}"
+value="${
+old
+? old.position
+: i + 1
+}">
 
-                        <td>
+</td>
 
-                          <input
-                            type="number"
-                            min="1"
-                            max="12"
-                            class="score-position"
-                            data-team="${escapeAttribute(t.team)}"
-                            value="${
-                              old
-                                ? old.position
-                                : i + 1
-                            }">
+<td>
 
-                        </td>
+<input
+type="number"
+min="0"
+class="score-kills"
+data-team="${escapeAttribute(t.team)}"
+value="${
+old
+? old.kills
+: 0
+}">
 
+</td>
 
-                        <td>
+</tr>
 
-                          <input
-                            type="number"
-                            min="0"
-                            class="score-kills"
-                            data-team="${escapeAttribute(t.team)}"
-                            value="${
-                              old
-                                ? old.kills
-                                : 0
-                            }">
+`;
 
-                        </td>
+}
+)
+.join("")
 
-                      </tr>
+}
 
-                    `;
+</tbody>
 
-                  }
-                )
-                .join("")
+</table>
 
-            }
+</div>
 
-          </tbody>
+<br>
 
-        </table>
+<button
+class="btn success"
+onclick="saveCurrentMatch()">
 
-      </div>
+Save Match ${currentScoreMatch}
 
+</button>
 
-      <br>
+`;
 
+}catch(e){
 
-      <button
-        class="btn success"
-        onclick="saveCurrentMatch()">
+body.innerHTML =
+`
 
-        Save Match ${currentScoreMatch}
+<div class="message show error">
 
-      </button>
+${escapeHTML(e.message)}
 
-    `;
+</div>
 
+`;
 
-  }catch(e){
-
-    body.innerHTML =
-      `
-        <div class="message show error">
-          ${escapeHTML(e.message)}
-        </div>
-      `;
-
-  }
+}
 
 }
 
@@ -3026,13 +2766,11 @@ async function renderScoreEntry(){
 ===================================================== */
 
 document
-  .getElementById(
-    "scoreLobby"
-  )
-  .addEventListener(
-    "change",
-    renderScoreEntry
-  );
+.getElementById("scoreLobby")
+.addEventListener(
+"change",
+renderScoreEntry
+);
 
 
 /* =====================================================
@@ -3041,148 +2779,142 @@ document
 
 async function saveCurrentMatch(){
 
-  const lobby =
-    document.getElementById(
-      "scoreLobby"
-    ).value;
+const lobby =
+document.getElementById(
+"scoreLobby"
+).value;
 
 
-  if(!lobby){
+if(!lobby){
 
-    alert(
-      "Please select a lobby."
-    );
+alert(
+"Please select a lobby."
+);
 
-    return;
+return;
 
-  }
-
-
-  const entries = [];
+}
 
 
-  document
-    .querySelectorAll(
-      ".score-position"
-    )
-    .forEach(
-      input => {
-
-        const team =
-          input.dataset.team;
+const entries = [];
 
 
-        const k =
-          document.querySelector(
-            `.score-kills[data-team="${CSS.escape(team)}"]`
-          );
+document
+.querySelectorAll(
+".score-position"
+)
+.forEach(
+input => {
+
+const team =
+input.dataset.team;
+
+const k =
+document.querySelector(
+`.score-kills[data-team="${CSS.escape(team)}"]`
+);
+
+entries.push({
+
+team,
+
+position:
+Number(
+input.value
+),
+
+kills:
+Number(
+k.value
+) || 0
+
+});
+
+}
+);
 
 
-        entries.push({
+try{
 
-          team,
+await api(
+"/api/leaderboard/match",
+{
+method:"POST",
 
-          position:
-            Number(
-              input.value
-            ),
+body:
+JSON.stringify({
 
-          kills:
-            Number(
-              k.value
-            ) || 0
+lobby,
 
-        });
+matchNo:
+currentScoreMatch,
 
-      }
-    );
+entries
 
+})
 
-  try{
+}
+);
 
-    await api(
-      "/api/leaderboard/match",
-      {
-        method:"POST",
+alert(
+`Match ${currentScoreMatch} saved successfully.`
+);
 
-        body:
-          JSON.stringify({
+renderScoreEntry();
 
-            lobby,
+}catch(e){
 
-            matchNo:
-              currentScoreMatch,
+alert(
+e.message
+);
 
-            entries
-
-          })
-
-      }
-    );
-
-
-    alert(
-      `Match ${currentScoreMatch} saved successfully.`
-    );
-
-
-    renderScoreEntry();
-
-
-  }catch(e){
-
-    alert(
-      e.message
-    );
-
-  }
+}
 
 }
 
 
 /* =====================================================
-   PUBLIC LEADERBOARD LOBBY OPTIONS
+   PUBLIC LEADERBOARD OPTIONS
 ===================================================== */
 
 async function loadLeaderboardLobbyOptions(){
 
-  const select =
-    document.getElementById(
-      "publicLobbySelect"
-    );
+const select =
+document.getElementById(
+"publicLobbySelect"
+);
 
+try{
 
-  try{
+const l =
+await api(
+"/api/public/lobbies"
+);
 
-    const l =
-      await api(
-        "/api/public/lobbies"
-      );
+select.innerHTML =
+'<option value="">Select a lobby</option>' +
 
+l
+.map(
+x =>
+`
 
-    select.innerHTML =
-      '<option value="">Select a lobby</option>' +
+<option
+value="${escapeAttribute(x.name)}">
 
-      l
-        .map(
-          x =>
-            `
-              <option
-                value="${escapeAttribute(x.name)}">
+${escapeHTML(x.name)}
 
-                ${escapeHTML(x.name)}
+</option>
 
-              </option>
-            `
-        )
-        .join("");
+`
+)
+.join("");
 
+}catch(e){
 
-  }catch(e){
+console.error(e);
 
-    console.error(e);
-
-  }
+}
 
 }
 
@@ -3193,80 +2925,85 @@ async function loadLeaderboardLobbyOptions(){
 
 async function loadPublicLeaderboard(){
 
-  const lobby =
-    document.getElementById(
-      "publicLobbySelect"
-    ).value;
+const lobby =
+document.getElementById(
+"publicLobbySelect"
+).value;
+
+const match =
+document.getElementById(
+"publicMatchSelect"
+).value;
+
+const target =
+document.getElementById(
+"publicLeaderboard"
+);
 
 
-  const match =
-    document.getElementById(
-      "publicMatchSelect"
-    ).value;
+if(!lobby){
+
+target.innerHTML =
+`
+
+<div class="message show error">
+
+Please select a lobby.
+
+</div>
+
+`;
+
+return;
+
+}
 
 
-  const target =
-    document.getElementById(
-      "publicLeaderboard"
-    );
+try{
+
+const rows =
+await api(
+
+match === "overall"
+
+? `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
+
+: `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
+
+);
 
 
-  if(!lobby){
+if(match === "overall"){
 
-    target.innerHTML =
-      `
-        <div class="message show error">
-          Please select a lobby.
-        </div>
-      `;
+renderOverallLeaderboard(
+target,
+rows
+);
 
-    return;
+}else{
 
-  }
+renderMatchLeaderboard(
+target,
+rows,
+match
+);
 
+}
 
-  try{
+}catch(e){
 
-    const rows =
-      await api(
-        match === "overall"
+target.innerHTML =
+`
 
-          ? `/api/public-leaderboard?lobby=${encodeURIComponent(lobby)}`
+<div class="message show error">
 
-          : `/api/leaderboard/match?lobby=${encodeURIComponent(lobby)}&match=${match}`
-      );
+${escapeHTML(e.message)}
 
+</div>
 
-    if(match === "overall"){
+`;
 
-      renderOverallLeaderboard(
-        target,
-        rows
-      );
-
-    }else{
-
-      renderMatchLeaderboard(
-        target,
-        rows,
-        match
-      );
-
-    }
-
-
-  }catch(e){
-
-    target.innerHTML =
-      `
-        <div class="message show error">
-
-          ${escapeHTML(e.message)}
-
-        </div>
-      `;
-
-  }
+}
 
 }
 
@@ -3276,139 +3013,121 @@ async function loadPublicLeaderboard(){
 ===================================================== */
 
 function renderOverallLeaderboard(
-  target,
-  rows
+target,
+rows
 ){
 
-  if(!rows.length){
+if(!rows.length){
 
-    target.innerHTML =
-      `
-        <div class="card">
+target.innerHTML =
+`
 
-          <p class="muted">
-            No match results have been entered yet.
-          </p>
+<div class="card">
 
-        </div>
-      `;
+<p class="muted">
 
-    return;
+No match results have been entered yet.
 
-  }
+</p>
 
+</div>
 
-  target.innerHTML = `
+`;
 
-    <div class="card">
+return;
 
-      <h3>
-        Overall Leaderboard
-      </h3>
-
-      <br>
+}
 
 
-      <div class="table-wrap">
+target.innerHTML = `
 
-        <table>
+<div class="card">
 
-          <thead>
+<h3>
+Overall Leaderboard
+</h3>
 
-            <tr>
+<br>
 
-              <th>
-                Rank
-              </th>
+<div class="table-wrap">
 
-              <th>
-                Team
-              </th>
+<table>
 
-              <th>
-                Matches
-              </th>
+<thead>
 
-              <th>
-                Booyahs
-              </th>
+<tr>
 
-              <th>
-                Placement
-              </th>
+<th>Rank</th>
+<th>Team</th>
+<th>Matches</th>
+<th>Booyahs</th>
+<th>Placement</th>
+<th>Kill Points</th>
+<th>Total</th>
 
-              <th>
-                Kill Points
-              </th>
+</tr>
 
-              <th>
-                Total
-              </th>
+</thead>
 
-            </tr>
+<tbody>
 
-          </thead>
+${
 
+rows
+.map(
+r => `
 
-          <tbody>
+<tr>
 
-            ${
+<td class="rank">
+#${r.position}
+</td>
 
-              rows
-                .map(
-                  r => `
+<td>
+<strong>
+${escapeHTML(r.team)}
+</strong>
+</td>
 
-                    <tr>
+<td>
+${r.matchesPlayed}
+</td>
 
-                      <td class="rank">
-                        #${r.position}
-                      </td>
+<td>
+${r.booyahs}
+</td>
 
-                      <td>
-                        <strong>
-                          ${escapeHTML(r.team)}
-                        </strong>
-                      </td>
+<td>
+${r.placementPoints}
+</td>
 
-                      <td>
-                        ${r.matchesPlayed}
-                      </td>
+<td>
+${r.killPoints}
+</td>
 
-                      <td>
-                        ${r.booyahs}
-                      </td>
+<td>
+<strong>
+${r.totalPoints}
+</strong>
+</td>
 
-                      <td>
-                        ${r.placementPoints}
-                      </td>
+</tr>
 
-                      <td>
-                        ${r.killPoints}
-                      </td>
+`
+)
+.join("")
 
-                      <td>
-                        <strong>
-                          ${r.totalPoints}
-                        </strong>
-                      </td>
+}
 
-                    </tr>
+</tbody>
 
-                  `
-                )
-                .join("")
+</table>
 
-            }
+</div>
 
-          </tbody>
+</div>
 
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
+`;
 
 }
 
@@ -3418,135 +3137,118 @@ function renderOverallLeaderboard(
 ===================================================== */
 
 function renderMatchLeaderboard(
-  target,
-  rows,
-  match
+target,
+rows,
+match
 ){
 
-  if(!rows.length){
+if(!rows.length){
 
-    target.innerHTML =
-      `
-        <div class="card">
+target.innerHTML =
+`
 
-          <p class="muted">
+<div class="card">
 
-            No results have been entered
-            for Match ${match}.
+<p class="muted">
 
-          </p>
+No results have been entered
+for Match ${match}.
 
-        </div>
-      `;
+</p>
 
-    return;
+</div>
 
-  }
+`;
 
+return;
 
-  target.innerHTML = `
-
-    <div class="card">
-
-      <h3>
-        Match ${match} Results
-      </h3>
-
-      <br>
+}
 
 
-      <div class="table-wrap">
+target.innerHTML = `
 
-        <table>
+<div class="card">
 
-          <thead>
+<h3>
+Match ${match} Results
+</h3>
 
-            <tr>
+<br>
 
-              <th>
-                Position
-              </th>
+<div class="table-wrap">
 
-              <th>
-                Team
-              </th>
+<table>
 
-              <th>
-                Kills
-              </th>
+<thead>
 
-              <th>
-                Placement Points
-              </th>
+<tr>
 
-              <th>
-                Kill Points
-              </th>
+<th>Position</th>
+<th>Team</th>
+<th>Kills</th>
+<th>Placement Points</th>
+<th>Kill Points</th>
+<th>Total</th>
 
-              <th>
-                Total
-              </th>
+</tr>
 
-            </tr>
+</thead>
 
-          </thead>
+<tbody>
 
+${
 
-          <tbody>
+rows
+.map(
+r => `
 
-            ${
+<tr>
 
-              rows
-                .map(
-                  r => `
+<td class="rank">
+${r.position}
+</td>
 
-                    <tr>
+<td>
+<strong>
+${escapeHTML(r.team)}
+</strong>
+</td>
 
-                      <td class="rank">
-                        ${r.position}
-                      </td>
+<td>
+${r.kills}
+</td>
 
-                      <td>
-                        <strong>
-                          ${escapeHTML(r.team)}
-                        </strong>
-                      </td>
+<td>
+${r.placement_points}
+</td>
 
-                      <td>
-                        ${r.kills}
-                      </td>
+<td>
+${r.kill_points}
+</td>
 
-                      <td>
-                        ${r.placement_points}
-                      </td>
+<td>
+<strong>
+${r.total_points}
+</strong>
+</td>
 
-                      <td>
-                        ${r.kill_points}
-                      </td>
+</tr>
 
-                      <td>
-                        <strong>
-                          ${r.total_points}
-                        </strong>
-                      </td>
+`
+)
+.join("")
 
-                    </tr>
+}
 
-                  `
-                )
-                .join("")
+</tbody>
 
-            }
+</table>
 
-          </tbody>
+</div>
 
-        </table>
+</div>
 
-      </div>
-
-    </div>
-
-  `;
+`;
 
 }
 
@@ -3557,36 +3259,36 @@ function renderMatchLeaderboard(
 
 function escapeHTML(v){
 
-  return String(
-    v ?? ""
-  )
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
+return String(
+v ?? ""
+)
+.replaceAll(
+"&",
+"&amp;"
+)
+.replaceAll(
+"<",
+"&lt;"
+)
+.replaceAll(
+">",
+"&gt;"
+)
+.replaceAll(
+'"',
+"&quot;"
+)
+.replaceAll(
+"'",
+"&#039;"
+);
 
 }
 
 
 function escapeAttribute(v){
 
-  return escapeHTML(v);
+return escapeHTML(v);
 
 }
 
@@ -3596,11 +3298,11 @@ function escapeAttribute(v){
 ===================================================== */
 
 document.addEventListener(
-  "DOMContentLoaded",
-  () =>
-    loadPublicLobbies(
-      "homeLobbies"
-    )
+"DOMContentLoaded",
+() =>
+loadPublicLobbies(
+"homeLobbies"
+)
 );
 
 </script>
