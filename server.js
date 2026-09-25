@@ -44,7 +44,6 @@ const sessions = new Map();
 
 
 function emptyDB() {
-
   return {
     nextLobbyId: 1,
     nextRegistrationId: 1,
@@ -55,7 +54,6 @@ function emptyDB() {
     registrations: [],
     scores: []
   };
-
 }
 
 
@@ -241,8 +239,8 @@ function lobbyByName(name) {
 
   return db.lobbies.find(
     lobby =>
-      String(lobby.name).trim() ===
-      String(name).trim()
+      String(lobby.name).trim().toLowerCase() ===
+      String(name || "").trim().toLowerCase()
   );
 
 }
@@ -303,6 +301,23 @@ function publicLobby(lobby) {
    SCORE CALCULATION
 ===================================================== */
 
+/*
+   Free Fire style placement points.
+
+   1st  = 12
+   2nd  = 9
+   3rd  = 8
+   4th  = 7
+   5th  = 6
+   6th  = 5
+   7th  = 4
+   8th  = 3
+   9th  = 2
+   10th = 1
+   11th = 0
+   12th = 0
+*/
+
 function placementPoints(position) {
 
   const table = {
@@ -322,23 +337,58 @@ function placementPoints(position) {
 
   };
 
-  return (
-    table[Number(position)] || 0
-  );
+  return table[
+    Number(position)
+  ] ?? 0;
 
 }
 
 
 function killPoints(kills) {
 
-  return Number(kills);
+  return Math.max(
+    0,
+    Number(kills) || 0
+  );
 
 }
 
 
-function isBooyah(position) {
+/*
+   Booyah is stored separately.
 
-  return Number(position) === 1
+   Booyah itself does NOT add another point.
+
+   It is displayed as a separate column.
+*/
+
+
+function cleanBooyah(value, position) {
+
+  /*
+     If admin sends booyah explicitly,
+     use that value.
+
+     If the field is missing,
+     automatically detect position 1.
+  */
+
+  if (
+    value === undefined ||
+    value === null ||
+    value === ""
+  ) {
+
+    return Number(position) === 1
+      ? 1
+      : 0;
+
+  }
+
+  const number =
+    Number(value);
+
+  return number > 0
     ? 1
     : 0;
 
@@ -371,13 +421,11 @@ app.get(
 
     res.json(
       admin
-
         ? {
             loggedIn: true,
             name: admin.name,
             email: admin.email
           }
-
         : {
             loggedIn: false
           }
@@ -597,7 +645,9 @@ app.get(
 );
 
 
-/* CREATE LOBBY */
+/* =====================================================
+   CREATE LOBBY
+===================================================== */
 
 app.post(
   "/api/lobbies",
@@ -677,7 +727,9 @@ app.post(
 );
 
 
-/* OPEN / CLOSE */
+/* =====================================================
+   OPEN / CLOSE LOBBY
+===================================================== */
 
 app.patch(
   "/api/lobbies/:id",
@@ -881,12 +933,6 @@ app.post(
 
     }
 
-    /*
-      Time and fee are ALWAYS taken from
-      the selected lobby on the server.
-      The browser cannot change them.
-    */
-
     const row = {
 
       id:
@@ -950,7 +996,7 @@ app.post(
 
 
 /* =====================================================
-   STATUS
+   REGISTRATION STATUS
 ===================================================== */
 
 app.get(
@@ -958,7 +1004,9 @@ app.get(
   (req, res) => {
 
     const ref =
-      String(req.params.ref || "").trim();
+      String(
+        req.params.ref || ""
+      ).trim();
 
     const row =
       db.registrations.find(
@@ -1047,7 +1095,7 @@ app.get(
 
 
 /* =====================================================
-   CONFIRM / REJECT + ASSIGN LOBBY
+   CONFIRM / REJECT REGISTRATION
 ===================================================== */
 
 app.patch(
@@ -1096,15 +1144,13 @@ app.patch(
     }
 
 
-    /* -------------------------
-       REJECT
-    ------------------------- */
-
     if (newStatus === "rejected") {
 
-      row.status = "rejected";
+      row.status =
+        "rejected";
 
-      row.lobby_id = null;
+      row.lobby_id =
+        null;
 
       saveDB();
 
@@ -1123,13 +1169,10 @@ app.patch(
     }
 
 
-    /* -------------------------
-       PENDING
-    ------------------------- */
-
     if (newStatus === "pending") {
 
-      row.status = "pending";
+      row.status =
+        "pending";
 
       saveDB();
 
@@ -1144,10 +1187,6 @@ app.patch(
 
     }
 
-
-    /* -------------------------
-       CONFIRM
-    ------------------------- */
 
     const lobbyId =
       Number(
@@ -1181,14 +1220,10 @@ app.patch(
     }
 
 
-    /*
-      Prevent duplicate team names
-      inside the same lobby.
-    */
-
     const duplicateTeam =
       db.registrations.find(
         registration =>
+
           Number(
             registration.lobby_id
           ) === Number(lobby.id) &&
@@ -1220,17 +1255,14 @@ app.patch(
     }
 
 
-    /*
-      Check lobby capacity.
-    */
-
     const alreadyConfirmed =
       confirmedRegistrations(
         lobby.id
       ).filter(
         registration =>
-          Number(registration.id) !==
-          Number(row.id)
+          Number(
+            registration.id
+          ) !== Number(row.id)
       ).length;
 
     if (
@@ -1248,22 +1280,11 @@ app.patch(
     }
 
 
-    /*
-      IMPORTANT:
-      Status + lobby assignment happen
-      together in ONE operation.
-    */
-
     row.status =
       "confirmed";
 
     row.lobby_id =
       lobby.id;
-
-    /*
-      Always synchronize these values
-      with the selected lobby.
-    */
 
     row.time =
       lobby.time;
@@ -1358,6 +1379,7 @@ app.patch(
     const duplicateTeam =
       db.registrations.find(
         registration =>
+
           Number(
             registration.lobby_id
           ) === Number(lobby.id) &&
@@ -1470,7 +1492,7 @@ app.get(
 
 
 /* =====================================================
-   LEADERBOARD TEAMS
+   LEADERBOARD TEAM LIST
 ===================================================== */
 
 app.get(
@@ -1566,9 +1588,14 @@ app.get(
         )
 
         .sort(
-          (a, b) =>
-            Number(a.position) -
-            Number(b.position)
+          (a, b) => {
+
+            return (
+              Number(a.position) -
+              Number(b.position)
+            );
+
+          }
         )
 
         .map(
@@ -1654,7 +1681,7 @@ app.post(
         .status(400)
         .json({
           error:
-            "Invalid match."
+            "Invalid match. Match must be between 1 and 6."
         });
 
     }
@@ -1674,9 +1701,9 @@ app.post(
     }
 
 
-    /* ---------------------------------------------
+    /* =================================================
        CONFIRMED TEAMS
-    --------------------------------------------- */
+    ================================================= */
 
     const confirmed =
       confirmedRegistrations(
@@ -1695,9 +1722,9 @@ app.post(
     }
 
 
-    /* ---------------------------------------------
-       UNIQUE TEAM LIST
-    --------------------------------------------- */
+    /* =================================================
+       CONFIRMED TEAM MAP
+    ================================================= */
 
     const confirmedTeamMap =
       new Map();
@@ -1730,7 +1757,7 @@ app.post(
         .status(400)
         .json({
           error:
-            "This lobby contains duplicate team names. Fix the registrations before entering scores."
+            "This lobby contains duplicate team names. Fix the registrations first."
         });
 
     }
@@ -1742,12 +1769,13 @@ app.post(
     const positions =
       new Set();
 
-    const cleanedEntries = [];
+    const cleanedEntries =
+      [];
 
 
-    /* ---------------------------------------------
-       VALIDATE EVERY ENTRY
-    --------------------------------------------- */
+    /* =================================================
+       VALIDATE ENTRIES
+    ================================================= */
 
     for (
       const entry of entries
@@ -1772,7 +1800,9 @@ app.post(
         );
 
 
-      /* TEAM */
+      /* ---------------------------------------------
+         TEAM
+      --------------------------------------------- */
 
       if (!team) {
 
@@ -1816,7 +1846,9 @@ app.post(
       }
 
 
-      /* POSITION */
+      /* ---------------------------------------------
+         POSITION
+      --------------------------------------------- */
 
       if (
         !Number.isInteger(position) ||
@@ -1828,7 +1860,7 @@ app.post(
           .status(400)
           .json({
             error:
-              "Positions must be unique numbers from 1 to 12."
+              "Positions must be whole numbers from 1 to 12."
           });
 
       }
@@ -1847,7 +1879,9 @@ app.post(
       }
 
 
-      /* KILLS */
+      /* ---------------------------------------------
+         KILLS
+      --------------------------------------------- */
 
       if (
         !Number.isInteger(kills) ||
@@ -1858,15 +1892,26 @@ app.post(
           .status(400)
           .json({
             error:
-              "Kills must be whole numbers greater than or equal to zero."
+              "Kills must be a whole number greater than or equal to 0."
           });
 
       }
 
 
       /* ---------------------------------------------
-         CALCULATE
+         BOOYAH
       --------------------------------------------- */
+
+      const booyah =
+        cleanBooyah(
+          entry.booyah,
+          position
+        );
+
+
+      /*
+         Calculate points automatically.
+      */
 
       const placement =
         placementPoints(
@@ -1876,11 +1921,6 @@ app.post(
       const killsPoints =
         killPoints(
           kills
-        );
-
-      const booyah =
-        isBooyah(
-          position
         );
 
       const total =
@@ -1904,19 +1944,28 @@ app.post(
             teamKey
           ),
 
-        position,
+        position:
 
-        kills,
+          position,
 
-        booyah,
+        kills:
+
+          kills,
+
+        booyah:
+
+          booyah,
 
         placement_points:
+
           placement,
 
         kill_points:
+
           killsPoints,
 
         total_points:
+
           total
 
       });
@@ -1924,9 +1973,9 @@ app.post(
     }
 
 
-    /* ---------------------------------------------
-       ENSURE ALL 12 POSITIONS EXIST
-    --------------------------------------------- */
+    /* =================================================
+       ENSURE POSITIONS 1-12 EXIST
+    ================================================= */
 
     for (
       let position = 1;
@@ -1950,9 +1999,9 @@ app.post(
     }
 
 
-    /* ---------------------------------------------
+    /* =================================================
        ENSURE ALL 12 TEAMS EXIST
-    --------------------------------------------- */
+    ================================================= */
 
     if (
       enteredTeams.size !== 12
@@ -1968,10 +2017,9 @@ app.post(
     }
 
 
-    /* ---------------------------------------------
-       REMOVE OLD VERSION OF THIS MATCH
-       BEFORE SAVING UPDATED VERSION
-    --------------------------------------------- */
+    /* =================================================
+       REMOVE PREVIOUS VERSION OF THIS MATCH
+    ================================================= */
 
     db.scores =
       db.scores.filter(
@@ -1986,9 +2034,9 @@ app.post(
       );
 
 
-    /* ---------------------------------------------
-       SAVE NEW RESULTS
-    --------------------------------------------- */
+    /* =================================================
+       SAVE NEW MATCH RESULTS
+    ================================================= */
 
     cleanedEntries.forEach(
       entry => {
@@ -2037,9 +2085,9 @@ app.post(
     saveDB();
 
 
-    /* ---------------------------------------------
-       RETURN CALCULATED RESULTS
-    --------------------------------------------- */
+    /* =================================================
+       RETURN RESULT
+    ================================================= */
 
     res.json({
 
@@ -2063,6 +2111,25 @@ app.post(
 /* =====================================================
    PUBLIC OVERALL LEADERBOARD
 ===================================================== */
+
+/*
+   THIS IS THE MAIN PLAYER LEADERBOARD.
+
+   It automatically combines every saved match
+   belonging to the selected lobby.
+
+   Example:
+
+   Match 1:
+   Team A = 20 points
+
+   Match 2:
+   Team A = 15 points
+
+   Overall:
+   Team A = 35 points
+*/
+
 
 app.get(
   "/api/public-leaderboard",
@@ -2088,6 +2155,10 @@ app.get(
     const teams =
       new Map();
 
+
+    /*
+       Get every score from this lobby.
+    */
 
     db.scores
 
@@ -2119,19 +2190,19 @@ app.get(
                 team:
                   score.team,
 
-                matchesPlayed:
+                matches_played:
                   0,
 
                 booyahs:
                   0,
 
-                placementPoints:
+                kill_points:
                   0,
 
-                killPoints:
+                placement_points:
                   0,
 
-                totalPoints:
+                total_points:
                   0
 
               }
@@ -2144,73 +2215,146 @@ app.get(
             teams.get(key);
 
 
-          team.matchesPlayed += 1;
+          /*
+             Matches played
+          */
+
+          team.matches_played += 1;
+
+
+          /*
+             Booyahs
+          */
 
           team.booyahs +=
             Number(
               score.booyah
-            ) || (
-              Number(
-                score.position
-              ) === 1
-                ? 1
-                : 0
-            );
-
-          team.placementPoints +=
-            Number(
-              score.placement_points
             ) || 0;
 
-          team.killPoints +=
+
+          /*
+             Kill points
+          */
+
+          team.kill_points +=
             Number(
               score.kill_points
             ) || 0;
 
-          team.totalPoints +=
+
+          /*
+             Placement points
+          */
+
+          team.placement_points +=
             Number(
-              score.total_points
-            ) ||
-            (
-              Number(
-                score.placement_points
-              ) +
-              Number(
-                score.kill_points
-              )
-            );
+              score.placement_points
+            ) || 0;
+
+
+          /*
+             Total points
+
+             Recalculate from components
+             instead of trusting old data.
+          */
+
+          team.total_points =
+            team.kill_points +
+            team.placement_points;
 
         }
       );
 
 
+    /*
+       SORTING:
+
+       1. Total points
+       2. Kill points
+       3. Placement points
+       4. Booyahs
+       5. Team name
+    */
+
     const rows =
       [...teams.values()]
 
-
         .sort(
-          (a, b) =>
+          (a, b) => {
 
-            b.totalPoints -
-              a.totalPoints ||
+            if (
+              b.total_points !==
+              a.total_points
+            ) {
 
-            b.killPoints -
-              a.killPoints ||
+              return (
+                b.total_points -
+                a.total_points
+              );
 
-            b.placementPoints -
-              a.placementPoints ||
+            }
 
-            b.booyahs -
-              a.booyahs ||
+            if (
+              b.kill_points !==
+              a.kill_points
+            ) {
 
-            a.team.localeCompare(
-              b.team
-            )
+              return (
+                b.kill_points -
+                a.kill_points
+              );
+
+            }
+
+            if (
+              b.placement_points !==
+              a.placement_points
+            ) {
+
+              return (
+                b.placement_points -
+                a.placement_points
+              );
+
+            }
+
+            if (
+              b.booyahs !==
+              a.booyahs
+            ) {
+
+              return (
+                b.booyahs -
+                a.booyahs
+              );
+
+            }
+
+            return String(
+              a.team
+            ).localeCompare(
+              String(b.team)
+            );
+
+          }
         );
 
 
+    /*
+       Assign rank after sorting.
+    */
+
     rows.forEach(
       (row, index) => {
+
+        row.rank =
+          index + 1;
+
+        /*
+           Keep "position" too so an older
+           frontend does not break.
+        */
 
         row.position =
           index + 1;
@@ -2219,9 +2363,14 @@ app.get(
     );
 
 
+    /*
+       Send clean leaderboard data.
+    */
+
     res.json({
 
       lobby: {
+
         id:
           lobby.id,
 
@@ -2233,9 +2382,23 @@ app.get(
 
         fee:
           lobby.fee
+
       },
 
-      rows
+      columns: [
+
+        "rank",
+        "team",
+        "booyahs",
+        "kill_points",
+        "placement_points",
+        "total_points"
+
+      ],
+
+      rows:
+
+        rows
 
     });
 
@@ -2244,26 +2407,307 @@ app.get(
 
 
 /* =====================================================
-   FALLBACK
+   PUBLIC MATCH LEADERBOARD
 ===================================================== */
 
 app.get(
-  "*",
+  "/api/public-match-leaderboard",
   (req, res) => {
 
-    res.sendFile(
-      path.join(
-        __dirname,
-        "index.html"
-      )
-    );
+    const lobby =
+      lobbyByName(
+        req.query.lobby
+      );
+
+    if (!lobby) {
+
+      return res
+        .status(404)
+        .json({
+          error:
+            "Lobby not found."
+        });
+
+    }
+
+    const match =
+      Number(
+        req.query.match
+      );
+
+    if (
+      !Number.isInteger(match) ||
+      match < 1 ||
+      match > 6
+    ) {
+
+      return res
+        .status(400)
+        .json({
+          error:
+            "Invalid match."
+        });
+
+    }
+
+
+    const rows =
+      db.scores
+
+        .filter(
+          score =>
+            Number(
+              score.lobby_id
+            ) ===
+              Number(lobby.id) &&
+
+            Number(
+              score.match_no
+            ) ===
+              match
+        )
+
+        .map(
+          score => ({
+
+            team:
+              score.team,
+
+            position:
+              Number(
+                score.position
+              ),
+
+            kills:
+              Number(
+                score.kills
+              ),
+
+            booyah:
+              Number(
+                score.booyah
+              ),
+
+            kill_points:
+              Number(
+                score.kill_points
+              ),
+
+            placement_points:
+              Number(
+                score.placement_points
+              ),
+
+            total_points:
+              Number(
+                score.total_points
+              )
+
+          })
+        )
+
+        .sort(
+          (a, b) =>
+            a.position -
+            b.position
+        );
+
+
+    res.json({
+
+      lobby:
+        lobby.name,
+
+      match:
+        match,
+
+      rows:
+
+        rows
+
+    });
 
   }
 );
 
 
 /* =====================================================
-   START
+   LEADERBOARD UPDATE TIME
+===================================================== */
+
+app.get(
+  "/api/leaderboard/status",
+  (req, res) => {
+
+    const lobby =
+      lobbyByName(
+        req.query.lobby
+      );
+
+    if (!lobby) {
+
+      return res
+        .status(404)
+        .json({
+          error:
+            "Lobby not found."
+        });
+
+    }
+
+
+    const scores =
+      db.scores.filter(
+        score =>
+          Number(
+            score.lobby_id
+          ) ===
+          Number(lobby.id)
+      );
+
+
+    const matches =
+      [
+        ...new Set(
+          scores.map(
+            score =>
+              Number(
+                score.match_no
+              )
+          )
+        )
+      ].sort(
+        (a, b) =>
+          a - b
+      );
+
+
+    res.json({
+
+      lobby:
+        lobby.name,
+
+      matches_played:
+        matches.length,
+
+      matches:
+
+        matches,
+
+      last_updated:
+
+        scores.length
+          ? scores
+              .map(
+                score =>
+                  score.updated_at
+              )
+              .sort()
+              .pop()
+          : null
+
+    });
+
+  }
+);
+
+
+/* =====================================================
+   HEALTH CHECK
+===================================================== */
+
+app.get(
+  "/api/health",
+  (req, res) => {
+
+    res.json({
+
+      ok: true,
+
+      service:
+        "ScrimForge",
+
+      time:
+        new Date().toISOString()
+
+    });
+
+  }
+);
+
+
+/* =====================================================
+   SAFE FRONTEND FALLBACK
+===================================================== */
+
+/*
+   IMPORTANT:
+
+   Do NOT use:
+
+       app.get("*", ...)
+
+   because newer Express versions can reject
+   that wildcard route.
+
+   This fallback only sends index.html for
+   normal browser page requests.
+
+   API routes above remain untouched.
+*/
+
+app.use(
+  (req, res, next) => {
+
+    if (
+      req.method !== "GET"
+    ) {
+
+      return next();
+
+    }
+
+    if (
+      req.path.startsWith("/api/")
+    ) {
+
+      return res
+        .status(404)
+        .json({
+          error:
+            "API endpoint not found."
+        });
+
+    }
+
+    const indexFile =
+      path.join(
+        __dirname,
+        "index.html"
+      );
+
+    if (
+      fs.existsSync(indexFile)
+    ) {
+
+      return res.sendFile(
+        indexFile
+      );
+
+    }
+
+    return res
+      .status(404)
+      .send(
+        "ScrimForge frontend not found."
+      );
+
+  }
+);
+
+
+/* =====================================================
+   START SERVER
 ===================================================== */
 
 app.listen(
