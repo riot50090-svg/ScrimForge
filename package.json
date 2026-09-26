@@ -1,7 +1,9 @@
 {
-  "name": "scrimforge-v2",
-  "version": "2.0.0",
+  "name": "scrimforge-v4",
+  "version": "4.0.0",
   "private": true,
+  "description": "ScrimForge V4 - Free Fire scrim and tournament management platform",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
