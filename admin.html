@@ -1009,6 +1009,84 @@
     );
 
   </script>
+<script>
+async function api(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
 
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch (e) {}
+
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed");
+  }
+
+  return data;
+}
+
+
+/* ===============================
+   CHECK ADMIN LOGIN
+================================ */
+
+async function checkAdminLogin() {
+  try {
+    const data = await api("/api/me");
+
+    if (data.loggedIn) {
+      document.body.classList.add("admin-logged-in");
+
+      const nameElement =
+        document.getElementById("adminName");
+
+      if (nameElement) {
+        nameElement.textContent =
+          data.name || "Admin";
+      }
+    }
+  } catch (error) {
+    console.error("Admin login check failed:", error);
+  }
+}
+
+
+/* ===============================
+   LOGOUT
+================================ */
+
+async function adminLogout() {
+  try {
+    await api("/api/logout", {
+      method: "POST"
+    });
+
+    window.location.reload();
+
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+
+/* ===============================
+   INITIALIZE
+================================ */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    checkAdminLogin();
+  }
+);
+</script>
 </body>
 </html>
