@@ -1012,8 +1012,8 @@ app.patch(
   (req, res) => {
     const row =
       db.registrations.find(
-        r =>
-          Number(r.id) ===
+        registration =>
+          Number(registration.id) ===
           Number(req.params.id)
       );
 
@@ -1029,14 +1029,15 @@ app.patch(
 
     if (!lobby) {
       return res.status(404).json({
-        error: "Lobby not found."
+        error:
+          "Lobby not found."
       });
     }
 
     if (row.status !== "confirmed") {
       return res.status(400).json({
         error:
-          "Confirm the registration first."
+          "Confirm the registration before assigning it to a lobby."
       });
     }
 
@@ -1049,18 +1050,23 @@ app.patch(
 
     const duplicate =
       db.registrations.find(
-        r =>
-          Number(r.id) !==
+        registration =>
+          Number(registration.id) !==
             Number(row.id) &&
-          Number(r.lobby_id) ===
+
+          Number(registration.lobby_id) ===
             Number(lobby.id) &&
-          r.status === "confirmed" &&
-          String(r.team)
+
+          registration.status ===
+            "confirmed" &&
+
+          String(registration.team)
             .trim()
             .toLowerCase() ===
-            String(row.team)
-              .trim()
-              .toLowerCase()
+
+          String(row.team)
+            .trim()
+            .toLowerCase()
       );
 
     if (duplicate) {
@@ -1070,11 +1076,17 @@ app.patch(
       });
     }
 
-    if (
-      confirmedCount(lobby.id) >=
-        Number(lobby.max_teams) &&
+    const currentConfirmed =
+      confirmedCount(lobby.id);
+
+    const movingFromAnotherLobby =
       Number(row.lobby_id) !==
-        Number(lobby.id)
+      Number(lobby.id);
+
+    if (
+      currentConfirmed >=
+        Number(lobby.max_teams) &&
+      movingFromAnotherLobby
     ) {
       return res.status(400).json({
         error:
@@ -1082,16 +1094,43 @@ app.patch(
       });
     }
 
-    row.lobby_id = lobby.id;
-    row.time = lobby.time;
-    row.fee = lobby.fee;
+    row.lobby_id =
+      lobby.id;
+
+    row.time =
+      lobby.time;
+
+    row.fee =
+      lobby.fee;
+
+    row.assigned_at =
+      new Date().toISOString();
 
     saveDB();
 
     res.json({
       ok: true,
-      lobby_id: lobby.id,
-      lobby_name: lobby.name
+
+      registration_id:
+        row.id,
+
+      team:
+        row.team,
+
+      lobby_id:
+        lobby.id,
+
+      lobby_name:
+        lobby.name,
+
+      time:
+        lobby.time,
+
+      fee:
+        lobby.fee,
+
+      message:
+        "Registration assigned to the new lobby successfully."
     });
   }
 );
