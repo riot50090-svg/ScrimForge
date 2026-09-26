@@ -1,7 +1,8 @@
 /* =========================================================
    SCRIMFORGE V4
    SERVER.JS
-   ========================================================= */
+   FIXED / STABLE VERSION
+========================================================= */
 
 "use strict";
 
@@ -16,18 +17,20 @@ const bcrypt = require("bcryptjs");
 
 
 /* =========================================================
-   APP
+   APP CONFIG
 ========================================================= */
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const ROOT = __dirname;
 
-const PUBLIC_DIR = path.join(ROOT, "public");
+const PUBLIC_DIR =
+  path.join(ROOT, "public");
 
-const DATA_DIR = path.join(ROOT, "data");
+const DATA_DIR =
+  path.join(ROOT, "data");
 
 
 /* =========================================================
@@ -45,12 +48,14 @@ if (!fs.existsSync(DATA_DIR)) {
    DATABASE
 ========================================================= */
 
-const dbPath = path.join(
-  DATA_DIR,
-  "scrimforge.db"
-);
+const DB_PATH =
+  path.join(
+    DATA_DIR,
+    "scrimforge.db"
+  );
 
-const db = new Database(dbPath);
+const db =
+  new Database(DB_PATH);
 
 db.pragma("foreign_keys = ON");
 db.pragma("journal_mode = WAL");
@@ -124,7 +129,7 @@ db.exec(`
 
 
 /* =========================================================
-   EXPRESS MIDDLEWARE
+   MIDDLEWARE
 ========================================================= */
 
 app.use(
@@ -165,7 +170,6 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
       secure: false,
-
       maxAge:
         1000 *
         60 *
@@ -189,7 +193,7 @@ app.use(
 
 
 /* =========================================================
-   BASIC HELPERS
+   HELPERS
 ========================================================= */
 
 function cleanString(value) {
@@ -225,10 +229,6 @@ function generateReference() {
 }
 
 
-/* =========================================================
-   GET ADMIN FROM SESSION
-========================================================= */
-
 function getAdminFromSession(req) {
 
   if (
@@ -254,10 +254,6 @@ function getAdminFromSession(req) {
   return admin || null;
 }
 
-
-/* =========================================================
-   REQUIRE ADMIN
-========================================================= */
 
 function requireAdmin(
   req,
@@ -316,6 +312,24 @@ function calculatePlacement(
 
 
 /* =========================================================
+   HEALTH
+========================================================= */
+
+app.get(
+  "/api/health",
+  (req, res) => {
+
+    res.json({
+      ok: true,
+      name: "ScrimForge V4",
+      time: new Date().toISOString()
+    });
+
+  }
+);
+
+
+/* =========================================================
    ADMIN EXISTS
 ========================================================= */
 
@@ -343,17 +357,20 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to check admin account."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to check admin account."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   CURRENT USER
+   CURRENT ADMIN
 ========================================================= */
 
 app.get(
@@ -372,7 +389,7 @@ app.get(
         });
       }
 
-      res.json({
+      return res.json({
 
         loggedIn: true,
 
@@ -390,21 +407,24 @@ app.get(
     } catch (error) {
 
       console.error(
-        "Me endpoint error:",
+        "ME endpoint error:",
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to check login status."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to check login."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   SETUP ADMIN
+   CREATE FIRST ADMIN
 ========================================================= */
 
 app.post(
@@ -460,9 +480,7 @@ app.post(
           });
       }
 
-      if (
-        password.length < 6
-      ) {
+      if (password.length < 6) {
 
         return res
           .status(400)
@@ -501,28 +519,29 @@ app.post(
         name;
 
       req.session.save(
-        saveError => {
+        error => {
 
-          if (saveError) {
+          if (error) {
 
             console.error(
-              "Setup session save error:",
-              saveError
+              "Setup session error:",
+              error
             );
 
             return res
               .status(500)
               .json({
                 error:
-                  "Admin created but login session could not be saved."
+                  "Admin created, but session could not be saved."
               });
           }
 
-          res.json({
+          return res.json({
             success: true,
             name,
             email
           });
+
         }
       );
 
@@ -533,13 +552,14 @@ app.post(
         error
       );
 
-      res
+      return res
         .status(500)
         .json({
           error:
             "Unable to create admin account."
         });
     }
+
   }
 );
 
@@ -602,30 +622,11 @@ app.post(
           });
       }
 
-      let passwordMatches = false;
-
-      try {
-
-        passwordMatches =
-          bcrypt.compareSync(
-            password,
-            admin.password_hash
-          );
-
-      } catch (compareError) {
-
-        console.error(
-          "Password comparison error:",
-          compareError
+      const passwordMatches =
+        bcrypt.compareSync(
+          password,
+          admin.password_hash
         );
-
-        return res
-          .status(500)
-          .json({
-            error:
-              "Unable to verify password."
-          });
-      }
 
       if (!passwordMatches) {
 
@@ -638,9 +639,10 @@ app.post(
       }
 
 
-      /* ===============================================
-         REGENERATE SESSION
-      =============================================== */
+      /*
+       * Completely regenerate the session.
+       * Then explicitly save it before responding.
+       */
 
       req.session.regenerate(
         regenerateError => {
@@ -661,16 +663,10 @@ app.post(
           }
 
           req.session.adminId =
-            Number(
-              admin.id
-            );
+            Number(admin.id);
 
           req.session.adminName =
             admin.name;
-
-          req.session.adminEmail =
-            admin.email;
-
 
           req.session.save(
             saveError => {
@@ -701,15 +697,17 @@ app.post(
                   admin.email
 
               });
+
             }
           );
+
         }
       );
 
     } catch (error) {
 
       console.error(
-        "Login error:",
+        "LOGIN ERROR:",
         error
       );
 
@@ -720,6 +718,7 @@ app.post(
             "Login failed. Please try again."
         });
     }
+
   }
 );
 
@@ -761,11 +760,13 @@ app.post(
           "connect.sid"
         );
 
-        res.json({
+        return res.json({
           success: true
         });
+
       }
     );
+
   }
 );
 
@@ -802,14 +803,12 @@ app.get(
           LEFT JOIN registrations r
             ON r.lobby_id = l.id
 
-          GROUP BY
-            l.id
+          GROUP BY l.id
 
-          ORDER BY
-            l.id DESC
+          ORDER BY l.id DESC
         `).all();
 
-      res.json(
+      return res.json(
         rows
       );
 
@@ -820,11 +819,14 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load lobbies."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load lobbies."
+        });
     }
+
   }
 );
 
@@ -862,14 +864,12 @@ app.get(
           LEFT JOIN registrations r
             ON r.lobby_id = l.id
 
-          GROUP BY
-            l.id
+          GROUP BY l.id
 
-          ORDER BY
-            l.id DESC
+          ORDER BY l.id DESC
         `).all();
 
-      res.json(
+      return res.json(
         rows
       );
 
@@ -880,17 +880,20 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load admin lobbies."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load lobbies."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   CREATE LOBBY / SCRIM
+   CREATE SCRIM
 ========================================================= */
 
 app.post(
@@ -935,9 +938,7 @@ app.post(
       }
 
       if (
-        !Number.isInteger(
-          maxTeams
-        ) ||
+        !Number.isInteger(maxTeams) ||
         maxTeams < 1 ||
         maxTeams > 100
       ) {
@@ -967,7 +968,7 @@ app.post(
           maxTeams
         );
 
-      res.json({
+      return res.json({
 
         success: true,
 
@@ -981,21 +982,24 @@ app.post(
     } catch (error) {
 
       console.error(
-        "Create lobby error:",
+        "Create scrim error:",
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to create scrim."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to create scrim."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   UPDATE LOBBY
+   UPDATE SCRIM
 ========================================================= */
 
 app.patch(
@@ -1017,10 +1021,7 @@ app.patch(
 
       if (
         !Number.isInteger(id) ||
-        ![
-          "open",
-          "closed"
-        ].includes(status)
+        !["open", "closed"].includes(status)
       ) {
 
         return res
@@ -1051,7 +1052,7 @@ app.patch(
           });
       }
 
-      res.json({
+      return res.json({
         success: true
       });
 
@@ -1062,17 +1063,20 @@ app.patch(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to update lobby."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to update scrim."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   DELETE LOBBY
+   DELETE SCRIM
 ========================================================= */
 
 app.delete(
@@ -1087,9 +1091,7 @@ app.delete(
           req.params.id
         );
 
-      if (
-        !Number.isInteger(id)
-      ) {
+      if (!Number.isInteger(id)) {
 
         return res
           .status(400)
@@ -1103,9 +1105,7 @@ app.delete(
         db.prepare(`
           DELETE FROM lobbies
           WHERE id = ?
-        `).run(
-          id
-        );
+        `).run(id);
 
       if (!result.changes) {
 
@@ -1117,7 +1117,7 @@ app.delete(
           });
       }
 
-      res.json({
+      return res.json({
         success: true
       });
 
@@ -1128,11 +1128,14 @@ app.delete(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to delete scrim."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to delete scrim."
+        });
     }
+
   }
 );
 
@@ -1199,9 +1202,7 @@ app.post(
             status
           FROM lobbies
           WHERE id = ?
-        `).get(
-          lobbyId
-        );
+        `).get(lobbyId);
 
       if (!lobby) {
 
@@ -1214,9 +1215,7 @@ app.post(
       }
 
       if (
-        String(
-          lobby.status
-        ).toLowerCase() !== "open"
+        lobby.status !== "open"
       ) {
 
         return res
@@ -1233,16 +1232,11 @@ app.post(
           FROM registrations
           WHERE lobby_id = ?
           AND status = 'confirmed'
-        `).get(
-          lobbyId
-        );
+        `).get(lobbyId);
 
       if (
-        Number(
-          confirmed.count
-        ) >= Number(
-          lobby.max_teams
-        )
+        Number(confirmed.count) >=
+        Number(lobby.max_teams)
       ) {
 
         return res
@@ -1293,7 +1287,7 @@ app.post(
           lobby.fee
         );
 
-      res.json({
+      return res.json({
 
         success: true,
 
@@ -1313,11 +1307,14 @@ app.post(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to submit registration."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to submit registration."
+        });
     }
+
   }
 );
 
@@ -1351,18 +1348,12 @@ app.get(
             r.status,
             r.lobby_id,
             l.name AS lobby_name
-
           FROM registrations r
-
           LEFT JOIN lobbies l
             ON l.id = r.lobby_id
-
           WHERE r.ref = ?
-
           LIMIT 1
-        `).get(
-          ref
-        );
+        `).get(ref);
 
       if (!row) {
 
@@ -1374,9 +1365,7 @@ app.get(
           });
       }
 
-      res.json(
-        row
-      );
+      return res.json(row);
 
     } catch (error) {
 
@@ -1385,11 +1374,14 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to check registration."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to check registration."
+        });
     }
+
   }
 );
 
@@ -1419,15 +1411,11 @@ app.get(
             fee,
             status,
             created_at
-
           FROM registrations
-
           ORDER BY id DESC
         `).all();
 
-      res.json(
-        rows
-      );
+      return res.json(rows);
 
     } catch (error) {
 
@@ -1436,17 +1424,20 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load registrations."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load registrations."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   UPDATE REGISTRATION STATUS
+   UPDATE REGISTRATION
 ========================================================= */
 
 app.patch(
@@ -1466,9 +1457,7 @@ app.patch(
           req.body.status
         ).toLowerCase();
 
-      if (
-        !Number.isInteger(id)
-      ) {
+      if (!Number.isInteger(id)) {
 
         return res
           .status(400)
@@ -1501,9 +1490,7 @@ app.patch(
             lobby_id
           FROM registrations
           WHERE id = ?
-        `).get(
-          id
-        );
+        `).get(id);
 
       if (!registration) {
 
@@ -1569,7 +1556,7 @@ app.patch(
         id
       );
 
-      res.json({
+      return res.json({
         success: true
       });
 
@@ -1580,11 +1567,14 @@ app.patch(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to update registration."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to update registration."
+        });
     }
+
   }
 );
 
@@ -1611,12 +1601,8 @@ app.patch(
         );
 
       if (
-        !Number.isInteger(
-          registrationId
-        ) ||
-        !Number.isInteger(
-          lobbyId
-        )
+        !Number.isInteger(registrationId) ||
+        !Number.isInteger(lobbyId)
       ) {
 
         return res
@@ -1713,12 +1699,10 @@ app.patch(
 
       db.prepare(`
         UPDATE registrations
-
         SET
           lobby_id = ?,
           time = ?,
           fee = ?
-
         WHERE id = ?
       `).run(
         lobby.id,
@@ -1727,7 +1711,7 @@ app.patch(
         registrationId
       );
 
-      res.json({
+      return res.json({
         success: true
       });
 
@@ -1738,11 +1722,14 @@ app.patch(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to assign lobby."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to assign lobby."
+        });
     }
+
   }
 );
 
@@ -1779,22 +1766,16 @@ app.get(
           WHERE status = 'open'
         `).get();
 
-      res.json({
+      return res.json({
 
         pending:
-          Number(
-            pending.count
-          ),
+          Number(pending.count),
 
         confirmed:
-          Number(
-            confirmed.count
-          ),
+          Number(confirmed.count),
 
         activeLobbies:
-          Number(
-            activeLobbies.count
-          )
+          Number(activeLobbies.count)
 
       });
 
@@ -1805,17 +1786,20 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load statistics."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load statistics."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   CONFIRMED TEAMS FOR SCORE ENTRY
+   LEADERBOARD TEAMS
 ========================================================= */
 
 app.get(
@@ -1869,19 +1853,14 @@ app.get(
             team,
             captain
           FROM registrations
-
           WHERE lobby_id = ?
           AND status = 'confirmed'
-
-          ORDER BY
-            team COLLATE NOCASE ASC
+          ORDER BY team COLLATE NOCASE ASC
         `).all(
           lobby.id
         );
 
-      res.json(
-        teams
-      );
+      return res.json(teams);
 
     } catch (error) {
 
@@ -1890,17 +1869,20 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load lobby teams."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load lobby teams."
+        });
     }
+
   }
 );
 
 
 /* =========================================================
-   EXISTING MATCH SCORE
+   GET MATCH SCORE
 ========================================================= */
 
 app.get(
@@ -1965,21 +1947,16 @@ app.get(
             placement_points,
             kill_points,
             total_points
-
           FROM match_scores
-
           WHERE lobby_id = ?
           AND match_no = ?
-
           ORDER BY position ASC
         `).all(
           lobby.id,
           matchNo
         );
 
-      res.json(
-        rows
-      );
+      return res.json(rows);
 
     } catch (error) {
 
@@ -1988,11 +1965,14 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load match results."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load match results."
+        });
     }
+
   }
 );
 
@@ -2049,9 +2029,7 @@ app.post(
           });
       }
 
-      if (
-        entries.length !== 12
-      ) {
+      if (entries.length !== 12) {
 
         return res
           .status(400)
@@ -2085,16 +2063,11 @@ app.post(
 
       const confirmedTeams =
         db.prepare(`
-          SELECT
-            team
-
+          SELECT team
           FROM registrations
-
           WHERE lobby_id = ?
           AND status = 'confirmed'
-
-          ORDER BY
-            team COLLATE NOCASE ASC
+          ORDER BY team COLLATE NOCASE ASC
         `).all(
           lobby.id
         );
@@ -2115,9 +2088,7 @@ app.post(
         new Set(
           confirmedTeams.map(
             row =>
-              String(
-                row.team
-              )
+              String(row.team)
           )
         );
 
@@ -2166,15 +2137,11 @@ app.post(
       const positions =
         entries.map(
           entry =>
-            Number(
-              entry.position
-            )
+            Number(entry.position)
         );
 
       const positionSet =
-        new Set(
-          positions
-        );
+        new Set(positions);
 
       if (
         positions.some(
@@ -2237,29 +2204,21 @@ app.post(
               killPoints;
 
             return {
-
               team,
-
               position,
-
-              kills:
-                safeKills,
-
+              kills: safeKills,
               booyah,
-
               placementPoints,
-
               killPoints,
-
               totalPoints
             };
+
           }
         );
 
       const deleteExisting =
         db.prepare(`
           DELETE FROM match_scores
-
           WHERE lobby_id = ?
           AND match_no = ?
         `);
@@ -2277,10 +2236,7 @@ app.post(
             kill_points,
             total_points
           )
-
-          VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?
-          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
       const saveTransaction =
@@ -2297,26 +2253,19 @@ app.post(
             ) {
 
               insertScore.run(
-
                 lobby.id,
-
                 matchNo,
-
                 row.team,
-
                 row.position,
-
                 row.kills,
-
                 row.booyah,
-
                 row.placementPoints,
-
                 row.killPoints,
-
                 row.totalPoints
               );
+
             }
+
           }
         );
 
@@ -2324,7 +2273,7 @@ app.post(
         normalized
       );
 
-      res.json({
+      return res.json({
 
         success: true,
 
@@ -2343,11 +2292,14 @@ app.post(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to save match results."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to save match results."
+        });
     }
+
   }
 );
 
@@ -2382,11 +2334,8 @@ app.get(
           SELECT
             id,
             name
-
           FROM lobbies
-
           WHERE name = ?
-
           LIMIT 1
         `).get(
           lobbyName
@@ -2408,28 +2357,21 @@ app.get(
 
             team,
 
-            SUM(
-              booyah
-            ) AS booyahs,
+            SUM(booyah) AS booyahs,
 
-            SUM(
-              kills
-            ) AS killPoints,
+            SUM(kills) AS killPoints,
 
-            SUM(
-              placement_points
-            ) AS placementPoints,
+            SUM(placement_points)
+              AS placementPoints,
 
-            SUM(
-              total_points
-            ) AS totalPoints
+            SUM(total_points)
+              AS totalPoints
 
           FROM match_scores
 
           WHERE lobby_id = ?
 
-          GROUP BY
-            team
+          GROUP BY team
 
           ORDER BY
             totalPoints DESC,
@@ -2469,10 +2411,11 @@ app.get(
               Number(
                 row.totalPoints || 0
               )
+
           })
         );
 
-      res.json(
+      return res.json(
         ranked
       );
 
@@ -2483,54 +2426,34 @@ app.get(
         error
       );
 
-      res.status(500).json({
-        error:
-          "Unable to load leaderboard."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Unable to load leaderboard."
+        });
     }
-  }
-);
 
-
-/* =========================================================
-   HEALTH CHECK
-========================================================= */
-
-app.get(
-  "/api/health",
-  (req, res) => {
-
-    res.json({
-
-      ok: true,
-
-      name:
-        "ScrimForge V4",
-
-      time:
-        new Date().toISOString()
-
-    });
   }
 );
 
 
 /* =========================================================
    SPA FALLBACK
-   EXPRESS 5 COMPATIBLE
+   =========================================================
+   
+   IMPORTANT:
+   Do NOT use:
+       app.get("*", ...)
+   
+   because Express 5 changed wildcard route syntax.
+
+   A regular expression works with both Express 4 and 5.
 ========================================================= */
 
 app.get(
-  "/{*splat}",
-  (req, res, next) => {
-
-    if (
-      req.path.startsWith(
-        "/api/"
-      )
-    ) {
-      return next();
-    }
+  /^\/(?!api(?:\/|$)).*/,
+  (req, res) => {
 
     const indexPath =
       path.join(
@@ -2539,36 +2462,55 @@ app.get(
       );
 
     if (
-      !fs.existsSync(indexPath)
+      fs.existsSync(indexPath)
     ) {
 
-      return res
-        .status(500)
-        .send(
-          "ScrimForge: public/index.html not found."
-        );
+      return res.sendFile(
+        indexPath
+      );
     }
 
-    res.sendFile(
-      indexPath
-    );
+    return res
+      .status(500)
+      .send(
+        "ScrimForge: public/index.html not found."
+      );
   }
 );
 
 
 /* =========================================================
-   404
+   API 404
+========================================================= */
+
+app.use(
+  "/api",
+  (req, res) => {
+
+    return res
+      .status(404)
+      .json({
+        error:
+          "API endpoint not found."
+      });
+
+  }
+);
+
+
+/* =========================================================
+   GENERAL 404
 ========================================================= */
 
 app.use(
   (req, res) => {
 
-    res
+    return res
       .status(404)
-      .json({
-        error:
-          "Endpoint not found."
-      });
+      .send(
+        "Page not found."
+      );
+
   }
 );
 
@@ -2578,15 +2520,10 @@ app.use(
 ========================================================= */
 
 app.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
+  (error, req, res, next) => {
 
     console.error(
-      "Unhandled server error:",
+      "UNHANDLED SERVER ERROR:",
       error
     );
 
@@ -2594,17 +2531,16 @@ app.use(
       res.headersSent
     ) {
 
-      return next(
-        error
-      );
+      return next(error);
     }
 
-    res
+    return res
       .status(500)
       .json({
         error:
           "Internal server error."
       });
+
   }
 );
 
@@ -2613,40 +2549,59 @@ app.use(
    START SERVER
 ========================================================= */
 
-const server =
-  app.listen(
-    PORT,
-    () => {
+let server;
 
-      console.log(
-        "=========================================="
-      );
+try {
 
-      console.log(
-        "       SCRIMFORGE V4 SERVER"
-      );
+  server =
+    app.listen(
+      PORT,
+      () => {
 
-      console.log(
-        "=========================================="
-      );
+        console.log(
+          "=========================================="
+        );
 
-      console.log(
-        `Server running on port ${PORT}`
-      );
+        console.log(
+          "       SCRIMFORGE V4 SERVER"
+        );
 
-      console.log(
-        `Public directory: ${PUBLIC_DIR}`
-      );
+        console.log(
+          "=========================================="
+        );
 
-      console.log(
-        `Database: ${dbPath}`
-      );
+        console.log(
+          `Server running on port ${PORT}`
+        );
 
-      console.log(
-        "=========================================="
-      );
-    }
+        console.log(
+          `Public directory: ${PUBLIC_DIR}`
+        );
+
+        console.log(
+          `Database: ${DB_PATH}`
+        );
+
+        console.log(
+          "Health: /api/health"
+        );
+
+        console.log(
+          "=========================================="
+        );
+
+      }
+    );
+
+} catch (error) {
+
+  console.error(
+    "SERVER START ERROR:",
+    error
   );
+
+  process.exit(1);
+}
 
 
 /* =========================================================
@@ -2669,13 +2624,23 @@ function shutdown() {
       "Database close error:",
       error
     );
+
   }
 
-  server.close(
-    () => {
-      process.exit(0);
-    }
-  );
+  if (server) {
+
+    server.close(
+      () => {
+        process.exit(0);
+      }
+    );
+
+  } else {
+
+    process.exit(0);
+
+  }
+
 }
 
 
