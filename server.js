@@ -550,11 +550,23 @@ app.post(
       uid
     } = req.body || {};
 
+    const cleanTeam =
+      String(team || "").trim();
+
+    const cleanCaptain =
+      String(captain || "").trim();
+
+    const cleanPhone =
+      String(phone || "").trim();
+
+    const cleanUid =
+      String(uid || "").trim();
+
     if (
-      !team ||
-      !captain ||
-      !phone ||
-      !uid
+      !cleanTeam ||
+      !cleanCaptain ||
+      !cleanPhone ||
+      !cleanUid
     ) {
       return res.status(400).json({
         error:
@@ -564,18 +576,22 @@ app.post(
 
     let lobby = null;
 
+    /* Find lobby by ID when provided */
     if (
       lobbyId !== undefined &&
       lobbyId !== null &&
       String(lobbyId).trim() !== ""
     ) {
       lobby = lobbyById(lobbyId);
-    } else if (time && fee) {
+    }
+
+    /* Fallback: find lobby by time + fee */
+    if (!lobby && time && fee) {
       lobby = db.lobbies.find(
         l =>
-          String(l.time) ===
+          String(l.time).trim() ===
             String(time).trim() &&
-          String(l.fee) ===
+          String(l.fee).trim() ===
             String(fee).trim() &&
           l.status === "open"
       );
@@ -590,12 +606,16 @@ app.post(
 
     if (lobby.status !== "open") {
       return res.status(400).json({
-        error: "This scrim is closed."
+        error:
+          "This scrim is closed."
       });
     }
 
+    const confirmed =
+      confirmedCount(lobby.id);
+
     if (
-      confirmedCount(lobby.id) >=
+      confirmed >=
       Number(lobby.max_teams)
     ) {
       return res.status(400).json({
@@ -604,9 +624,38 @@ app.post(
       });
     }
 
+    /*
+      Prevent the same team from creating
+      multiple pending/confirmed registrations
+      in the same lobby.
+    */
+    const duplicate =
+      db.registrations.find(
+        registration =>
+          Number(registration.lobby_id) ===
+            Number(lobby.id) &&
+          ["pending", "confirmed"].includes(
+            registration.status
+          ) &&
+          String(registration.team)
+            .trim()
+            .toLowerCase() ===
+            cleanTeam.toLowerCase()
+      );
+
+    if (duplicate) {
+      return res.status(400).json({
+        error:
+          "This team already has a registration for this scrim."
+      });
+    }
+
     const row = {
-      id: db.nextRegistrationId++,
-      ref: makeRef(),
+      id:
+        db.nextRegistrationId++,
+
+      ref:
+        makeRef(),
 
       time:
         String(lobby.time).trim(),
@@ -615,37 +664,61 @@ app.post(
         String(lobby.fee).trim(),
 
       team:
-        String(team).trim(),
+        cleanTeam,
 
       captain:
-        String(captain).trim(),
+        cleanCaptain,
 
       phone:
-        String(phone).trim(),
+        cleanPhone,
 
       uid:
-        String(uid).trim(),
+        cleanUid,
 
-      status: "pending",
+      status:
+        "pending",
 
-      lobby_id: lobby.id,
+      lobby_id:
+        lobby.id,
 
       created_at:
         new Date().toISOString()
     };
 
     db.registrations.push(row);
+
     saveDB();
 
     res.json({
-      ref: row.ref,
-      lobby_name: lobby.name,
-      time: row.time,
-      fee: row.fee,
-      status: row.status
+      ok: true,
+
+      ref:
+        row.ref,
+
+      lobby_id:
+        lobby.id,
+
+      lobby_name:
+        lobby.name,
+
+      time:
+        row.time,
+
+      fee:
+        row.fee,
+
+      status:
+        row.status,
+
+      message:
+        "Registration submitted successfully. Payment can be completed through WhatsApp, then the admin can confirm the registration."
     });
   }
 );
+
+/* =====================================================
+   REGISTRATION STATUS
+===================================================== */
 
 /* =====================================================
    REGISTRATION STATUS
