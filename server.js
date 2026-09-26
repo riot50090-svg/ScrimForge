@@ -824,8 +824,8 @@ app.patch(
   (req, res) => {
     const row =
       db.registrations.find(
-        r =>
-          Number(r.id) ===
+        registration =>
+          Number(registration.id) ===
           Number(req.params.id)
       );
 
@@ -839,7 +839,9 @@ app.patch(
     const status =
       String(
         req.body.status || ""
-      ).toLowerCase();
+      )
+        .trim()
+        .toLowerCase();
 
     if (
       ![
@@ -854,17 +856,26 @@ app.patch(
       });
     }
 
+    /* ==========================================
+       REJECT REGISTRATION
+    ========================================== */
+
     if (status === "rejected") {
       row.status = "rejected";
-      row.lobby_id = null;
 
       saveDB();
 
       return res.json({
         ok: true,
-        status: row.status
+        status: row.status,
+        message:
+          "Registration rejected successfully."
       });
     }
+
+    /* ==========================================
+       MOVE BACK TO PENDING
+    ========================================== */
 
     if (status === "pending") {
       row.status = "pending";
@@ -873,9 +884,15 @@ app.patch(
 
       return res.json({
         ok: true,
-        status: row.status
+        status: row.status,
+        message:
+          "Registration moved back to pending."
       });
     }
+
+    /* ==========================================
+       CONFIRM REGISTRATION
+    ========================================== */
 
     const requestedLobbyId =
       req.body.lobbyId ??
@@ -900,18 +917,23 @@ app.patch(
 
     const duplicate =
       db.registrations.find(
-        r =>
-          Number(r.id) !==
+        registration =>
+          Number(registration.id) !==
             Number(row.id) &&
-          Number(r.lobby_id) ===
+
+          Number(registration.lobby_id) ===
             Number(lobby.id) &&
-          r.status === "confirmed" &&
-          String(r.team)
+
+          registration.status ===
+            "confirmed" &&
+
+          String(registration.team)
             .trim()
             .toLowerCase() ===
-            String(row.team)
-              .trim()
-              .toLowerCase()
+
+          String(row.team)
+            .trim()
+            .toLowerCase()
       );
 
     if (duplicate) {
@@ -921,11 +943,17 @@ app.patch(
       });
     }
 
-    if (
-      confirmedCount(lobby.id) >=
-        Number(lobby.max_teams) &&
+    const currentConfirmed =
+      confirmedCount(lobby.id);
+
+    const movingFromAnotherLobby =
       Number(row.lobby_id) !==
-        Number(lobby.id)
+      Number(lobby.id);
+
+    if (
+      currentConfirmed >=
+        Number(lobby.max_teams) &&
+      movingFromAnotherLobby
     ) {
       return res.status(400).json({
         error:
@@ -933,18 +961,43 @@ app.patch(
       });
     }
 
-    row.status = "confirmed";
-    row.lobby_id = lobby.id;
-    row.time = lobby.time;
-    row.fee = lobby.fee;
+    row.status =
+      "confirmed";
+
+    row.lobby_id =
+      lobby.id;
+
+    row.time =
+      lobby.time;
+
+    row.fee =
+      lobby.fee;
+
+    row.confirmed_at =
+      new Date().toISOString();
 
     saveDB();
 
     res.json({
       ok: true,
-      status: row.status,
-      lobby_id: row.lobby_id,
-      lobby_name: lobby.name
+
+      status:
+        row.status,
+
+      lobby_id:
+        row.lobby_id,
+
+      lobby_name:
+        lobby.name,
+
+      time:
+        row.time,
+
+      fee:
+        row.fee,
+
+      message:
+        "Registration confirmed successfully."
     });
   }
 );
