@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -17,12 +16,9 @@
 
   <title>ScrimForge V4</title>
 
-  <link
-    rel="stylesheet"
-    href="/styles.css"
-  >
-
+  <link rel="stylesheet" href="/styles.css">
 </head>
+
 
 <body>
 
@@ -44,12 +40,9 @@
         SF
       </div>
 
-      <div>
-
+      <div class="brand-text">
         <strong>ScrimForge</strong>
-
         <span>V4</span>
-
       </div>
 
     </div>
@@ -106,9 +99,6 @@
 </header>
 
 
-<!-- =====================================================
-     MAIN
-====================================================== -->
 
 <main>
 
@@ -117,10 +107,7 @@
      HOME
 ====================================================== -->
 
-<section
-  id="home"
-  class="page active"
->
+<section id="home" class="page active">
 
   <div class="hero">
 
@@ -130,21 +117,17 @@
         FREE FIRE SCRIM PLATFORM
       </span>
 
-      <h1>
-        SCRIMFORGE
-      </h1>
+      <h1>SCRIMFORGE</h1>
 
       <p class="hero-version">
         V4
       </p>
 
       <p class="hero-text">
-
         Manage Free Fire scrims,
         registrations, lobbies and
         live leaderboards from one
         powerful platform.
-
       </p>
 
 
@@ -176,7 +159,6 @@
     <div class="section-heading">
 
       <div>
-
         <span class="eyebrow">
           ACTIVE ROOMS
         </span>
@@ -184,16 +166,14 @@
         <h2>
           Available Scrims
         </h2>
-
       </div>
 
 
       <button
         class="refresh-btn"
         onclick="loadPublicLobbies('homeLobbies')"
-        title="Refresh scrims"
       >
-        ↻ Refresh
+        🔄 Refresh
       </button>
 
     </div>
@@ -203,11 +183,9 @@
       id="homeLobbies"
       class="grid"
     >
-
       <p class="muted">
         Loading lobbies...
       </p>
-
     </div>
 
   </section>
@@ -217,46 +195,34 @@
 
     <div class="feature-grid">
 
-      <div class="card">
-
-        <h3>
-          ⚡ Fast Registration
-        </h3>
+      <div class="card feature-card">
+        <h3>⚡ Fast Registration</h3>
 
         <p class="muted">
           Select an available lobby
           and submit your team details.
         </p>
-
       </div>
 
 
-      <div class="card">
-
-        <h3>
-          🏆 Live Leaderboards
-        </h3>
+      <div class="card feature-card">
+        <h3>🏆 Live Leaderboards</h3>
 
         <p class="muted">
           View match-by-match and
           overall leaderboard results.
         </p>
-
       </div>
 
 
-      <div class="card">
-
-        <h3>
-          🛡️ Admin Control
-        </h3>
+      <div class="card feature-card">
+        <h3>🛡️ Admin Control</h3>
 
         <p class="muted">
           Manage lobbies, registrations
           and match scores from the
           admin dashboard.
         </p>
-
       </div>
 
     </div>
@@ -266,42 +232,36 @@
 </section>
 
 
+
 <!-- =====================================================
      SCRIMS
 ====================================================== -->
 
-<section
-  id="scrims"
-  class="page"
->
+<section id="scrims" class="page">
 
   <div class="page-header">
 
-    <span class="eyebrow">
-      SCRIMS
-    </span>
+    <div>
+      <span class="eyebrow">
+        SCRIMS
+      </span>
 
-    <h1>
-      Available Scrims
-    </h1>
+      <h1>
+        Available Scrims
+      </h1>
 
-    <p>
-      Choose an open lobby and register
-      your team.
-    </p>
+      <p>
+        Choose an open lobby and register
+        your team.
+      </p>
+    </div>
 
-  </div>
-
-
-  <div class="section-heading">
-
-    <div></div>
 
     <button
       class="refresh-btn"
       onclick="loadPublicLobbies('scrimList')"
     >
-      ↻ Refresh
+      🔄 Refresh Scrims
     </button>
 
   </div>
@@ -311,24 +271,20 @@
     id="scrimList"
     class="grid"
   >
-
     <p class="muted">
       Loading lobbies...
     </p>
-
   </div>
 
 </section>
+
 
 
 <!-- =====================================================
      REGISTER
 ====================================================== -->
 
-<section
-  id="register"
-  class="page"
->
+<section id="register" class="page">
 
   <div class="page-header">
 
@@ -478,14 +434,12 @@
 </section>
 
 
+
 <!-- =====================================================
      STATUS
 ====================================================== -->
 
-<section
-  id="status"
-  class="page"
->
+<section id="status" class="page">
 
   <div class="page-header">
 
@@ -546,29 +500,39 @@
 </section>
 
 
+
 <!-- =====================================================
      LEADERBOARD
 ====================================================== -->
 
-<section
-  id="leaderboard"
-  class="page"
->
+<section id="leaderboard" class="page">
 
   <div class="page-header">
 
-    <span class="eyebrow">
-      LIVE RESULTS
-    </span>
+    <div>
 
-    <h1>
-      Leaderboard
-    </h1>
+      <span class="eyebrow">
+        LIVE RESULTS
+      </span>
 
-    <p>
-      Match results and overall standings
-      update automatically.
-    </p>
+      <h1>
+        Leaderboard
+      </h1>
+
+      <p>
+        Match results and overall standings
+        update automatically.
+      </p>
+
+    </div>
+
+
+    <button
+      class="refresh-btn"
+      onclick="loadLeaderboardLobbyOptions()"
+    >
+      🔄 Refresh
+    </button>
 
   </div>
 
@@ -604,41 +568,16 @@
           Overall
         </option>
 
-        <option value="1">
-          Match 1
-        </option>
-
-        <option value="2">
-          Match 2
-        </option>
-
-        <option value="3">
-          Match 3
-        </option>
-
-        <option value="4">
-          Match 4
-        </option>
-
-        <option value="5">
-          Match 5
-        </option>
-
-        <option value="6">
-          Match 6
-        </option>
+        <option value="1">Match 1</option>
+        <option value="2">Match 2</option>
+        <option value="3">Match 3</option>
+        <option value="4">Match 4</option>
+        <option value="5">Match 5</option>
+        <option value="6">Match 6</option>
 
       </select>
 
     </div>
-
-
-    <button
-      class="refresh-btn leaderboard-refresh"
-      onclick="loadLeaderboardLobbyOptions()"
-    >
-      ↻ Refresh
-    </button>
 
   </div>
 
@@ -658,14 +597,12 @@
 </section>
 
 
+
 <!-- =====================================================
      ADMIN
 ====================================================== -->
 
-<section
-  id="admin"
-  class="page"
->
+<section id="admin" class="page">
 
   <div class="page-header">
 
@@ -677,39 +614,19 @@
       Admin Dashboard
     </h1>
 
-    <p>
-      Manage scrims, registrations and
-      match results from one place.
-    </p>
-
   </div>
 
 
-  <!-- ===================================================
-       ADMIN SETUP
-  ==================================================== -->
+  <!-- ADMIN SETUP -->
 
   <div
     id="adminSetupBox"
     class="form-card admin-auth-card"
   >
 
-    <div class="panel-header">
-
-      <div>
-
-        <span class="eyebrow">
-          FIRST TIME SETUP
-        </span>
-
-        <h2>
-          Create Admin Account
-        </h2>
-
-      </div>
-
-    </div>
-
+    <h2>
+      Create Admin Account
+    </h2>
 
     <p class="muted">
       Create the first ScrimForge administrator.
@@ -776,16 +693,15 @@
   </div>
 
 
-  <!-- ===================================================
-       ADMIN LOGIN
-  ==================================================== -->
+
+  <!-- ADMIN LOGIN -->
 
   <div
     id="adminLoginBox"
     class="form-card admin-auth-card hidden"
   >
 
-    <div class="panel-header">
+    <div class="auth-title-row">
 
       <div>
 
@@ -799,6 +715,10 @@
 
       </div>
 
+      <span class="admin-lock">
+        🔐
+      </span>
+
     </div>
 
 
@@ -811,6 +731,7 @@
         <input
           id="loginEmail"
           type="email"
+          autocomplete="username"
           required
         >
 
@@ -824,6 +745,7 @@
         <input
           id="loginPassword"
           type="password"
+          autocomplete="current-password"
           required
         >
 
@@ -848,9 +770,8 @@
   </div>
 
 
-  <!-- ===================================================
-       ADMIN DASHBOARD
-  ==================================================== -->
+
+  <!-- ADMIN DASHBOARD -->
 
   <div
     id="adminDashboard"
@@ -858,14 +779,14 @@
   >
 
 
-    <!-- ADMIN TOPBAR -->
+    <!-- ADMIN TOP -->
 
-    <div class="admin-topbar panel">
+    <div class="admin-topbar">
 
       <div>
 
         <span class="eyebrow">
-          ADMIN PANEL
+          ADMIN
         </span>
 
         <h2>
@@ -878,34 +799,22 @@
       </div>
 
 
-      <div class="admin-top-actions">
-
-        <button
-          class="refresh-btn"
-          onclick="loadAdminData()"
-        >
-          ↻ Refresh All
-        </button>
-
-        <button
-          class="btn danger"
-          onclick="logout()"
-        >
-          Logout
-        </button>
-
-      </div>
+      <button
+        class="btn danger"
+        onclick="logout()"
+      >
+        Logout
+      </button>
 
     </div>
 
 
-    <!-- =================================================
-         STATS PANEL
-    ================================================== -->
 
-    <div class="admin-section panel">
+    <!-- STATS -->
 
-      <div class="panel-header">
+    <div class="admin-section">
+
+      <div class="section-heading">
 
         <div>
 
@@ -914,7 +823,7 @@
           </span>
 
           <h2>
-            Dashboard Statistics
+            Dashboard Stats
           </h2>
 
         </div>
@@ -922,9 +831,9 @@
 
         <button
           class="refresh-btn"
-          onclick="loadStats()"
+          onclick="refreshStatsPanel()"
         >
-          ↻ Refresh
+          🔄 Refresh
         </button>
 
       </div>
@@ -933,41 +842,29 @@
       <div class="stats-grid">
 
         <div class="stat-card">
-
-          <span>
-            Pending
-          </span>
+          <span>Pending</span>
 
           <strong id="pendingCount">
             0
           </strong>
-
         </div>
 
 
         <div class="stat-card">
-
-          <span>
-            Confirmed
-          </span>
+          <span>Confirmed</span>
 
           <strong id="confirmedCount">
             0
           </strong>
-
         </div>
 
 
         <div class="stat-card">
-
-          <span>
-            Active Lobbies
-          </span>
+          <span>Active Lobbies</span>
 
           <strong id="activeLobbyCount">
             0
           </strong>
-
         </div>
 
       </div>
@@ -975,13 +872,12 @@
     </div>
 
 
-    <!-- =================================================
-         CREATE SCRIM
-    ================================================== -->
 
-    <div class="admin-section panel">
+    <!-- CREATE LOBBY -->
 
-      <div class="panel-header">
+    <div class="admin-section">
+
+      <div class="section-heading">
 
         <div>
 
@@ -995,21 +891,10 @@
 
         </div>
 
-
-        <button
-          class="refresh-btn"
-          onclick="
-            document.getElementById('lobbyForm')?.reset();
-            document.getElementById('lobbyMaxTeams').value=12;
-          "
-        >
-          ↻ Reset
-        </button>
-
       </div>
 
 
-      <div class="form-card inner-card">
+      <div class="form-card">
 
         <form id="lobbyForm">
 
@@ -1099,13 +984,12 @@
     </div>
 
 
-    <!-- =================================================
-         LOBBY MANAGEMENT
-    ================================================== -->
 
-    <div class="admin-section panel">
+    <!-- LOBBY LIST -->
 
-      <div class="panel-header">
+    <div class="admin-section">
+
+      <div class="section-heading">
 
         <div>
 
@@ -1122,15 +1006,9 @@
 
         <button
           class="refresh-btn"
-          onclick="
-            loadAdminLobbies();
-            loadStats();
-            loadScoreLobbyOptions();
-            loadPublicLobbies('homeLobbies');
-            loadPublicLobbies('scrimList');
-          "
+          onclick="refreshLobbyPanel()"
         >
-          ↻ Refresh
+          🔄 Refresh
         </button>
 
       </div>
@@ -1150,13 +1028,12 @@
     </div>
 
 
-    <!-- =================================================
-         REGISTRATION MANAGEMENT
-    ================================================== -->
 
-    <div class="admin-section panel">
+    <!-- REGISTRATIONS -->
 
-      <div class="panel-header">
+    <div class="admin-section">
+
+      <div class="section-heading">
 
         <div>
 
@@ -1173,59 +1050,41 @@
 
         <button
           class="refresh-btn"
-          onclick="
-            loadRegistrations();
-            loadStats();
-            loadScoreLobbyOptions();
-          "
+          onclick="refreshRegistrationPanel()"
         >
-          ↻ Refresh
+          🔄 Refresh
         </button>
 
       </div>
 
 
-      <div class="table-wrap admin-table">
+      <div class="table-wrap">
 
         <table>
 
           <thead>
 
             <tr>
-
               <th>ID</th>
-
               <th>Reference</th>
-
               <th>Team</th>
-
               <th>Captain</th>
-
               <th>Fee</th>
-
               <th>Time</th>
-
               <th>Status</th>
-
               <th>Assign Lobby</th>
-
               <th>Actions</th>
-
             </tr>
 
           </thead>
 
 
-          <tbody
-            id="registrationTable"
-          >
+          <tbody id="registrationTable">
 
             <tr>
-
               <td colspan="9">
                 Loading...
               </td>
-
             </tr>
 
           </tbody>
@@ -1237,13 +1096,12 @@
     </div>
 
 
-    <!-- =================================================
-         SCORE ENTRY
-    ================================================== -->
 
-    <div class="admin-section panel">
+    <!-- SCORE ENTRY -->
 
-      <div class="panel-header">
+    <div class="admin-section">
+
+      <div class="section-heading">
 
         <div>
 
@@ -1260,15 +1118,15 @@
 
         <button
           class="refresh-btn"
-          onclick="loadScoreLobbyOptions()"
+          onclick="refreshScorePanel()"
         >
-          ↻ Refresh
+          🔄 Refresh
         </button>
 
       </div>
 
 
-      <div class="form-card inner-card">
+      <div class="form-card">
 
         <div class="form-group">
 
@@ -1350,63 +1208,13 @@
 
     </div>
 
-
-    <!-- =================================================
-         PUBLIC LEADERBOARD CONTROL
-    ================================================== -->
-
-    <div class="admin-section panel">
-
-      <div class="panel-header">
-
-        <div>
-
-          <span class="eyebrow">
-            PUBLIC RESULTS
-          </span>
-
-          <h2>
-            Leaderboard Control
-          </h2>
-
-        </div>
-
-
-        <button
-          class="refresh-btn"
-          onclick="
-            loadLeaderboardLobbyOptions();
-            loadScoreLobbyOptions();
-          "
-        >
-          ↻ Refresh
-        </button>
-
-      </div>
-
-
-      <div class="card inner-card">
-
-        <p class="muted">
-
-          Public leaderboards update automatically
-          every few seconds. Use the refresh button
-          whenever you want to manually reload the
-          lobby list.
-
-        </p>
-
-      </div>
-
-    </div>
-
-
   </div>
 
 </section>
 
 
 </main>
+
 
 
 <!-- =====================================================
@@ -1435,16 +1243,11 @@
 </footer>
 
 
-<!-- =====================================================
-     APP.JS
-====================================================== -->
 
 <script
   src="/app.js"
   defer
 ></script>
 
-
 </body>
-
 </html>
