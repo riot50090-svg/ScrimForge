@@ -1,15 +1,17 @@
-"use strict";
-
 /* =========================================================
    SCRIMFORGE V4
-   STABLE SERVER
+   SERVER.JS
+   Render + Express + SQLite Backend
    ========================================================= */
+
+"use strict";
 
 const path = require("path");
 const fs = require("fs");
 
 const express = require("express");
 const session = require("express-session");
+const SQLiteStoreFactory = require("connect-sqlite3");
 const bcrypt = require("bcryptjs");
 const Database = require("better-sqlite3");
 
@@ -20,22 +22,42 @@ const Database = require("better-sqlite3");
 
 const app = express();
 
-const PORT = Number(process.env.PORT) || 3000;
+/*
+  IMPORTANT FOR RENDER:
+
+  Render provides PORT automatically.
+
+  DO NOT hardcode 3000 for production.
+  Local fallback is 10000.
+*/
+
+const PORT = Number(process.env.PORT) || 10000;
+
+const HOST = "0.0.0.0";
 
 const ROOT_DIR = __dirname;
-const PUBLIC_DIR = path.join(ROOT_DIR, "public");
-const DATA_DIR = path.join(ROOT_DIR, "data");
 
-fs.mkdirSync(PUBLIC_DIR, { recursive: true });
-fs.mkdirSync(DATA_DIR, { recursive: true });
+const PUBLIC_DIR =
+  path.join(ROOT_DIR, "public");
+
+const DATA_DIR =
+  path.join(ROOT_DIR, "data");
 
 
 /* =========================================================
-   PROXY / HOSTING CONFIG
+   DIRECTORIES
 ========================================================= */
 
-if (process.env.NODE_ENV === "production") {
-  app.set("trust proxy", 1);
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, {
+    recursive: true
+  });
+}
+
+if (!fs.existsSync(PUBLIC_DIR)) {
+  fs.mkdirSync(PUBLIC_DIR, {
+    recursive: true
+  });
 }
 
 
@@ -43,11 +65,17 @@ if (process.env.NODE_ENV === "production") {
    DATABASE
 ========================================================= */
 
-const DB_PATH = path.join(DATA_DIR, "scrimforge.db");
+const dbPath =
+  path.join(
+    DATA_DIR,
+    "scrimforge.db"
+  );
 
-const db = new Database(DB_PATH);
+const db =
+  new Database(dbPath);
 
 db.pragma("journal_mode = WAL");
+
 db.pragma("foreign_keys = ON");
 
 
@@ -115,49 +143,70 @@ db.exec(`
 
 
 /* =========================================================
-   MIDDLEWARE
+   EXPRESS MIDDLEWARE
 ========================================================= */
 
 app.disable("x-powered-by");
 
-app.use(express.json({ limit: "2mb" }));
+app.use(
+  express.json({
+    limit: "1mb"
+  })
+);
 
 app.use(
   express.urlencoded({
     extended: true,
-    limit: "2mb"
+    limit: "1mb"
   })
 );
 
 
 /* =========================================================
    SESSION
-   IMPORTANT:
-   No connect-sqlite3 here.
-   This removes the failing SQLite session-store layer.
 ========================================================= */
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET ||
-  "scrimforge-v4-session-secret-change-this";
+const SQLiteStore =
+  SQLiteStoreFactory(session);
 
 app.use(
   session({
-    name: "scrimforge.sid",
 
-    secret: SESSION_SECRET,
+    store:
+      new SQLiteStore({
+        db: "sessions.sqlite",
+        dir: DATA_DIR
+      }),
+
+    secret:
+      process.env.SESSION_SECRET ||
+      "scrimforge-v4-super-secret-change-this",
 
     resave: false,
 
     saveUninitialized: false,
 
-    rolling: true,
-
     cookie: {
       httpOnly: true,
+
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+
+      /*
+        Render uses HTTPS publicly.
+        Setting secure automatically prevents
+        cookies from being sent over plain HTTP.
+
+        This also works locally.
+      */
+      secure:
+        process.env.NODE_ENV === "production",
+
+      maxAge:
+        1000 *
+        60 *
+        60 *
+        24 *
+        7
     }
   })
 );
@@ -168,10 +217,54 @@ app.use(
 ========================================================= */
 
 app.use(
-  express.static(PUBLIC_DIR, {
-    extensions: ["html"],
-    index: "index.html"
-  })
+  express.static(
+    PUBLIC_DIR
+  )
+);
+
+
+/* =========================================================
+   HEALTH CHECK
+========================================================= */
+
+/*
+  Render can use this endpoint to determine
+  whether the service is alive.
+*/
+
+app.get(
+  "/health",
+  (req, res) => {
+
+    res.status(200).json({
+      ok: true,
+      service: "ScrimForge V4",
+      status: "online",
+      port: PORT,
+      time:
+        new Date().toISOString()
+    });
+
+  }
+);
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+app.get(
+  "/",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        PUBLIC_DIR,
+        "index.html"
+      )
+    );
+
+  }
 );
 
 
@@ -180,7 +273,11 @@ app.use(
 ========================================================= */
 
 function clean(value) {
-  return String(value ?? "").trim();
+
+  return String(
+    value ?? ""
+  ).trim();
+
 }
 
 
@@ -193,15 +290,23 @@ function generateReference() {
     const random =
       Math.random()
         .toString(36)
-        .substring(2, 10)
+        .substring(
+          2,
+          10
+        )
         .toUpperCase();
 
-    ref = `SF-${random}`;
+    ref =
+      `SF-${random}`;
 
   } while (
     db
       .prepare(
-        "SELECT id FROM registrations WHERE ref = ?"
+        `
+        SELECT id
+        FROM registrations
+        WHERE ref = ?
+        `
       )
       .get(ref)
   );
@@ -213,6 +318,7 @@ function generateReference() {
 function placementPoints(position) {
 
   const table = {
+
     1: 12,
     2: 9,
     3: 8,
@@ -225,514 +331,596 @@ function placementPoints(position) {
     10: 1,
     11: 0,
     12: 0
+
   };
 
-  return table[Number(position)] ?? 0;
+  return (
+    table[
+      Number(position)
+    ] ?? 0
+  );
+
 }
 
 
-function requireAdmin(req, res, next) {
+function requireAdmin(
+  req,
+  res,
+  next
+) {
 
-  if (!req.session || !req.session.adminId) {
+  if (
+    !req.session ||
+    !req.session.adminId
+  ) {
 
     return res.status(401).json({
-      error: "Admin login required."
+      error:
+        "Admin login required."
     });
 
   }
 
   next();
+
 }
-
-
-/* =========================================================
-   HEALTH
-========================================================= */
-
-app.get("/health", (req, res) => {
-
-  res.status(200).json({
-    ok: true,
-    service: "ScrimForge V4",
-    database: "connected",
-    session: "ready",
-    time: new Date().toISOString()
-  });
-
-});
-
-
-/* =========================================================
-   ROOT
-========================================================= */
-
-app.get("/", (req, res) => {
-
-  res.sendFile(
-    path.join(PUBLIC_DIR, "index.html")
-  );
-
-});
 
 
 /* =========================================================
    ADMIN EXISTS
 ========================================================= */
 
-app.get("/api/admin-exists", (req, res) => {
+app.get(
+  "/api/admin-exists",
+  (req, res) => {
 
-  try {
+    try {
 
-    const row =
-      db
-        .prepare(
-          "SELECT COUNT(*) AS count FROM admins"
-        )
-        .get();
+      const row =
+        db
+          .prepare(
+            `
+            SELECT COUNT(*) AS count
+            FROM admins
+            `
+          )
+          .get();
 
-    res.json({
-      exists: Number(row.count) > 0
-    });
+      res.json({
+        exists:
+          Number(row.count) > 0
+      });
 
-  } catch (error) {
+    } catch (error) {
 
-    console.error("ADMIN EXISTS ERROR:", error);
+      console.error(
+        "ADMIN EXISTS ERROR:",
+        error
+      );
 
-    res.status(500).json({
-      error: "Unable to check admin."
-    });
+      res.status(500).json({
+        error:
+          "Unable to check admin account."
+      });
+
+    }
 
   }
-
-});
+);
 
 
 /* =========================================================
    CURRENT ADMIN
 ========================================================= */
 
-app.get("/api/me", (req, res) => {
+app.get(
+  "/api/me",
+  (req, res) => {
 
-  try {
+    try {
 
-    if (!req.session || !req.session.adminId) {
+      if (
+        !req.session ||
+        !req.session.adminId
+      ) {
 
-      return res.json({
-        loggedIn: false
+        return res.json({
+          loggedIn: false
+        });
+
+      }
+
+      const admin =
+        db
+          .prepare(
+            `
+            SELECT
+              id,
+              name,
+              email
+            FROM admins
+            WHERE id = ?
+            `
+          )
+          .get(
+            req.session.adminId
+          );
+
+      if (!admin) {
+
+        return req.session.destroy(
+          () => {
+
+            res.json({
+              loggedIn: false
+            });
+
+          }
+        );
+
+      }
+
+      res.json({
+
+        loggedIn: true,
+
+        id:
+          admin.id,
+
+        name:
+          admin.name,
+
+        email:
+          admin.email
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ME ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to check login."
       });
 
     }
-
-    const admin =
-      db
-        .prepare(
-          `
-          SELECT id, name, email
-          FROM admins
-          WHERE id = ?
-          `
-        )
-        .get(req.session.adminId);
-
-    if (!admin) {
-
-      req.session.destroy(() => {});
-
-      return res.json({
-        loggedIn: false
-      });
-
-    }
-
-    res.json({
-      loggedIn: true,
-      id: admin.id,
-      name: admin.name,
-      email: admin.email
-    });
-
-  } catch (error) {
-
-    console.error("ME ERROR:", error);
-
-    res.status(500).json({
-      error: "Unable to check login."
-    });
 
   }
-
-});
+);
 
 
 /* =========================================================
    CREATE FIRST ADMIN
 ========================================================= */
 
-app.post("/api/setup-admin", (req, res) => {
+app.post(
+  "/api/setup-admin",
+  (req, res) => {
 
-  try {
+    try {
 
-    const name =
-      clean(req.body.name);
-
-    const email =
-      clean(req.body.email).toLowerCase();
-
-    const password =
-      String(req.body.password || "");
-
-    if (!name || !email || !password) {
-
-      return res.status(400).json({
-        error:
-          "Name, email and password are required."
-      });
-
-    }
-
-    if (password.length < 6) {
-
-      return res.status(400).json({
-        error:
-          "Password must be at least 6 characters."
-      });
-
-    }
-
-    const count =
-      db
-        .prepare(
-          "SELECT COUNT(*) AS count FROM admins"
-        )
-        .get();
-
-    if (Number(count.count) > 0) {
-
-      return res.status(409).json({
-        error:
-          "Admin account already exists."
-      });
-
-    }
-
-    const hash =
-      bcrypt.hashSync(password, 12);
-
-    const result =
-      db
-        .prepare(
-          `
-          INSERT INTO admins
-          (name, email, password_hash)
-          VALUES (?, ?, ?)
-          `
-        )
-        .run(
-          name,
-          email,
-          hash
+      const name =
+        clean(
+          req.body.name
         );
 
-    req.session.regenerate(err => {
+      const email =
+        clean(
+          req.body.email
+        ).toLowerCase();
 
-      if (err) {
-
-        console.error(
-          "SETUP SESSION REGENERATE ERROR:",
-          err
+      const password =
+        String(
+          req.body.password || ""
         );
 
-        return res.status(500).json({
+      if (
+        !name ||
+        !email ||
+        !password
+      ) {
+
+        return res.status(400).json({
           error:
-            "Admin created but login session failed."
+            "Name, email and password are required."
         });
 
       }
 
-      req.session.adminId =
-        Number(result.lastInsertRowid);
+      if (
+        password.length < 6
+      ) {
 
-      req.session.save(saveError => {
+        return res.status(400).json({
+          error:
+            "Password must be at least 6 characters."
+        });
 
-        if (saveError) {
+      }
 
-          console.error(
-            "SETUP SESSION SAVE ERROR:",
-            saveError
+      const count =
+        db
+          .prepare(
+            `
+            SELECT COUNT(*) AS count
+            FROM admins
+            `
+          )
+          .get();
+
+      if (
+        Number(count.count) > 0
+      ) {
+
+        return res.status(409).json({
+          error:
+            "Admin account already exists."
+        });
+
+      }
+
+      const passwordHash =
+        bcrypt.hashSync(
+          password,
+          12
+        );
+
+      const result =
+        db
+          .prepare(
+            `
+            INSERT INTO admins
+              (
+                name,
+                email,
+                password_hash
+              )
+            VALUES
+              (?, ?, ?)
+            `
+          )
+          .run(
+            name,
+            email,
+            passwordHash
           );
 
-          return res.status(500).json({
-            error:
-              "Admin created but session could not be saved."
+      req.session.adminId =
+        Number(
+          result.lastInsertRowid
+        );
+
+      req.session.save(
+        err => {
+
+          if (err) {
+
+            console.error(
+              "SETUP SESSION ERROR:",
+              err
+            );
+
+            return res.status(500).json({
+              error:
+                "Admin created but session could not be saved."
+            });
+
+          }
+
+          res.json({
+            success: true,
+            name,
+            email
           });
 
         }
+      );
 
-        res.json({
-          success: true,
-          name,
-          email
-        });
+    } catch (error) {
 
+      console.error(
+        "SETUP ADMIN ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to create admin account."
       });
 
-    });
-
-  } catch (error) {
-
-    console.error(
-      "SETUP ADMIN ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error:
-        "Unable to create admin account."
-    });
+    }
 
   }
-
-});
+);
 
 
 /* =========================================================
    ADMIN LOGIN
 ========================================================= */
 
-app.post("/api/login", (req, res) => {
+app.post(
+  "/api/login",
+  (req, res) => {
 
-  try {
+    try {
 
-    const email =
-      clean(req.body.email).toLowerCase();
+      const email =
+        clean(
+          req.body.email
+        ).toLowerCase();
 
-    const password =
-      String(req.body.password || "");
-
-    if (!email || !password) {
-
-      return res.status(400).json({
-        error:
-          "Email and password are required."
-      });
-
-    }
-
-    const admin =
-      db
-        .prepare(
-          `
-          SELECT
-            id,
-            name,
-            email,
-            password_hash
-          FROM admins
-          WHERE email = ?
-          LIMIT 1
-          `
-        )
-        .get(email);
-
-    if (!admin) {
-
-      return res.status(401).json({
-        error:
-          "Invalid email or password."
-      });
-
-    }
-
-    const valid =
-      bcrypt.compareSync(
-        password,
-        admin.password_hash
-      );
-
-    if (!valid) {
-
-      return res.status(401).json({
-        error:
-          "Invalid email or password."
-      });
-
-    }
-
-    /*
-      Regenerate the session after authentication.
-      This prevents session fixation and also gives us
-      a completely fresh session object.
-    */
-
-    req.session.regenerate(err => {
-
-      if (err) {
-
-        console.error(
-          "LOGIN SESSION REGENERATE ERROR:",
-          err
+      const password =
+        String(
+          req.body.password || ""
         );
 
-        return res.status(500).json({
+      if (
+        !email ||
+        !password
+      ) {
+
+        return res.status(400).json({
           error:
-            "Authentication succeeded but the session could not be created."
+            "Email and password are required."
         });
 
       }
 
-      req.session.adminId =
-        Number(admin.id);
-
-      req.session.adminName =
-        admin.name;
-
-      req.session.adminEmail =
-        admin.email;
-
-      req.session.save(saveError => {
-
-        if (saveError) {
-
-          console.error(
-            "LOGIN SESSION SAVE ERROR:",
-            saveError
+      const admin =
+        db
+          .prepare(
+            `
+            SELECT
+              id,
+              name,
+              email,
+              password_hash
+            FROM admins
+            WHERE email = ?
+            LIMIT 1
+            `
+          )
+          .get(
+            email
           );
 
-          return res.status(500).json({
-            error:
-              "Authentication succeeded but the login session could not be saved."
-          });
+      if (!admin) {
 
-        }
-
-        console.log(
-          `ADMIN LOGIN SUCCESS: ${admin.email}`
-        );
-
-        res.status(200).json({
-          success: true,
-          name: admin.name,
-          email: admin.email
+        return res.status(401).json({
+          error:
+            "Invalid email or password."
         });
 
+      }
+
+      let valid = false;
+
+      try {
+
+        valid =
+          bcrypt.compareSync(
+            password,
+            admin.password_hash
+          );
+
+      } catch (bcryptError) {
+
+        console.error(
+          "BCRYPT ERROR:",
+          bcryptError
+        );
+
+        return res.status(500).json({
+          error:
+            "Password verification failed on the server."
+        });
+
+      }
+
+      if (!valid) {
+
+        return res.status(401).json({
+          error:
+            "Invalid email or password."
+        });
+
+      }
+
+      /*
+        Regenerate the session after login.
+        This avoids stale/broken session IDs.
+      */
+
+      req.session.regenerate(
+        err => {
+
+          if (err) {
+
+            console.error(
+              "SESSION REGENERATE ERROR:",
+              err
+            );
+
+            return res.status(500).json({
+              error:
+                "Unable to create login session."
+            });
+
+          }
+
+          req.session.adminId =
+            Number(admin.id);
+
+          req.session.adminName =
+            admin.name;
+
+          req.session.adminEmail =
+            admin.email;
+
+          req.session.save(
+            saveError => {
+
+              if (saveError) {
+
+                console.error(
+                  "SESSION SAVE ERROR:",
+                  saveError
+                );
+
+                return res.status(500).json({
+                  error:
+                    "Login succeeded, but the session could not be saved."
+                });
+
+              }
+
+              res.status(200).json({
+
+                success: true,
+
+                name:
+                  admin.name,
+
+                email:
+                  admin.email
+
+              });
+
+            }
+          );
+
+        }
+      );
+
+    } catch (error) {
+
+      console.error(
+        "LOGIN ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Login server error."
       });
 
-    });
-
-  } catch (error) {
-
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error:
-        "Login server error."
-    });
+    }
 
   }
-
-});
+);
 
 
 /* =========================================================
    LOGOUT
 ========================================================= */
 
-app.post("/api/logout", (req, res) => {
+app.post(
+  "/api/logout",
+  (req, res) => {
 
-  if (!req.session) {
+    if (!req.session) {
 
-    return res.json({
-      success: true
-    });
-
-  }
-
-  req.session.destroy(error => {
-
-    if (error) {
-
-      console.error(
-        "LOGOUT ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error:
-          "Unable to logout."
+      return res.json({
+        success: true
       });
 
     }
 
-    res.clearCookie("scrimforge.sid");
+    req.session.destroy(
+      err => {
 
-    res.json({
-      success: true
-    });
+        if (err) {
 
-  });
+          console.error(
+            "LOGOUT ERROR:",
+            err
+          );
 
-});
+          return res.status(500).json({
+            error:
+              "Unable to logout."
+          });
+
+        }
+
+        res.clearCookie(
+          "connect.sid"
+        );
+
+        res.json({
+          success: true
+        });
+
+      }
+    );
+
+  }
+);
 
 
 /* =========================================================
    PUBLIC LOBBIES
 ========================================================= */
 
-app.get("/api/public/lobbies", (req, res) => {
+app.get(
+  "/api/public/lobbies",
+  (req, res) => {
 
-  try {
+    try {
 
-    const rows =
-      db
-        .prepare(
-          `
-          SELECT
-            l.id,
-            l.name,
-            l.time,
-            l.fee,
-            l.max_teams,
-            l.status,
+      const rows =
+        db
+          .prepare(
+            `
+            SELECT
+              l.id,
+              l.name,
+              l.time,
+              l.fee,
+              l.max_teams,
+              l.status,
 
-            COUNT(
-              CASE
-                WHEN r.status = 'confirmed'
-                THEN 1
-              END
-            ) AS confirmed
+              COUNT(
+                CASE
+                  WHEN r.status = 'confirmed'
+                  THEN 1
+                END
+              ) AS confirmed
 
-          FROM lobbies l
+            FROM lobbies l
 
-          LEFT JOIN registrations r
-            ON r.lobby_id = l.id
+            LEFT JOIN registrations r
+              ON r.lobby_id = l.id
 
-          GROUP BY l.id
+            GROUP BY l.id
 
-          ORDER BY l.id DESC
-          `
-        )
-        .all();
+            ORDER BY l.id DESC
+            `
+          )
+          .all();
 
-    res.json(rows);
+      res.json(rows);
 
-  } catch (error) {
+    } catch (error) {
 
-    console.error(
-      "PUBLIC LOBBIES ERROR:",
-      error
-    );
+      console.error(
+        "PUBLIC LOBBIES ERROR:",
+        error
+      );
 
-    res.status(500).json({
-      error:
-        "Unable to load lobbies."
-    });
+      res.status(500).json({
+        error:
+          "Unable to load lobbies."
+      });
+
+    }
 
   }
-
-});
+);
 
 
 /* =========================================================
@@ -813,9 +1001,15 @@ app.post(
         clean(req.body.fee);
 
       const maxTeams =
-        Number(req.body.maxTeams);
+        Number(
+          req.body.maxTeams
+        );
 
-      if (!name || !time || !fee) {
+      if (
+        !name ||
+        !time ||
+        !fee
+      ) {
 
         return res.status(400).json({
           error:
@@ -842,8 +1036,15 @@ app.post(
           .prepare(
             `
             INSERT INTO lobbies
-            (name, time, fee, max_teams, status)
-            VALUES (?, ?, ?, ?, 'open')
+              (
+                name,
+                time,
+                fee,
+                max_teams,
+                status
+              )
+            VALUES
+              (?, ?, ?, ?, 'open')
             `
           )
           .run(
@@ -854,9 +1055,14 @@ app.post(
           );
 
       res.json({
+
         success: true,
+
         id:
-          Number(result.lastInsertRowid)
+          Number(
+            result.lastInsertRowid
+          )
+
       });
 
     } catch (error) {
@@ -889,12 +1095,18 @@ app.patch(
     try {
 
       const id =
-        Number(req.params.id);
+        Number(
+          req.params.id
+        );
 
       const status =
-        clean(req.body.status).toLowerCase();
+        clean(
+          req.body.status
+        ).toLowerCase();
 
-      if (!Number.isInteger(id)) {
+      if (
+        !Number.isInteger(id)
+      ) {
 
         return res.status(400).json({
           error:
@@ -903,7 +1115,12 @@ app.patch(
 
       }
 
-      if (!["open", "closed"].includes(status)) {
+      if (
+        ![
+          "open",
+          "closed"
+        ].includes(status)
+      ) {
 
         return res.status(400).json({
           error:
@@ -921,7 +1138,10 @@ app.patch(
             WHERE id = ?
             `
           )
-          .run(status, id);
+          .run(
+            status,
+            id
+          );
 
       if (!result.changes) {
 
@@ -966,9 +1186,13 @@ app.delete(
     try {
 
       const id =
-        Number(req.params.id);
+        Number(
+          req.params.id
+        );
 
-      if (!Number.isInteger(id)) {
+      if (
+        !Number.isInteger(id)
+      ) {
 
         return res.status(400).json({
           error:
@@ -978,32 +1202,44 @@ app.delete(
       }
 
       const transaction =
-        db.transaction(() => {
+        db.transaction(
+          () => {
 
-          db
-            .prepare(
-              "DELETE FROM match_scores WHERE lobby_id = ?"
-            )
-            .run(id);
-
-          db
-            .prepare(
-              "DELETE FROM registrations WHERE lobby_id = ?"
-            )
-            .run(id);
-
-          const result =
             db
               .prepare(
-                "DELETE FROM lobbies WHERE id = ?"
+                `
+                DELETE FROM match_scores
+                WHERE lobby_id = ?
+                `
               )
               .run(id);
 
-          return result.changes;
+            db
+              .prepare(
+                `
+                DELETE FROM registrations
+                WHERE lobby_id = ?
+                `
+              )
+              .run(id);
 
-        });
+            const result =
+              db
+                .prepare(
+                  `
+                  DELETE FROM lobbies
+                  WHERE id = ?
+                  `
+                )
+                .run(id);
 
-      const changes = transaction();
+            return result.changes;
+
+          }
+        );
+
+      const changes =
+        transaction();
 
       if (!changes) {
 
@@ -1040,150 +1276,186 @@ app.delete(
    CREATE REGISTRATION
 ========================================================= */
 
-app.post("/api/registrations", (req, res) => {
+app.post(
+  "/api/registrations",
+  (req, res) => {
 
-  try {
+    try {
 
-    const lobbyId =
-      Number(req.body.lobbyId);
+      const lobbyId =
+        Number(
+          req.body.lobbyId
+        );
 
-    const team =
-      clean(req.body.team);
+      const team =
+        clean(
+          req.body.team
+        );
 
-    const captain =
-      clean(req.body.captain);
+      const captain =
+        clean(
+          req.body.captain
+        );
 
-    const phone =
-      clean(req.body.phone);
+      const phone =
+        clean(
+          req.body.phone
+        );
 
-    const uid =
-      clean(req.body.uid);
+      const uid =
+        clean(
+          req.body.uid
+        );
 
-    if (
-      !Number.isInteger(lobbyId) ||
-      lobbyId <= 0
-    ) {
+      if (
+        !Number.isInteger(lobbyId) ||
+        lobbyId <= 0
+      ) {
 
-      return res.status(400).json({
-        error:
-          "Please select a valid lobby."
-      });
+        return res.status(400).json({
+          error:
+            "Please select a valid lobby."
+        });
 
-    }
+      }
 
-    if (!team || !captain || !phone || !uid) {
+      if (
+        !team ||
+        !captain ||
+        !phone ||
+        !uid
+      ) {
 
-      return res.status(400).json({
-        error:
-          "Please complete all registration fields."
-      });
+        return res.status(400).json({
+          error:
+            "Please complete all registration fields."
+        });
 
-    }
+      }
 
-    const lobby =
-      db
-        .prepare(
-          "SELECT * FROM lobbies WHERE id = ?"
-        )
-        .get(lobbyId);
+      const lobby =
+        db
+          .prepare(
+            `
+            SELECT *
+            FROM lobbies
+            WHERE id = ?
+            `
+          )
+          .get(
+            lobbyId
+          );
 
-    if (!lobby) {
+      if (!lobby) {
 
-      return res.status(404).json({
-        error:
-          "Selected lobby no longer exists."
-      });
+        return res.status(404).json({
+          error:
+            "Selected lobby no longer exists."
+        });
 
-    }
+      }
 
-    if (lobby.status !== "open") {
+      if (
+        String(lobby.status)
+          .toLowerCase() !== "open"
+      ) {
 
-      return res.status(400).json({
-        error:
-          "This lobby is currently closed."
-      });
+        return res.status(400).json({
+          error:
+            "This lobby is currently closed."
+        });
 
-    }
+      }
 
-    const count =
-      db
-        .prepare(
-          `
-          SELECT COUNT(*) AS count
-          FROM registrations
-          WHERE lobby_id = ?
-          AND status = 'confirmed'
-          `
-        )
-        .get(lobbyId);
+      const count =
+        db
+          .prepare(
+            `
+            SELECT COUNT(*) AS count
+            FROM registrations
+            WHERE lobby_id = ?
+              AND status = 'confirmed'
+            `
+          )
+          .get(
+            lobbyId
+          );
 
-    if (
-      Number(count.count) >=
-      Number(lobby.max_teams)
-    ) {
+      if (
+        Number(count.count) >=
+        Number(lobby.max_teams)
+      ) {
 
-      return res.status(400).json({
-        error:
-          "This lobby is full."
-      });
+        return res.status(400).json({
+          error:
+            "This lobby is full."
+        });
 
-    }
+      }
 
-    const ref =
-      generateReference();
+      const ref =
+        generateReference();
 
-    const result =
-      db
-        .prepare(
-          `
-          INSERT INTO registrations
-          (
+      const result =
+        db
+          .prepare(
+            `
+            INSERT INTO registrations
+              (
+                ref,
+                lobby_id,
+                team,
+                captain,
+                phone,
+                uid,
+                time,
+                fee,
+                status
+              )
+            VALUES
+              (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+            `
+          )
+          .run(
             ref,
-            lobby_id,
+            lobbyId,
             team,
             captain,
             phone,
             uid,
-            time,
-            fee,
-            status
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-          `
-        )
-        .run(
-          ref,
-          lobbyId,
-          team,
-          captain,
-          phone,
-          uid,
-          lobby.time,
-          lobby.fee
-        );
+            lobby.time,
+            lobby.fee
+          );
 
-    res.json({
-      success: true,
-      id:
-        Number(result.lastInsertRowid),
-      ref
-    });
+      res.json({
 
-  } catch (error) {
+        success: true,
 
-    console.error(
-      "REGISTRATION ERROR:",
-      error
-    );
+        id:
+          Number(
+            result.lastInsertRowid
+          ),
 
-    res.status(500).json({
-      error:
-        "Unable to submit registration."
-    });
+        ref
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "REGISTRATION ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to submit registration."
+      });
+
+    }
 
   }
-
-});
+);
 
 
 /* =========================================================
@@ -1197,7 +1469,9 @@ app.get(
     try {
 
       const ref =
-        clean(req.params.ref).toUpperCase();
+        clean(
+          req.params.ref
+        ).toUpperCase();
 
       const row =
         db
@@ -1215,7 +1489,9 @@ app.get(
             WHERE UPPER(r.ref) = ?
             `
           )
-          .get(ref);
+          .get(
+            ref
+          );
 
       if (!row) {
 
@@ -1227,15 +1503,31 @@ app.get(
       }
 
       res.json({
-        id: row.id,
-        ref: row.ref,
-        team: row.team,
-        captain: row.captain,
-        time: row.time,
-        fee: row.fee,
-        status: row.status,
+
+        id:
+          row.id,
+
+        ref:
+          row.ref,
+
+        team:
+          row.team,
+
+        captain:
+          row.captain,
+
+        time:
+          row.time,
+
+        fee:
+          row.fee,
+
+        status:
+          row.status,
+
         lobby_name:
           row.lobby_name || ""
+
       });
 
     } catch (error) {
@@ -1317,12 +1609,18 @@ app.patch(
     try {
 
       const id =
-        Number(req.params.id);
+        Number(
+          req.params.id
+        );
 
       const status =
-        clean(req.body.status).toLowerCase();
+        clean(
+          req.body.status
+        ).toLowerCase();
 
-      if (!Number.isInteger(id)) {
+      if (
+        !Number.isInteger(id)
+      ) {
 
         return res.status(400).json({
           error:
@@ -1332,8 +1630,11 @@ app.patch(
       }
 
       if (
-        !["pending", "confirmed", "rejected"]
-          .includes(status)
+        ![
+          "pending",
+          "confirmed",
+          "rejected"
+        ].includes(status)
       ) {
 
         return res.status(400).json({
@@ -1346,7 +1647,11 @@ app.patch(
       const registration =
         db
           .prepare(
-            "SELECT * FROM registrations WHERE id = ?"
+            `
+            SELECT *
+            FROM registrations
+            WHERE id = ?
+            `
           )
           .get(id);
 
@@ -1367,9 +1672,15 @@ app.patch(
         const lobby =
           db
             .prepare(
-              "SELECT * FROM lobbies WHERE id = ?"
+              `
+              SELECT *
+              FROM lobbies
+              WHERE id = ?
+              `
             )
-            .get(registration.lobby_id);
+            .get(
+              registration.lobby_id
+            );
 
         if (lobby) {
 
@@ -1380,8 +1691,8 @@ app.patch(
                 SELECT COUNT(*) AS count
                 FROM registrations
                 WHERE lobby_id = ?
-                AND status = 'confirmed'
-                AND id != ?
+                  AND status = 'confirmed'
+                  AND id != ?
                 `
               )
               .get(
@@ -1452,14 +1763,22 @@ app.patch(
     try {
 
       const registrationId =
-        Number(req.params.id);
+        Number(
+          req.params.id
+        );
 
       const lobbyId =
-        Number(req.body.lobbyId);
+        Number(
+          req.body.lobbyId
+        );
 
       if (
-        !Number.isInteger(registrationId) ||
-        !Number.isInteger(lobbyId)
+        !Number.isInteger(
+          registrationId
+        ) ||
+        !Number.isInteger(
+          lobbyId
+        )
       ) {
 
         return res.status(400).json({
@@ -1472,9 +1791,15 @@ app.patch(
       const registration =
         db
           .prepare(
-            "SELECT * FROM registrations WHERE id = ?"
+            `
+            SELECT *
+            FROM registrations
+            WHERE id = ?
+            `
           )
-          .get(registrationId);
+          .get(
+            registrationId
+          );
 
       if (!registration) {
 
@@ -1488,9 +1813,15 @@ app.patch(
       const lobby =
         db
           .prepare(
-            "SELECT * FROM lobbies WHERE id = ?"
+            `
+            SELECT *
+            FROM lobbies
+            WHERE id = ?
+            `
           )
-          .get(lobbyId);
+          .get(
+            lobbyId
+          );
 
       if (!lobby) {
 
@@ -1508,8 +1839,8 @@ app.patch(
             SELECT COUNT(*) AS count
             FROM registrations
             WHERE lobby_id = ?
-            AND status = 'confirmed'
-            AND id != ?
+              AND status = 'confirmed'
+              AND id != ?
             `
           )
           .get(
@@ -1520,7 +1851,7 @@ app.patch(
       if (
         registration.status === "confirmed" &&
         Number(confirmed.count) >=
-        Number(lobby.max_teams)
+          Number(lobby.max_teams)
       ) {
 
         return res.status(400).json({
@@ -1603,7 +1934,7 @@ app.get(
           )
           .get();
 
-      const active =
+      const activeLobbies =
         db
           .prepare(
             `
@@ -1615,14 +1946,22 @@ app.get(
           .get();
 
       res.json({
+
         pending:
-          Number(pending.count),
+          Number(
+            pending.count
+          ),
 
         confirmed:
-          Number(confirmed.count),
+          Number(
+            confirmed.count
+          ),
 
         activeLobbies:
-          Number(active.count)
+          Number(
+            activeLobbies.count
+          )
+
       });
 
     } catch (error) {
@@ -1644,7 +1983,7 @@ app.get(
 
 
 /* =========================================================
-   LEADERBOARD TEAMS
+   CONFIRMED TEAMS
 ========================================================= */
 
 app.get(
@@ -1655,7 +1994,9 @@ app.get(
     try {
 
       const lobbyName =
-        clean(req.query.lobby);
+        clean(
+          req.query.lobby
+        );
 
       if (!lobbyName) {
 
@@ -1677,7 +2018,9 @@ app.get(
             LIMIT 1
             `
           )
-          .get(lobbyName);
+          .get(
+            lobbyName
+          );
 
       if (!lobby) {
 
@@ -1697,16 +2040,15 @@ app.get(
               team,
               captain,
               uid
-
             FROM registrations
-
             WHERE lobby_id = ?
-            AND status = 'confirmed'
-
+              AND status = 'confirmed'
             ORDER BY id ASC
             `
           )
-          .all(lobby.id);
+          .all(
+            lobby.id
+          );
 
       res.json(teams);
 
@@ -1729,7 +2071,7 @@ app.get(
 
 
 /* =========================================================
-   GET MATCH
+   GET MATCH SCORES
 ========================================================= */
 
 app.get(
@@ -1739,10 +2081,14 @@ app.get(
     try {
 
       const lobbyName =
-        clean(req.query.lobby);
+        clean(
+          req.query.lobby
+        );
 
       const match =
-        Number(req.query.match);
+        Number(
+          req.query.match
+        );
 
       if (
         !lobbyName ||
@@ -1769,7 +2115,9 @@ app.get(
             LIMIT 1
             `
           )
-          .get(lobbyName);
+          .get(
+            lobbyName
+          );
 
       if (!lobby) {
 
@@ -1792,12 +2140,9 @@ app.get(
               placement_points,
               kill_points,
               total_points
-
             FROM match_scores
-
             WHERE lobby_id = ?
-            AND match_no = ?
-
+              AND match_no = ?
             ORDER BY position ASC
             `
           )
@@ -1838,13 +2183,19 @@ app.post(
     try {
 
       const lobbyName =
-        clean(req.body.lobby);
+        clean(
+          req.body.lobby
+        );
 
       const matchNo =
-        Number(req.body.matchNo);
+        Number(
+          req.body.matchNo
+        );
 
       const entries =
-        Array.isArray(req.body.entries)
+        Array.isArray(
+          req.body.entries
+        )
           ? req.body.entries
           : [];
 
@@ -1890,7 +2241,9 @@ app.post(
             LIMIT 1
             `
           )
-          .get(lobbyName);
+          .get(
+            lobbyName
+          );
 
       if (!lobby) {
 
@@ -1908,34 +2261,55 @@ app.post(
             SELECT team
             FROM registrations
             WHERE lobby_id = ?
-            AND status = 'confirmed'
+              AND status = 'confirmed'
             `
           )
-          .all(lobby.id);
+          .all(
+            lobby.id
+          );
 
       const confirmedTeams =
         new Set(
-          teams.map(row => row.team)
+          teams.map(
+            row => row.team
+          )
         );
 
-      const positions = [];
+      for (
+        const entry of entries
+      ) {
 
-      for (const entry of entries) {
-
-        const team =
-          clean(entry.team);
-
-        const position =
-          Number(entry.position);
-
-        if (!confirmedTeams.has(team)) {
+        if (
+          !confirmedTeams.has(
+            clean(entry.team)
+          )
+        ) {
 
           return res.status(400).json({
             error:
-              `Team "${team}" is not confirmed in this lobby.`
+              `Team "${clean(entry.team)}" is not a confirmed team in this lobby.`
           });
 
         }
+
+      }
+
+      const positions =
+        entries.map(
+          entry =>
+            Number(
+              entry.position
+            )
+        );
+
+      const uniquePositions =
+        new Set(
+          positions
+        );
+
+      for (
+        const position of positions
+      ) {
 
         if (
           !Number.isInteger(position) ||
@@ -1950,12 +2324,10 @@ app.post(
 
         }
 
-        positions.push(position);
-
       }
 
       if (
-        new Set(positions).size !==
+        uniquePositions.size !==
         positions.length
       ) {
 
@@ -1967,81 +2339,97 @@ app.post(
       }
 
       const transaction =
-        db.transaction(() => {
+        db.transaction(
+          () => {
 
-          db
-            .prepare(
-              `
-              DELETE FROM match_scores
-              WHERE lobby_id = ?
-              AND match_no = ?
-              `
-            )
-            .run(
-              lobby.id,
-              matchNo
-            );
+            db
+              .prepare(
+                `
+                DELETE FROM match_scores
+                WHERE lobby_id = ?
+                  AND match_no = ?
+                `
+              )
+              .run(
+                lobby.id,
+                matchNo
+              );
 
-          const insert =
-            db.prepare(
-              `
-              INSERT INTO match_scores
-              (
-                lobby_id,
-                match_no,
+            const insert =
+              db.prepare(
+                `
+                INSERT INTO match_scores
+                  (
+                    lobby_id,
+                    match_no,
+                    team,
+                    position,
+                    kills,
+                    booyah,
+                    placement_points,
+                    kill_points,
+                    total_points
+                  )
+                VALUES
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `
+              );
+
+            for (
+              const entry of entries
+            ) {
+
+              const team =
+                clean(
+                  entry.team
+                );
+
+              const position =
+                Number(
+                  entry.position
+                );
+
+              const kills =
+                Math.max(
+                  0,
+                  Number(
+                    entry.kills
+                  ) || 0
+                );
+
+              const booyah =
+                position === 1
+                  ? 1
+                  : 0;
+
+              const placement =
+                placementPoints(
+                  position
+                );
+
+              const killPoints =
+                kills;
+
+              const total =
+                placement +
+                killPoints;
+
+              insert.run(
+                lobby.id,
+                matchNo,
                 team,
                 position,
                 kills,
                 booyah,
-                placement_points,
-                kill_points,
-                total_points
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-              `
-            );
-
-          for (const entry of entries) {
-
-            const team =
-              clean(entry.team);
-
-            const position =
-              Number(entry.position);
-
-            const kills =
-              Math.max(
-                0,
-                Number(entry.kills) || 0
+                placement,
+                killPoints,
+                total
               );
 
-            const booyah =
-              position === 1 ? 1 : 0;
-
-            const placement =
-              placementPoints(position);
-
-            const killPoints =
-              kills;
-
-            const total =
-              placement + killPoints;
-
-            insert.run(
-              lobby.id,
-              matchNo,
-              team,
-              position,
-              kills,
-              booyah,
-              placement,
-              killPoints,
-              total
-            );
+            }
 
           }
-
-        });
+        );
 
       transaction();
 
@@ -2068,7 +2456,7 @@ app.post(
 
 
 /* =========================================================
-   PUBLIC LEADERBOARD
+   PUBLIC OVERALL LEADERBOARD
 ========================================================= */
 
 app.get(
@@ -2078,7 +2466,9 @@ app.get(
     try {
 
       const lobbyName =
-        clean(req.query.lobby);
+        clean(
+          req.query.lobby
+        );
 
       if (!lobbyName) {
 
@@ -2100,7 +2490,9 @@ app.get(
             LIMIT 1
             `
           )
-          .get(lobbyName);
+          .get(
+            lobbyName
+          );
 
       if (!lobby) {
 
@@ -2144,31 +2536,44 @@ app.get(
               team ASC
             `
           )
-          .all(lobby.id);
+          .all(
+            lobby.id
+          );
 
-      res.json(
-        rows.map((row, index) => ({
+      const result =
+        rows.map(
+          (row, index) => ({
 
-          position:
-            index + 1,
+            position:
+              index + 1,
 
-          team:
-            row.team,
+            team:
+              row.team,
 
-          booyahs:
-            Number(row.booyahs || 0),
+            booyahs:
+              Number(
+                row.booyahs || 0
+              ),
 
-          killPoints:
-            Number(row.killPoints || 0),
+            killPoints:
+              Number(
+                row.killPoints || 0
+              ),
 
-          placementPoints:
-            Number(row.placementPoints || 0),
+            placementPoints:
+              Number(
+                row.placementPoints || 0
+              ),
 
-          totalPoints:
-            Number(row.totalPoints || 0)
+            totalPoints:
+              Number(
+                row.totalPoints || 0
+              )
 
-        }))
-      );
+          })
+        );
+
+      res.json(result);
 
     } catch (error) {
 
@@ -2189,119 +2594,170 @@ app.get(
 
 
 /* =========================================================
-   UNKNOWN API
+   UNKNOWN API ROUTE
 ========================================================= */
 
-app.use("/api", (req, res) => {
+app.use(
+  "/api",
+  (req, res) => {
 
-  res.status(404).json({
-    error:
-      `API route not found: ${req.method} ${req.originalUrl}`
-  });
+    res.status(404).json({
+      error:
+        `API route not found: ${req.method} ${req.originalUrl}`
+    });
 
-});
+  }
+);
 
 
 /* =========================================================
    FRONTEND FALLBACK
 ========================================================= */
 
-app.get("*", (req, res) => {
+app.get(
+  "*",
+  (req, res) => {
 
-  res.sendFile(
-    path.join(
-      PUBLIC_DIR,
-      "index.html"
-    )
-  );
+    res.sendFile(
+      path.join(
+        PUBLIC_DIR,
+        "index.html"
+      )
+    );
 
-});
+  }
+);
 
 
 /* =========================================================
    ERROR HANDLER
 ========================================================= */
 
-app.use((error, req, res, next) => {
+app.use(
+  (
+    error,
+    req,
+    res,
+    next
+  ) => {
 
-  console.error(
-    "UNHANDLED SERVER ERROR:",
-    error
-  );
-
-  if (res.headersSent) {
-    return next(error);
-  }
-
-  res.status(500).json({
-    error:
-      "Internal server error."
-  });
-
-});
-
-
-/* =========================================================
-   SERVER START
-========================================================= */
-
-let server;
-
-try {
-
-  server =
-    app.listen(
-      PORT,
-      "0.0.0.0",
-      () => {
-
-        console.log("");
-        console.log(
-          "=============================================="
-        );
-        console.log(
-          "       SCRIMFORGE V4 SERVER ONLINE"
-        );
-        console.log(
-          "=============================================="
-        );
-        console.log(
-          `PORT: ${PORT}`
-        );
-        console.log(
-          `PUBLIC: ${PUBLIC_DIR}`
-        );
-        console.log(
-          `DATABASE: ${DB_PATH}`
-        );
-        console.log(
-          "SESSION STORE: IN-MEMORY"
-        );
-        console.log(
-          "HEALTH: /health"
-        );
-        console.log(
-          "=============================================="
-        );
-        console.log("");
-
-      }
+    console.error(
+      "UNHANDLED SERVER ERROR:",
+      error
     );
 
-} catch (error) {
+    if (
+      res.headersSent
+    ) {
 
-  console.error(
-    "SERVER START ERROR:",
-    error
-  );
+      return next(error);
 
-  process.exit(1);
+    }
 
-}
+    res.status(500).json({
+      error:
+        "Internal server error."
+    });
+
+  }
+);
 
 
 /* =========================================================
-   PROCESS ERROR LOGGING
+   START SERVER
+========================================================= */
+
+console.log("");
+console.log(
+  "=============================================="
+);
+console.log(
+  "        SCRIMFORGE V4 STARTING"
+);
+console.log(
+  "=============================================="
+);
+console.log(
+  `Environment: ${
+    process.env.NODE_ENV || "development"
+  }`
+);
+console.log(
+  `Render: ${
+    process.env.RENDER
+      ? "YES"
+      : "NO"
+  }`
+);
+console.log(
+  `PORT ENV: ${
+    process.env.PORT || "not provided"
+  }`
+);
+console.log(
+  `Using PORT: ${PORT}`
+);
+console.log(
+  `Binding HOST: ${HOST}`
+);
+console.log(
+  `Database: ${dbPath}`
+);
+console.log(
+  "=============================================="
+);
+console.log("");
+
+
+const server =
+  app.listen(
+    PORT,
+    HOST,
+    () => {
+
+      console.log("");
+      console.log(
+        "=============================================="
+      );
+      console.log(
+        "        SCRIMFORGE V4 SERVER ONLINE"
+      );
+      console.log(
+        "=============================================="
+      );
+      console.log(
+        `Listening on: http://${HOST}:${PORT}`
+      );
+      console.log(
+        `Health: http://${HOST}:${PORT}/health`
+      );
+      console.log(
+        "=============================================="
+      );
+      console.log("");
+
+    }
+  );
+
+
+/* =========================================================
+   SERVER TIMEOUTS
+========================================================= */
+
+/*
+  Render specifically recommends increasing these
+  when Node services experience connection resets/timeouts.
+*/
+
+server.keepAliveTimeout =
+  120000;
+
+server.headersTimeout =
+  120000;
+
+
+/* =========================================================
+   PROCESS ERROR HANDLING
 ========================================================= */
 
 process.on(
@@ -2315,7 +2771,6 @@ process.on(
 
   }
 );
-
 
 process.on(
   "unhandledRejection",
@@ -2334,50 +2789,46 @@ process.on(
    GRACEFUL SHUTDOWN
 ========================================================= */
 
-function shutdown(signal) {
+function shutdown(
+  signal
+) {
 
   console.log(
-    `${signal} received. Shutting down...`
+    `\n${signal} received. Shutting down...`
   );
 
-  if (!server) {
+  server.close(
+    () => {
 
-    try {
-      db.close();
-    } catch (_) {}
+      try {
 
-    process.exit(0);
+        db.close();
 
-  }
+      } catch (error) {
 
-  server.close(() => {
+        console.error(
+          "DATABASE CLOSE ERROR:",
+          error
+        );
 
-    try {
+      }
 
-      db.close();
-
-    } catch (error) {
-
-      console.error(
-        "DATABASE CLOSE ERROR:",
-        error
-      );
+      process.exit(0);
 
     }
-
-    process.exit(0);
-
-  });
+  );
 
 }
 
 
 process.on(
   "SIGINT",
-  () => shutdown("SIGINT")
+  () =>
+    shutdown("SIGINT")
 );
 
 process.on(
   "SIGTERM",
-  () => shutdown("SIGTERM")
+  () =>
+    shutdown("SIGTERM")
 );
