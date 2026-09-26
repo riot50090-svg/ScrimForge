@@ -5,14 +5,15 @@
 
 "use strict";
 
-const express = require("express");
-const session = require("express-session");
-const SQLiteStoreFactory = require("connect-sqlite3");
-const Database = require("better-sqlite3");
-const bcrypt = require("bcryptjs");
 const path = require("path");
 const fs = require("fs");
-const crypto = require("crypto");
+
+const express = require("express");
+const session = require("express-session");
+const SQLiteStore = require("connect-sqlite3")(session);
+const Database = require("better-sqlite3");
+const bcrypt = require("bcryptjs");
+
 
 /* =========================================================
    APP
@@ -21,7 +22,7 @@ const crypto = require("crypto");
 const app = express();
 
 const PORT =
-  Number(process.env.PORT) || 3000;
+  process.env.PORT || 3000;
 
 const ROOT =
   __dirname;
@@ -32,11 +33,17 @@ const PUBLIC_DIR =
 const DATA_DIR =
   path.join(ROOT, "data");
 
+
+/* =========================================================
+   DIRECTORIES
+========================================================= */
+
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, {
     recursive: true
   });
 }
+
 
 /* =========================================================
    DATABASE
@@ -45,17 +52,19 @@ if (!fs.existsSync(DATA_DIR)) {
 const dbPath =
   path.join(
     DATA_DIR,
-    "scrimforge.sqlite"
+    "scrimforge.db"
   );
 
 const db =
   new Database(dbPath);
 
 db.pragma("foreign_keys = ON");
+
 db.pragma("journal_mode = WAL");
 
+
 /* =========================================================
-   DATABASE TABLES
+   DATABASE SCHEMA
 ========================================================= */
 
 db.exec(`
@@ -71,7 +80,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     time TEXT NOT NULL,
-    fee TEXT NOT NULL DEFAULT '',
+    fee TEXT NOT NULL,
     max_teams INTEGER NOT NULL DEFAULT 12,
     status TEXT NOT NULL DEFAULT 'open',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -85,14 +94,14 @@ db.exec(`
     captain TEXT NOT NULL,
     phone TEXT NOT NULL,
     uid TEXT NOT NULL,
-    fee TEXT NOT NULL DEFAULT '',
-    time TEXT NOT NULL DEFAULT '',
+    time TEXT NOT NULL,
+    fee TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY(lobby_id)
+    FOREIGN KEY (lobby_id)
       REFERENCES lobbies(id)
-      ON DELETE SET NULL
+      ON DELETE CASCADE
   );
 
   CREATE TABLE IF NOT EXISTS match_scores (
@@ -108,34 +117,22 @@ db.exec(`
     total_points INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    UNIQUE(lobby_id, match_no, team),
-
-    FOREIGN KEY(lobby_id)
+    FOREIGN KEY (lobby_id)
       REFERENCES lobbies(id)
-      ON DELETE CASCADE
+      ON DELETE CASCADE,
+
+    UNIQUE (
+      lobby_id,
+      match_no,
+      team
+    )
   );
 `);
 
-/* =========================================================
-   SESSION STORE
-========================================================= */
-
-const SQLiteStore =
-  SQLiteStoreFactory(
-    session
-  );
-
-const sessionStore =
-  new SQLiteStore({
-    db: "sessions.sqlite",
-    dir: DATA_DIR
-  });
 
 /* =========================================================
-   MIDDLEWARE
+   EXPRESS MIDDLEWARE
 ========================================================= */
-
-app.disable("x-powered-by");
 
 app.use(
   express.json({
@@ -145,53 +142,68 @@ app.use(
 
 app.use(
   express.urlencoded({
-    extended: true,
-    limit: "1mb"
+    extended: true
   })
 );
 
-/*
-  IMPORTANT:
 
-  The website and API are served by the SAME
-  Express server and SAME origin.
-
-  This makes the admin session cookie available
-  to /api/lobbies after /api/login.
-*/
+/* =========================================================
+   SESSION
+========================================================= */
 
 app.use(
   session({
-    name: "scrimforge.sid",
+
+    store:
+      new SQLiteStore({
+
+        db:
+          "sessions.db",
+
+        dir:
+          DATA_DIR
+
+      }),
 
     secret:
       process.env.SESSION_SECRET ||
-      "scrimforge-v4-development-secret-change-this",
+      "scrimforge-v4-session-secret-change-this",
 
-    store: sessionStore,
+    resave:
+      false,
 
-    resave: false,
+    saveUninitialized:
+      false,
 
-    saveUninitialized: false,
-
-    rolling: true,
+    rolling:
+      false,
 
     cookie: {
-      httpOnly: true,
 
-      sameSite: "lax",
+      httpOnly:
+        true,
+
+      sameSite:
+        "lax",
 
       secure:
-        process.env.NODE_ENV === "production",
+        false,
 
       maxAge:
-        1000 * 60 * 60 * 12
+        1000 *
+        60 *
+        60 *
+        24 *
+        7
+
     }
+
   })
 );
 
+
 /* =========================================================
-   STATIC WEBSITE
+   STATIC FILES
 ========================================================= */
 
 app.use(
@@ -200,27 +212,36 @@ app.use(
   )
 );
 
+
 /* =========================================================
-   HELPERS
+   BASIC HELPERS
 ========================================================= */
 
-function normalizeEmail(value) {
-  return String(
-    value || ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
-
 function cleanString(value) {
+
   return String(
     value ?? ""
   ).trim();
+
+}
+
+
+function normalizeEmail(value) {
+
+  return cleanString(
+    value
+  ).toLowerCase();
+
 }
 
 
 function generateReference() {
+
+  const part =
+    Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
 
   return (
     "SF-" +
@@ -228,22 +249,37 @@ function generateReference() {
       .toString(36)
       .toUpperCase() +
     "-" +
-    crypto
-      .randomBytes(3)
-      .toString("hex")
-      .toUpperCase()
+    part
   );
+
 }
 
 
-function adminExists() {
+function getAdminFromSession(req) {
 
-  const row =
-    db.prepare(
-      "SELECT id FROM admins LIMIT 1"
-    ).get();
+  if (
+    !req.session ||
+    !req.session.adminId
+  ) {
 
-  return !!row;
+    return null;
+
+  }
+
+  const admin =
+    db.prepare(`
+      SELECT
+        id,
+        name,
+        email
+      FROM admins
+      WHERE id = ?
+    `).get(
+      req.session.adminId
+    );
+
+  return admin || null;
+
 }
 
 
@@ -253,47 +289,38 @@ function requireAdmin(
   next
 ) {
 
-  if (
-    req.session &&
-    req.session.adminId
-  ) {
+  const admin =
+    getAdminFromSession(req);
 
-    return next();
+  if (!admin) {
+
+    return res
+      .status(401)
+      .json({
+        error:
+          "Admin login required."
+      });
 
   }
 
-  return res.status(401).json({
-    error:
-      "Admin login required."
-  });
+  req.admin =
+    admin;
+
+  next();
+
 }
 
 
-function getAdminFromRequest(req) {
+/* =========================================================
+   PLACEMENT POINTS
+========================================================= */
 
-  if (
-    !req.session ||
-    !req.session.adminId
-  ) {
-    return null;
-  }
-
-  return db.prepare(`
-    SELECT
-      id,
-      name,
-      email
-    FROM admins
-    WHERE id = ?
-  `).get(
-    req.session.adminId
-  );
-}
-
-
-function calculatePlacement(position) {
+function calculatePlacement(
+  position
+) {
 
   const table = {
+
     1: 12,
     2: 9,
     3: 8,
@@ -306,6 +333,7 @@ function calculatePlacement(position) {
     10: 1,
     11: 0,
     12: 0
+
   };
 
   return (
@@ -313,79 +341,8 @@ function calculatePlacement(position) {
       Number(position)
     ] || 0
   );
+
 }
-
-
-function lobbyByName(name) {
-
-  return db.prepare(`
-    SELECT *
-    FROM lobbies
-    WHERE name = ?
-    LIMIT 1
-  `).get(name);
-}
-
-
-function confirmedTeamsForLobby(
-  lobbyId
-) {
-
-  return db.prepare(`
-    SELECT
-      id,
-      team,
-      captain,
-      uid
-    FROM registrations
-    WHERE lobby_id = ?
-      AND status = 'confirmed'
-    ORDER BY id ASC
-  `).all(lobbyId);
-}
-
-
-function publicLobbyRows() {
-
-  return db.prepare(`
-    SELECT
-      l.id,
-      l.name,
-      l.time,
-      l.fee,
-      l.max_teams,
-      l.status,
-      l.created_at,
-
-      (
-        SELECT COUNT(*)
-        FROM registrations r
-        WHERE r.lobby_id = l.id
-          AND r.status = 'confirmed'
-      ) AS confirmed
-
-    FROM lobbies l
-
-    ORDER BY l.id DESC
-  `).all();
-}
-
-
-/* =========================================================
-   HEALTH
-========================================================= */
-
-app.get(
-  "/api/health",
-  (req, res) => {
-
-    res.json({
-      ok: true,
-      version: "4.0.0"
-    });
-
-  }
-);
 
 
 /* =========================================================
@@ -396,9 +353,15 @@ app.get(
   "/api/admin-exists",
   (req, res) => {
 
+    const row =
+      db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM admins
+      `).get();
+
     res.json({
       exists:
-        adminExists()
+        Number(row.count) > 0
     });
 
   }
@@ -414,7 +377,7 @@ app.get(
   (req, res) => {
 
     const admin =
-      getAdminFromRequest(req);
+      getAdminFromSession(req);
 
     if (!admin) {
 
@@ -424,11 +387,19 @@ app.get(
 
     }
 
-    return res.json({
+    res.json({
+
       loggedIn: true,
-      id: admin.id,
-      name: admin.name,
-      email: admin.email
+
+      id:
+        admin.id,
+
+      name:
+        admin.name,
+
+      email:
+        admin.email
+
     });
 
   }
@@ -445,17 +416,28 @@ app.post(
 
     try {
 
-      if (adminExists()) {
+      const existing =
+        db.prepare(`
+          SELECT id
+          FROM admins
+          LIMIT 1
+        `).get();
 
-        return res.status(409).json({
-          error:
-            "Admin account already exists."
-        });
+      if (existing) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "Admin account already exists."
+          });
 
       }
 
       const name =
-        cleanString(req.body.name);
+        cleanString(
+          req.body.name
+        );
 
       const email =
         normalizeEmail(
@@ -464,37 +446,37 @@ app.post(
 
       const password =
         String(
-          req.body.password || ""
+          req.body.password ||
+          ""
         );
 
-      if (!name) {
+      if (
+        !name ||
+        !email ||
+        !password
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Admin name is required."
-        });
-
-      }
-
-      if (!email) {
-
-        return res.status(400).json({
-          error:
-            "Admin email is required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Name, email and password are required."
+          });
 
       }
 
       if (password.length < 6) {
 
-        return res.status(400).json({
-          error:
-            "Password must be at least 6 characters."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Password must contain at least 6 characters."
+          });
 
       }
 
-      const hash =
+      const passwordHash =
         bcrypt.hashSync(
           password,
           12
@@ -502,51 +484,47 @@ app.post(
 
       const result =
         db.prepare(`
-          INSERT INTO admins
-          (
+          INSERT INTO admins (
             name,
             email,
             password_hash
           )
-          VALUES
-          (?, ?, ?)
+          VALUES (?, ?, ?)
         `).run(
           name,
           email,
-          hash
+          passwordHash
         );
-
-      /*
-        Immediately create the authenticated
-        session after setup.
-      */
 
       req.session.adminId =
         Number(result.lastInsertRowid);
 
-      req.session.adminName =
-        name;
-
       req.session.save(
-        error => {
+        saveError => {
 
-          if (error) {
+          if (saveError) {
 
             console.error(
               "Session save error:",
-              error
+              saveError
             );
 
-            return res.status(500).json({
-              error:
-                "Admin created but session could not be saved."
-            });
+            return res
+              .status(500)
+              .json({
+                error:
+                  "Admin created, but login session could not be saved."
+              });
 
           }
 
-          return res.json({
-            success: true,
+          res.json({
+
+            success:
+              true,
+
             name
+
           });
 
         }
@@ -559,10 +537,12 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to create admin."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to create admin account."
+        });
 
     }
 
@@ -587,15 +567,21 @@ app.post(
 
       const password =
         String(
-          req.body.password || ""
+          req.body.password ||
+          ""
         );
 
-      if (!email || !password) {
+      if (
+        !email ||
+        !password
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Email and password are required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Email and password are required."
+          });
 
       }
 
@@ -609,54 +595,87 @@ app.post(
           FROM admins
           WHERE email = ?
           LIMIT 1
-        `).get(email);
+        `).get(
+          email
+        );
 
       if (!admin) {
 
-        return res.status(401).json({
-          error:
-            "Invalid email or password."
-        });
+        return res
+          .status(401)
+          .json({
+            error:
+              "Invalid email or password."
+          });
 
       }
 
-      const valid =
-        bcrypt.compareSync(
-          password,
-          admin.password_hash
+      let passwordMatches =
+        false;
+
+      try {
+
+        passwordMatches =
+          bcrypt.compareSync(
+            password,
+            admin.password_hash
+          );
+
+      } catch (compareError) {
+
+        console.error(
+          "Password comparison error:",
+          compareError
         );
 
-      if (!valid) {
-
-        return res.status(401).json({
-          error:
-            "Invalid email or password."
-        });
+        return res
+          .status(500)
+          .json({
+            error:
+              "Unable to verify password."
+          });
 
       }
 
-      /*
-        Regenerate the session after login.
+      if (!passwordMatches) {
 
-        This prevents old session IDs from being
-        reused and guarantees the new authenticated
-        session is properly established.
+        return res
+          .status(401)
+          .json({
+            error:
+              "Invalid email or password."
+          });
+
+      }
+
+
+      /*
+        IMPORTANT:
+
+        Regenerate the session before
+        storing adminId.
+
+        This prevents stale/broken
+        sessions while preserving
+        authentication correctly.
       */
 
       req.session.regenerate(
-        error => {
+        regenerateError => {
 
-          if (error) {
+          if (regenerateError) {
 
             console.error(
-              "Session regeneration error:",
-              error
+              "Session regenerate error:",
+              regenerateError
             );
 
-            return res.status(500).json({
-              error:
-                "Login session could not be created."
-            });
+            return res
+              .status(500)
+              .json({
+                error:
+                  "Unable to create login session."
+              });
 
           }
 
@@ -676,17 +695,26 @@ app.post(
                   saveError
                 );
 
-                return res.status(500).json({
-                  error:
-                    "Login succeeded but session could not be saved."
-                });
+                return res
+                  .status(500)
+                  .json({
+                    error:
+                      "Unable to save login session."
+                  });
 
               }
 
               return res.json({
-                success: true,
-                name: admin.name,
-                email: admin.email
+
+                success:
+                  true,
+
+                name:
+                  admin.name,
+
+                email:
+                  admin.email
+
               });
 
             }
@@ -702,10 +730,12 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to login."
-      });
+      return res
+        .status(500)
+        .json({
+          error:
+            "Login failed. Please try again."
+        });
 
     }
 
@@ -739,25 +769,20 @@ app.post(
             error
           );
 
-          return res.status(500).json({
-            error:
-              "Unable to logout."
-          });
+          return res
+            .status(500)
+            .json({
+              error:
+                "Unable to logout."
+            });
 
         }
 
         res.clearCookie(
-          "scrimforge.sid",
-          {
-            httpOnly: true,
-            sameSite: "lax",
-            secure:
-              process.env.NODE_ENV ===
-              "production"
-          }
+          "connect.sid"
         );
 
-        return res.json({
+        res.json({
           success: true
         });
 
@@ -778,21 +803,50 @@ app.get(
 
     try {
 
-      return res.json(
-        publicLobbyRows()
+      const rows =
+        db.prepare(`
+          SELECT
+            l.id,
+            l.name,
+            l.time,
+            l.fee,
+            l.max_teams,
+            l.status,
+            COUNT(
+              CASE
+                WHEN r.status = 'confirmed'
+                THEN 1
+              END
+            ) AS confirmed
+          FROM lobbies l
+
+          LEFT JOIN registrations r
+            ON r.lobby_id = l.id
+
+          GROUP BY
+            l.id
+
+          ORDER BY
+            l.id DESC
+        `).all();
+
+      res.json(
+        rows
       );
 
     } catch (error) {
 
       console.error(
-        "Public lobby error:",
+        "Public lobbies error:",
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load lobbies."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load lobbies."
+        });
 
     }
 
@@ -801,7 +855,7 @@ app.get(
 
 
 /* =========================================================
-   ADMIN LOBBIES
+   ALL LOBBIES - ADMIN
 ========================================================= */
 
 app.get(
@@ -811,21 +865,50 @@ app.get(
 
     try {
 
-      return res.json(
-        publicLobbyRows()
+      const rows =
+        db.prepare(`
+          SELECT
+            l.id,
+            l.name,
+            l.time,
+            l.fee,
+            l.max_teams,
+            l.status,
+            COUNT(
+              CASE
+                WHEN r.status = 'confirmed'
+                THEN 1
+              END
+            ) AS confirmed
+          FROM lobbies l
+
+          LEFT JOIN registrations r
+            ON r.lobby_id = l.id
+
+          GROUP BY
+            l.id
+
+          ORDER BY
+            l.id DESC
+        `).all();
+
+      res.json(
+        rows
       );
 
     } catch (error) {
 
       console.error(
-        "Admin lobby error:",
+        "Admin lobbies error:",
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load lobbies."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load admin lobbies."
+        });
 
     }
 
@@ -834,7 +917,7 @@ app.get(
 
 
 /* =========================================================
-   CREATE LOBBY
+   CREATE LOBBY / SCRIM
 ========================================================= */
 
 app.post(
@@ -864,64 +947,48 @@ app.post(
           req.body.maxTeams
         );
 
-      if (!name) {
+      if (
+        !name ||
+        !time ||
+        !fee
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Scrim name is required."
-        });
-
-      }
-
-      if (!time) {
-
-        return res.status(400).json({
-          error:
-            "Scrim time is required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Scrim name, time and entry fee are required."
+          });
 
       }
 
-      if (!Number.isInteger(maxTeams) ||
-          maxTeams < 1 ||
-          maxTeams > 100) {
+      if (
+        !Number.isInteger(
+          maxTeams
+        ) ||
+        maxTeams < 1 ||
+        maxTeams > 100
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Maximum teams must be between 1 and 100."
-        });
-
-      }
-
-      const duplicate =
-        db.prepare(`
-          SELECT id
-          FROM lobbies
-          WHERE name = ?
-          LIMIT 1
-        `).get(name);
-
-      if (duplicate) {
-
-        return res.status(409).json({
-          error:
-            "A scrim with this name already exists."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Maximum teams must be between 1 and 100."
+          });
 
       }
 
       const result =
         db.prepare(`
-          INSERT INTO lobbies
-          (
+          INSERT INTO lobbies (
             name,
             time,
             fee,
             max_teams,
             status
           )
-          VALUES
-          (?, ?, ?, ?, 'open')
+          VALUES (?, ?, ?, ?, 'open')
         `).run(
           name,
           time,
@@ -929,12 +996,16 @@ app.post(
           maxTeams
         );
 
-      return res.status(201).json({
-        success: true,
+      res.json({
+
+        success:
+          true,
+
         id:
           Number(
             result.lastInsertRowid
           )
+
       });
 
     } catch (error) {
@@ -944,10 +1015,12 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to create scrim."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to create scrim."
+        });
 
     }
 
@@ -971,58 +1044,50 @@ app.patch(
           req.params.id
         );
 
-      if (!Number.isInteger(id)) {
-
-        return res.status(400).json({
-          error:
-            "Invalid lobby ID."
-        });
-
-      }
-
-      const lobby =
-        db.prepare(`
-          SELECT *
-          FROM lobbies
-          WHERE id = ?
-        `).get(id);
-
-      if (!lobby) {
-
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
-
-      }
-
       const status =
         cleanString(
           req.body.status
         ).toLowerCase();
 
       if (
-        status !== "open" &&
-        status !== "closed"
+        !Number.isInteger(id) ||
+        ![
+          "open",
+          "closed"
+        ].includes(status)
       ) {
 
-        return res.status(400).json({
-          error:
-            "Invalid lobby status."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid lobby update."
+          });
 
       }
 
-      db.prepare(`
-        UPDATE lobbies
-        SET status = ?
-        WHERE id = ?
-      `).run(
-        status,
-        id
-      );
+      const result =
+        db.prepare(`
+          UPDATE lobbies
+          SET status = ?
+          WHERE id = ?
+        `).run(
+          status,
+          id
+        );
 
-      return res.json({
+      if (!result.changes) {
+
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
+
+      }
+
+      res.json({
         success: true
       });
 
@@ -1033,10 +1098,12 @@ app.patch(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to update lobby."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to update lobby."
+        });
 
     }
 
@@ -1060,54 +1127,39 @@ app.delete(
           req.params.id
         );
 
-      if (!Number.isInteger(id)) {
+      if (
+        !Number.isInteger(id)
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Invalid lobby ID."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid lobby ID."
+          });
 
       }
 
-      const lobby =
+      const result =
         db.prepare(`
-          SELECT id
-          FROM lobbies
+          DELETE FROM lobbies
           WHERE id = ?
-        `).get(id);
+        `).run(
+          id
+        );
 
-      if (!lobby) {
+      if (!result.changes) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
 
       }
 
-      const transaction =
-        db.transaction(() => {
-
-          db.prepare(`
-            DELETE FROM match_scores
-            WHERE lobby_id = ?
-          `).run(id);
-
-          db.prepare(`
-            DELETE FROM registrations
-            WHERE lobby_id = ?
-          `).run(id);
-
-          db.prepare(`
-            DELETE FROM lobbies
-            WHERE id = ?
-          `).run(id);
-
-        });
-
-      transaction();
-
-      return res.json({
+      res.json({
         success: true
       });
 
@@ -1118,10 +1170,12 @@ app.delete(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to delete scrim."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to delete scrim."
+        });
 
     }
 
@@ -1164,77 +1218,64 @@ app.post(
           req.body.uid
         );
 
-      if (!Number.isInteger(lobbyId)) {
+      if (
+        !Number.isInteger(
+          lobbyId
+        ) ||
+        !team ||
+        !captain ||
+        !phone ||
+        !uid
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Please select a valid lobby."
-        });
-
-      }
-
-      if (!team) {
-
-        return res.status(400).json({
-          error:
-            "Team name is required."
-        });
-
-      }
-
-      if (!captain) {
-
-        return res.status(400).json({
-          error:
-            "Captain name is required."
-        });
-
-      }
-
-      if (!phone) {
-
-        return res.status(400).json({
-          error:
-            "Phone number is required."
-        });
-
-      }
-
-      if (!uid) {
-
-        return res.status(400).json({
-          error:
-            "Free Fire UID is required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Please complete all registration fields."
+          });
 
       }
 
       const lobby =
         db.prepare(`
-          SELECT *
+          SELECT
+            id,
+            name,
+            time,
+            fee,
+            max_teams,
+            status
           FROM lobbies
           WHERE id = ?
-        `).get(lobbyId);
+        `).get(
+          lobbyId
+        );
 
       if (!lobby) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Selected lobby not found."
+          });
 
       }
 
       if (
-        String(lobby.status)
-          .toLowerCase() !==
+        String(
+          lobby.status
+        ).toLowerCase() !==
         "open"
       ) {
 
-        return res.status(400).json({
-          error:
-            "This lobby is currently closed."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "This lobby is currently closed."
+          });
 
       }
 
@@ -1243,53 +1284,81 @@ app.post(
           SELECT COUNT(*) AS count
           FROM registrations
           WHERE lobby_id = ?
-            AND status = 'confirmed'
-        `).get(lobbyId).count;
+          AND status = 'confirmed'
+        `).get(
+          lobbyId
+        );
 
       if (
-        Number(confirmed) >=
-        Number(lobby.max_teams)
+        Number(
+          confirmed.count
+        ) >= Number(
+          lobby.max_teams
+        )
       ) {
 
-        return res.status(400).json({
-          error:
-            "This lobby is full."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "This lobby is full."
+          });
 
       }
 
-      const ref =
+      let ref =
         generateReference();
 
-      db.prepare(`
-        INSERT INTO registrations
-        (
+      while (
+        db.prepare(`
+          SELECT id
+          FROM registrations
+          WHERE ref = ?
+        `).get(ref)
+      ) {
+
+        ref =
+          generateReference();
+
+      }
+
+      const result =
+        db.prepare(`
+          INSERT INTO registrations (
+            ref,
+            lobby_id,
+            team,
+            captain,
+            phone,
+            uid,
+            time,
+            fee,
+            status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+        `).run(
           ref,
-          lobby_id,
+          lobby.id,
           team,
           captain,
           phone,
           uid,
-          fee,
-          time,
-          status
-        )
-        VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-      `).run(
-        ref,
-        lobby.id,
-        team,
-        captain,
-        phone,
-        uid,
-        lobby.fee,
-        lobby.time
-      );
+          lobby.time,
+          lobby.fee
+        );
 
-      return res.status(201).json({
-        success: true,
+      res.json({
+
+        success:
+          true,
+
+        id:
+          Number(
+            result.lastInsertRowid
+          ),
+
         ref
+
       });
 
     } catch (error) {
@@ -1299,10 +1368,12 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to submit registration."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to submit registration."
+        });
 
     }
 
@@ -1311,7 +1382,7 @@ app.post(
 
 
 /* =========================================================
-   PUBLIC REGISTRATION STATUS
+   REGISTRATION STATUS
 ========================================================= */
 
 app.get(
@@ -1328,30 +1399,42 @@ app.get(
       const row =
         db.prepare(`
           SELECT
+            r.id,
             r.ref,
             r.team,
             r.captain,
-            r.fee,
+            r.phone,
+            r.uid,
             r.time,
+            r.fee,
             r.status,
+            r.lobby_id,
             l.name AS lobby_name
           FROM registrations r
+
           LEFT JOIN lobbies l
             ON l.id = r.lobby_id
+
           WHERE r.ref = ?
           LIMIT 1
-        `).get(ref);
+        `).get(
+          ref
+        );
 
       if (!row) {
 
-        return res.status(404).json({
-          error:
-            "Registration reference not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registration reference not found."
+          });
 
       }
 
-      return res.json(row);
+      res.json(
+        row
+      );
 
     } catch (error) {
 
@@ -1360,10 +1443,12 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to check registration."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to check registration."
+        });
 
     }
 
@@ -1385,34 +1470,38 @@ app.get(
       const rows =
         db.prepare(`
           SELECT
-            r.id,
-            r.ref,
-            r.lobby_id,
-            r.team,
-            r.captain,
-            r.phone,
-            r.uid,
-            r.fee,
-            r.time,
-            r.status,
-            r.created_at
-          FROM registrations r
-          ORDER BY r.id DESC
+            id,
+            ref,
+            lobby_id,
+            team,
+            captain,
+            phone,
+            uid,
+            time,
+            fee,
+            status,
+            created_at
+          FROM registrations
+          ORDER BY id DESC
         `).all();
 
-      return res.json(rows);
+      res.json(
+        rows
+      );
 
     } catch (error) {
 
       console.error(
-        "Admin registrations error:",
+        "Registrations error:",
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load registrations."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load registrations."
+        });
 
     }
 
@@ -1421,7 +1510,7 @@ app.get(
 
 
 /* =========================================================
-   UPDATE REGISTRATION
+   UPDATE REGISTRATION STATUS
 ========================================================= */
 
 app.patch(
@@ -1441,41 +1530,55 @@ app.patch(
           req.body.status
         ).toLowerCase();
 
-      if (!Number.isInteger(id)) {
+      if (
+        !Number.isInteger(id)
+      ) {
 
-        return res.status(400).json({
-          error:
-            "Invalid registration ID."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid registration ID."
+          });
 
       }
 
       if (
-        status !== "confirmed" &&
-        status !== "rejected" &&
-        status !== "pending"
+        ![
+          "pending",
+          "confirmed",
+          "rejected"
+        ].includes(status)
       ) {
 
-        return res.status(400).json({
-          error:
-            "Invalid registration status."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid registration status."
+          });
 
       }
 
       const registration =
         db.prepare(`
-          SELECT *
+          SELECT
+            id,
+            lobby_id
           FROM registrations
           WHERE id = ?
-        `).get(id);
+        `).get(
+          id
+        );
 
       if (!registration) {
 
-        return res.status(404).json({
-          error:
-            "Registration not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registration not found."
+          });
 
       }
 
@@ -1486,7 +1589,9 @@ app.patch(
 
         const lobby =
           db.prepare(`
-            SELECT *
+            SELECT
+              id,
+              max_teams
             FROM lobbies
             WHERE id = ?
           `).get(
@@ -1500,22 +1605,24 @@ app.patch(
               SELECT COUNT(*) AS count
               FROM registrations
               WHERE lobby_id = ?
-                AND status = 'confirmed'
-                AND id != ?
+              AND status = 'confirmed'
+              AND id != ?
             `).get(
               lobby.id,
               id
-            ).count;
+            );
 
           if (
-            Number(count) >=
+            Number(count.count) >=
             Number(lobby.max_teams)
           ) {
 
-            return res.status(400).json({
-              error:
-                "This lobby is already full."
-            });
+            return res
+              .status(400)
+              .json({
+                error:
+                  "This lobby is already full."
+              });
 
           }
 
@@ -1532,7 +1639,7 @@ app.patch(
         id
       );
 
-      return res.json({
+      res.json({
         success: true
       });
 
@@ -1543,10 +1650,12 @@ app.patch(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to update registration."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to update registration."
+        });
 
     }
 
@@ -1584,16 +1693,21 @@ app.patch(
         )
       ) {
 
-        return res.status(400).json({
-          error:
-            "Invalid registration or lobby."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid registration or lobby."
+          });
 
       }
 
       const registration =
         db.prepare(`
-          SELECT *
+          SELECT
+            id,
+            team,
+            status
           FROM registrations
           WHERE id = ?
         `).get(
@@ -1602,10 +1716,12 @@ app.patch(
 
       if (!registration) {
 
-        return res.status(404).json({
-          error:
-            "Registration not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Registration not found."
+          });
 
       }
 
@@ -1614,16 +1730,23 @@ app.patch(
         "confirmed"
       ) {
 
-        return res.status(400).json({
-          error:
-            "Confirm the registration first."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Confirm the registration before assigning a lobby."
+          });
 
       }
 
       const lobby =
         db.prepare(`
-          SELECT *
+          SELECT
+            id,
+            time,
+            fee,
+            max_teams,
+            status
           FROM lobbies
           WHERE id = ?
         `).get(
@@ -1632,10 +1755,12 @@ app.patch(
 
       if (!lobby) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
 
       }
 
@@ -1644,22 +1769,24 @@ app.patch(
           SELECT COUNT(*) AS count
           FROM registrations
           WHERE lobby_id = ?
-            AND status = 'confirmed'
-            AND id != ?
+          AND status = 'confirmed'
+          AND id != ?
         `).get(
           lobbyId,
           registrationId
-        ).count;
+        );
 
       if (
-        Number(count) >=
+        Number(count.count) >=
         Number(lobby.max_teams)
       ) {
 
-        return res.status(400).json({
-          error:
-            "The selected lobby is full."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Selected lobby is full."
+          });
 
       }
 
@@ -1671,13 +1798,13 @@ app.patch(
           fee = ?
         WHERE id = ?
       `).run(
-        lobbyId,
+        lobby.id,
         lobby.time,
         lobby.fee,
         registrationId
       );
 
-      return res.json({
+      res.json({
         success: true
       });
 
@@ -1688,10 +1815,12 @@ app.patch(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to assign lobby."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to assign lobby."
+        });
 
     }
 
@@ -1700,7 +1829,7 @@ app.patch(
 
 
 /* =========================================================
-   STATS
+   ADMIN STATS
 ========================================================= */
 
 app.get(
@@ -1715,31 +1844,39 @@ app.get(
           SELECT COUNT(*) AS count
           FROM registrations
           WHERE status = 'pending'
-        `).get().count;
+        `).get();
 
       const confirmed =
         db.prepare(`
           SELECT COUNT(*) AS count
           FROM registrations
           WHERE status = 'confirmed'
-        `).get().count;
+        `).get();
 
       const activeLobbies =
         db.prepare(`
           SELECT COUNT(*) AS count
           FROM lobbies
           WHERE status = 'open'
-        `).get().count;
+        `).get();
 
-      return res.json({
+      res.json({
+
         pending:
-          Number(pending),
+          Number(
+            pending.count
+          ),
 
         confirmed:
-          Number(confirmed),
+          Number(
+            confirmed.count
+          ),
 
         activeLobbies:
-          Number(activeLobbies)
+          Number(
+            activeLobbies.count
+          )
+
       });
 
     } catch (error) {
@@ -1749,10 +1886,12 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load statistics."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load statistics."
+        });
 
     }
 
@@ -1761,7 +1900,7 @@ app.get(
 
 
 /* =========================================================
-   LEADERBOARD TEAMS
+   CONFIRMED TEAMS FOR SCORE ENTRY
 ========================================================= */
 
 app.get(
@@ -1778,33 +1917,53 @@ app.get(
 
       if (!lobbyName) {
 
-        return res.status(400).json({
-          error:
-            "Lobby is required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Lobby is required."
+          });
 
       }
 
       const lobby =
-        lobbyByName(
+        db.prepare(`
+          SELECT
+            id,
+            name
+          FROM lobbies
+          WHERE name = ?
+          LIMIT 1
+        `).get(
           lobbyName
         );
 
       if (!lobby) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
 
       }
 
       const teams =
-        confirmedTeamsForLobby(
+        db.prepare(`
+          SELECT
+            id,
+            team,
+            captain
+          FROM registrations
+          WHERE lobby_id = ?
+          AND status = 'confirmed'
+          ORDER BY team COLLATE NOCASE ASC
+        `).all(
           lobby.id
         );
 
-      return res.json(
+      res.json(
         teams
       );
 
@@ -1815,10 +1974,12 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load leaderboard teams."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load lobby teams."
+        });
 
     }
 
@@ -1827,7 +1988,7 @@ app.get(
 
 
 /* =========================================================
-   GET MATCH SCORES - ADMIN/PUBLIC
+   EXISTING MATCH SCORE
 ========================================================= */
 
 app.get(
@@ -1846,45 +2007,50 @@ app.get(
           req.query.match
         );
 
-      if (!lobbyName) {
-
-        return res.status(400).json({
-          error:
-            "Lobby is required."
-        });
-
-      }
-
       if (
-        !Number.isInteger(matchNo) ||
+        !lobbyName ||
+        !Number.isInteger(
+          matchNo
+        ) ||
         matchNo < 1 ||
         matchNo > 6
       ) {
 
-        return res.status(400).json({
-          error:
-            "Match must be between 1 and 6."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid lobby or match."
+          });
 
       }
 
       const lobby =
-        lobbyByName(
+        db.prepare(`
+          SELECT
+            id
+          FROM lobbies
+          WHERE name = ?
+          LIMIT 1
+        `).get(
           lobbyName
         );
 
       if (!lobby) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
 
       }
 
       const rows =
         db.prepare(`
           SELECT
+            id,
             team,
             position,
             kills,
@@ -1894,14 +2060,16 @@ app.get(
             total_points
           FROM match_scores
           WHERE lobby_id = ?
-            AND match_no = ?
+          AND match_no = ?
           ORDER BY position ASC
         `).all(
           lobby.id,
           matchNo
         );
 
-      return res.json(rows);
+      res.json(
+        rows
+      );
 
     } catch (error) {
 
@@ -1910,10 +2078,12 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load match leaderboard."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load match results."
+        });
 
     }
 
@@ -1922,7 +2092,7 @@ app.get(
 
 
 /* =========================================================
-   SAVE MATCH
+   SAVE MATCH SCORE
 ========================================================= */
 
 app.post(
@@ -1951,51 +2121,77 @@ app.post(
 
       if (!lobbyName) {
 
-        return res.status(400).json({
-          error:
-            "Lobby is required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Lobby is required."
+          });
 
       }
 
       if (
-        !Number.isInteger(matchNo) ||
+        !Number.isInteger(
+          matchNo
+        ) ||
         matchNo < 1 ||
         matchNo > 6
       ) {
 
-        return res.status(400).json({
-          error:
-            "Match number must be between 1 and 6."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Match number must be between 1 and 6."
+          });
 
       }
 
-      if (!entries.length) {
+      if (
+        entries.length !== 12
+      ) {
 
-        return res.status(400).json({
-          error:
-            "No score entries were submitted."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Exactly 12 teams are required."
+          });
 
       }
 
       const lobby =
-        lobbyByName(
+        db.prepare(`
+          SELECT
+            id,
+            max_teams
+          FROM lobbies
+          WHERE name = ?
+          LIMIT 1
+        `).get(
           lobbyName
         );
 
       if (!lobby) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
 
       }
 
       const confirmedTeams =
-        confirmedTeamsForLobby(
+        db.prepare(`
+          SELECT
+            team
+          FROM registrations
+          WHERE lobby_id = ?
+          AND status = 'confirmed'
+          ORDER BY team COLLATE NOCASE ASC
+        `).all(
           lobby.id
         );
 
@@ -2003,187 +2199,115 @@ app.post(
         confirmedTeams.length !== 12
       ) {
 
-        return res.status(400).json({
-          error:
-            `Exactly 12 confirmed teams are required. This lobby currently has ${confirmedTeams.length}.`
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              `This lobby has ${confirmedTeams.length}/12 confirmed teams. Exactly 12 teams are required.`
+          });
 
       }
 
-      if (
-        entries.length !==
-        confirmedTeams.length
-      ) {
-
-        return res.status(400).json({
-          error:
-            "Score must be entered for all 12 teams."
-        });
-
-      }
-
-      const validTeams =
+      const confirmedSet =
         new Set(
           confirmedTeams.map(
-            row => row.team
+            row =>
+              String(
+                row.team
+              )
           )
         );
 
       const submittedTeams =
-        new Set();
+        entries.map(
+          entry =>
+            cleanString(
+              entry.team
+            )
+        );
 
-      for (const entry of entries) {
+      const uniqueTeams =
+        new Set(
+          submittedTeams
+        );
 
-        const team =
-          cleanString(
-            entry.team
-          );
+      if (
+        uniqueTeams.size !== 12
+      ) {
 
-        const position =
-          Number(
-            entry.position
-          );
-
-        const kills =
-          Number(
-            entry.kills
-          );
-
-        if (!validTeams.has(team)) {
-
-          return res.status(400).json({
+        return res
+          .status(400)
+          .json({
             error:
-              `Invalid team in score entry: ${team}`
+              "Each team must appear exactly once."
           });
-
-        }
-
-        if (
-          submittedTeams.has(team)
-        ) {
-
-          return res.status(400).json({
-            error:
-              `Duplicate team: ${team}`
-          });
-
-        }
-
-        submittedTeams.add(team);
-
-        if (
-          !Number.isInteger(position) ||
-          position < 1 ||
-          position > 12
-        ) {
-
-          return res.status(400).json({
-            error:
-              `Invalid position for ${team}.`
-          });
-
-        }
-
-        if (
-          !Number.isInteger(kills) ||
-          kills < 0
-        ) {
-
-          return res.status(400).json({
-            error:
-              `Invalid kills for ${team}.`
-          });
-
-        }
 
       }
 
-      if (
-        submittedTeams.size !==
-        validTeams.size
+      for (
+        const team
+        of submittedTeams
       ) {
 
-        return res.status(400).json({
-          error:
-            "Every confirmed team must have a score."
-        });
+        if (
+          !confirmedSet.has(
+            team
+          )
+        ) {
+
+          return res
+            .status(400)
+            .json({
+              error:
+                `Team "${team}" is not a confirmed team in this lobby.`
+            });
+
+        }
 
       }
 
       const positions =
         entries.map(
           entry =>
-            Number(entry.position)
+            Number(
+              entry.position
+            )
         );
 
-      const uniquePositions =
+      const positionSet =
         new Set(
           positions
         );
 
       if (
-        uniquePositions.size !== 12
+        positions.some(
+          position =>
+            !Number.isInteger(
+              position
+            ) ||
+            position < 1 ||
+            position > 12
+        ) ||
+        positionSet.size !== 12
       ) {
 
-        return res.status(400).json({
-          error:
-            "Each position from 1 to 12 must be used exactly once."
-        });
-
-      }
-
-      for (
-        let position = 1;
-        position <= 12;
-        position++
-      ) {
-
-        if (
-          !uniquePositions.has(
-            position
-          )
-        ) {
-
-          return res.status(400).json({
+        return res
+          .status(400)
+          .json({
             error:
-              "Positions must contain every rank from 1 to 12."
+              "Positions must contain every value from 1 to 12 exactly once."
           });
 
-        }
-
       }
 
-      const transaction =
-        db.transaction(() => {
+      const normalized =
+        entries.map(
+          entry => {
 
-          db.prepare(`
-            DELETE FROM match_scores
-            WHERE lobby_id = ?
-              AND match_no = ?
-          `).run(
-            lobby.id,
-            matchNo
-          );
-
-          const insert =
-            db.prepare(`
-              INSERT INTO match_scores
-              (
-                lobby_id,
-                match_no,
-                team,
-                position,
-                kills,
-                booyah,
-                placement_points,
-                kill_points,
-                total_points
-              )
-              VALUES
-              (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `);
-
-          for (const entry of entries) {
+            const team =
+              cleanString(
+                entry.team
+              );
 
             const position =
               Number(
@@ -2193,49 +2317,133 @@ app.post(
             const kills =
               Number(
                 entry.kills
-              ) || 0;
+              );
+
+            const safeKills =
+              Number.isInteger(
+                kills
+              ) && kills >= 0
+                ? kills
+                : 0;
+
+            const placementPoints =
+              calculatePlacement(
+                position
+              );
 
             const booyah =
               position === 1
                 ? 1
                 : 0;
 
-            const placement =
-              calculatePlacement(
-                position
-              );
-
             const killPoints =
-              kills;
+              safeKills;
 
-            const total =
-              placement +
+            const totalPoints =
+              placementPoints +
               killPoints;
 
-            insert.run(
-              lobby.id,
-              matchNo,
-              cleanString(
-                entry.team
-              ),
+            return {
+
+              team,
+
               position,
-              kills,
+
+              kills:
+                safeKills,
+
               booyah,
-              placement,
+
+              placementPoints,
+
               killPoints,
-              total
-            );
+
+              totalPoints
+
+            };
 
           }
+        );
 
-        });
+      const deleteExisting =
+        db.prepare(`
+          DELETE FROM match_scores
+          WHERE lobby_id = ?
+          AND match_no = ?
+        `);
 
-      transaction();
+      const insertScore =
+        db.prepare(`
+          INSERT INTO match_scores (
+            lobby_id,
+            match_no,
+            team,
+            position,
+            kills,
+            booyah,
+            placement_points,
+            kill_points,
+            total_points
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
 
-      return res.json({
-        success: true,
+      const saveTransaction =
+        db.transaction(
+          rows => {
+
+            deleteExisting.run(
+              lobby.id,
+              matchNo
+            );
+
+            for (
+              const row
+              of rows
+            ) {
+
+              insertScore.run(
+
+                lobby.id,
+
+                matchNo,
+
+                row.team,
+
+                row.position,
+
+                row.kills,
+
+                row.booyah,
+
+                row.placementPoints,
+
+                row.killPoints,
+
+                row.totalPoints
+
+              );
+
+            }
+
+          }
+        );
+
+      saveTransaction(
+        normalized
+      );
+
+      res.json({
+
+        success:
+          true,
+
         match:
-          matchNo
+          matchNo,
+
+        count:
+          normalized.length
+
       });
 
     } catch (error) {
@@ -2245,10 +2453,12 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to save match scores."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to save match results."
+        });
 
     }
 
@@ -2273,41 +2483,42 @@ app.get(
 
       if (!lobbyName) {
 
-        return res.status(400).json({
-          error:
-            "Lobby is required."
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Lobby is required."
+          });
 
       }
 
       const lobby =
-        lobbyByName(
+        db.prepare(`
+          SELECT
+            id,
+            name
+          FROM lobbies
+          WHERE name = ?
+          LIMIT 1
+        `).get(
           lobbyName
         );
 
       if (!lobby) {
 
-        return res.status(404).json({
-          error:
-            "Lobby not found."
-        });
-
-      }
-
-      const teams =
-        confirmedTeamsForLobby(
-          lobby.id
-        );
-
-      if (!teams.length) {
-
-        return res.json([]);
+        return res
+          .status(404)
+          .json({
+            error:
+              "Lobby not found."
+          });
 
       }
 
       const rows =
         db.prepare(`
           SELECT
+
             team,
 
             SUM(
@@ -2315,7 +2526,7 @@ app.get(
             ) AS booyahs,
 
             SUM(
-              kill_points
+              kills
             ) AS killPoints,
 
             SUM(
@@ -2330,18 +2541,19 @@ app.get(
 
           WHERE lobby_id = ?
 
-          GROUP BY team
+          GROUP BY
+            team
 
           ORDER BY
             totalPoints DESC,
             killPoints DESC,
-            placementPoints DESC,
-            team ASC
+            booyahs DESC,
+            team COLLATE NOCASE ASC
         `).all(
           lobby.id
         );
 
-      const result =
+      const ranked =
         rows.map(
           (row, index) => ({
 
@@ -2374,8 +2586,8 @@ app.get(
           })
         );
 
-      return res.json(
-        result
+      res.json(
+        ranked
       );
 
     } catch (error) {
@@ -2385,10 +2597,12 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Unable to load leaderboard."
-      });
+      res
+        .status(500)
+        .json({
+          error:
+            "Unable to load leaderboard."
+        });
 
     }
 
@@ -2397,16 +2611,37 @@ app.get(
 
 
 /* =========================================================
-   FALLBACK INDEX
+   HEALTH CHECK
+========================================================= */
+
+app.get(
+  "/api/health",
+  (req, res) => {
+
+    res.json({
+
+      ok:
+        true,
+
+      name:
+        "ScrimForge V4",
+
+      time:
+        new Date().toISOString()
+
+    });
+
+  }
+);
+
+
+/* =========================================================
+   SPA FALLBACK
 ========================================================= */
 
 app.get(
   "*",
   (req, res, next) => {
-
-    /*
-      Do not intercept API errors/routes.
-    */
 
     if (
       req.path.startsWith(
@@ -2418,7 +2653,7 @@ app.get(
 
     }
 
-    return res.sendFile(
+    res.sendFile(
       path.join(
         PUBLIC_DIR,
         "index.html"
@@ -2434,13 +2669,14 @@ app.get(
 ========================================================= */
 
 app.use(
-  "/api",
   (req, res) => {
 
-    return res.status(404).json({
-      error:
-        "API endpoint not found."
-    });
+    res
+      .status(404)
+      .json({
+        error:
+          "Endpoint not found."
+      });
 
   }
 );
@@ -2458,18 +2694,20 @@ app.use(
       error
     );
 
-    if (
-      res.headersSent
-    ) {
+    if (res.headersSent) {
 
-      return next(error);
+      return next(
+        error
+      );
 
     }
 
-    return res.status(500).json({
-      error:
-        "Internal server error."
-    });
+    res
+      .status(500)
+      .json({
+        error:
+          "Internal server error."
+      });
 
   }
 );
@@ -2479,40 +2717,45 @@ app.use(
    START SERVER
 ========================================================= */
 
-app.listen(
-  PORT,
-  () => {
+const server =
+  app.listen(
+    PORT,
+    () => {
 
-    console.log("");
-    console.log(
-      "======================================"
-    );
-    console.log(
-      "       SCRIMFORGE V4 SERVER"
-    );
-    console.log(
-      "======================================"
-    );
-    console.log(
-      `Server running on port ${PORT}`
-    );
-    console.log(
-      `Website: http://localhost:${PORT}`
-    );
-    console.log(
-      `Database: ${dbPath}`
-    );
-    console.log(
-      "======================================"
-    );
-    console.log("");
+      console.log(
+        "=========================================="
+      );
 
-  }
-);
+      console.log(
+        "       SCRIMFORGE V4 SERVER"
+      );
+
+      console.log(
+        "=========================================="
+      );
+
+      console.log(
+        `Server running on port ${PORT}`
+      );
+
+      console.log(
+        `Public directory: ${PUBLIC_DIR}`
+      );
+
+      console.log(
+        `Database: ${dbPath}`
+      );
+
+      console.log(
+        "=========================================="
+      );
+
+    }
+  );
 
 
 /* =========================================================
-   CLEAN SHUTDOWN
+   GRACEFUL SHUTDOWN
 ========================================================= */
 
 function shutdown() {
@@ -2522,12 +2765,24 @@ function shutdown() {
   );
 
   try {
+
     db.close();
+
   } catch (error) {
-    console.error(error);
+
+    console.error(
+      "Database close error:",
+      error
+    );
+
   }
 
-  process.exit(0);
+  server.close(
+    () => {
+      process.exit(0);
+    }
+  );
+
 }
 
 
