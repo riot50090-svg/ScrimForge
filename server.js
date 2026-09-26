@@ -720,10 +720,6 @@ app.post(
    REGISTRATION STATUS
 ===================================================== */
 
-/* =====================================================
-   REGISTRATION STATUS
-===================================================== */
-
 app.get(
   "/api/registration-status/:ref",
   (req, res) => {
@@ -768,11 +764,57 @@ app.get(
   "/api/registrations",
   requireAdmin,
   (req, res) => {
-    res.json(
-      db.registrations.map(
-        r => ({ ...r })
-      )
+    const rows = db.registrations.map(
+      registration => {
+        const lobby =
+          registration.lobby_id
+            ? lobbyById(
+                registration.lobby_id
+              )
+            : null;
+
+        return {
+          ...registration,
+
+          lobby_name:
+            lobby
+              ? lobby.name
+              : null,
+
+          lobby_status:
+            lobby
+              ? lobby.status
+              : null
+        };
+      }
     );
+
+    rows.sort(
+      (a, b) => {
+        const statusOrder = {
+          pending: 1,
+          confirmed: 2,
+          rejected: 3
+        };
+
+        const aStatus =
+          statusOrder[a.status] || 99;
+
+        const bStatus =
+          statusOrder[b.status] || 99;
+
+        if (aStatus !== bStatus) {
+          return aStatus - bStatus;
+        }
+
+        return (
+          new Date(b.created_at) -
+          new Date(a.created_at)
+        );
+      }
+    );
+
+    res.json(rows);
   }
 );
 
