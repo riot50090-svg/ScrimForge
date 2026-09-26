@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScrimForge — Admin Panel</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #080b12;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      min-height: 70px;
+      padding: 15px 20px;
+      background: #101521;
+      border-bottom: 1px solid #252c3b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand span {
+      color: #8b5cf6;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+      width: 230px;
+      background: #0d111a;
+      border-right: 1px solid #252c3b;
+      padding: 20px 12px;
+    }
+
+    .nav-title {
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin: 10px 12px;
+      letter-spacing: 1px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #cbd5e1;
+      text-align: left;
+      padding: 12px;
+      border-radius: 9px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #181d2b;
+      color: #ffffff;
+    }
+
+    .main {
+      flex: 1;
+      padding: 25px;
+      overflow-x: auto;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-title {
+      font-size: 27px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      color: #8b95a7;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #101521;
+      border: 1px solid #252c3b;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card-label {
+      color: #8b95a7;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .panel {
+      background: #101521;
+      border: 1px solid #252c3b;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #aeb7c7;
+      font-size: 13px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: #080b12;
+      color: #ffffff;
+      border: 1px solid #30384a;
+      border-radius: 8px;
+      padding: 11px 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #8b5cf6;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button.primary,
+    button.secondary,
+    button.danger {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: #8b5cf6;
+      color: #ffffff;
+    }
+
+    button.secondary {
+      background: #242b3a;
+      color: #ffffff;
+    }
+
+    button.danger {
+      background: #b91c1c;
+      color: #ffffff;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #252c3b;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      color: #9ca3af;
+      font-weight: 700;
+    }
+
+    td {
+      color: #dbe2ee;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge.pending {
+      background: #3b2f12;
+      color: #fbbf24;
+    }
+
+    .badge.confirmed {
+      background: #12351f;
+      color: #4ade80;
+    }
+
+    .badge.cancelled {
+      background: #3a1717;
+      color: #f87171;
+    }
+
+    .empty {
+      color: #737d90;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .notice {
+      background: #161d2b;
+      border: 1px solid #30384a;
+      border-radius: 10px;
+      padding: 14px;
+      color: #aeb7c7;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 190px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid #252c3b;
+      }
+
+      .main {
+        padding: 15px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">Scrim<span>Forge</span> Admin</div>
+    <div class="status">V4 Control Panel</div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+
+      <div class="nav-title">Management</div>
+
+      <button class="nav-btn active" onclick="showPage('dashboard', this)">
+        Dashboard
+      </button>
+
+      <button class="nav-btn" onclick="showPage('lobbies', this)">
+        Lobbies
+      </button>
+
+      <button class="nav-btn" onclick="showPage('registrations', this)">
+        Registrations
+      </button>
+
+      <button class="nav-btn" onclick="showPage('leaderboards', this)">
+        Leaderboards
+      </button>
+
+      <button class="nav-btn" onclick="showPage('settings', this)">
+        Settings
+      </button>
+
+    </aside>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="page active">
+
+        <h1 class="page-title">Dashboard</h1>
+
+        <p class="page-subtitle">
+          Manage ScrimForge lobbies, registrations and results.
+        </p>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="card-label">Total Lobbies</div>
+            <div class="card-value" id="totalLobbies">0</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Registrations</div>
+            <div class="card-value" id="totalRegistrations">0</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Confirmed</div>
+            <div class="card-value" id="confirmedRegistrations">0</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Pending</div>
+            <div class="card-value" id="pendingRegistrations">0</div>
+          </div>
+
+        </div>
+
+        <div class="notice">
+          Payment is handled manually through WhatsApp Business.
+          Use this panel only to create/manage lobbies, confirm registrations
+          after payment, and manage leaderboard data.
+        </div>
+
+      </section>
+
+
+      <!-- LOBBIES -->
+      <section id="lobbies" class="page">
+
+        <h1 class="page-title">Lobbies</h1>
+
+        <p class="page-subtitle">
+          Create and manage scrim rooms.
+        </p>
+
+        <div class="panel">
+
+          <h2>Create Scrim Lobby</h2>
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label>Scrim Name</label>
+              <input id="lobbyName" placeholder="Example: Night Scrim #01">
+            </div>
+
+            <div class="field">
+              <label>Entry Fee</label>
+              <input id="lobbyFee" type="number" min="0" placeholder="50">
+            </div>
+
+            <div class="field">
+              <label>Date</label>
+              <input id="lobbyDate" type="date">
+            </div>
+
+            <div class="field">
+              <label>Time</label>
+              <input id="lobbyTime" type="time">
+            </div>
+
+            <div class="field">
+              <label>Map</label>
+              <select id="lobbyMap">
+                <option value="Bermuda">Bermuda</option>
+                <option value="Purgatory">Purgatory</option>
+                <option value="Kalahari">Kalahari</option>
+                <option value="Nexterra">Nexterra</option>
+                <option value="Solara">Solara</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Maximum Teams</label>
+              <input id="lobbySlots" type="number" min="1" value="12">
+            </div>
+
+            <div class="field full">
+              <label>Description</label>
+              <textarea id="lobbyDescription"
+                placeholder="Scrim information..."></textarea>
+            </div>
+
+          </div>
+
+          <div class="actions">
+            <button class="primary" onclick="createLobby()">
+              Create Lobby
+            </button>
+          </div>
+
+        </div>
+
+        <div class="panel">
+
+          <h2>Existing Lobbies</h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Fee</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Map</th>
+                  <th>Slots</th>
+                </tr>
+              </thead>
+
+              <tbody id="lobbiesTable">
+                <tr>
+                  <td colspan="7" class="empty">
+                    No lobbies created yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- REGISTRATIONS -->
+      <section id="registrations" class="page">
+
+        <h1 class="page-title">Registrations</h1>
+
+        <p class="page-subtitle">
+          Confirm registrations after receiving payment through WhatsApp.
+        </p>
+
+        <div class="panel">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Lobby</th>
+                  <th>Team</th>
+                  <th>Player</th>
+                  <th>Fee</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="registrationsTable">
+
+                <tr>
+                  <td colspan="7" class="empty">
+                    No registrations yet.
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- LEADERBOARDS -->
+      <section id="leaderboards" class="page">
+
+        <h1 class="page-title">Leaderboards</h1>
+
+        <p class="page-subtitle">
+          Manage scores and leaderboard visibility.
+        </p>
+
+        <div class="panel">
+
+          <h2>Leaderboard Management</h2>
+
+          <div class="notice">
+            Leaderboard scoring and result-entry tools will be connected
+            to the backend in the next development step.
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Lobby</th>
+                  <th>Placement</th>
+                  <th>Kills</th>
+                  <th>Points</th>
+                </tr>
+              </thead>
+
+              <tbody id="leaderboardTable">
+
+                <tr>
+                  <td colspan="5" class="empty">
+                    No scores available.
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SETTINGS -->
+      <section id="settings" class="page">
+
+        <h1 class="page-title">Settings</h1>
+
+        <p class="page-subtitle">
+          Basic ScrimForge administration settings.
+        </p>
+
+        <div class="panel">
+
+          <h2>WhatsApp Registration</h2>
+
+          <div class="field">
+            <label>WhatsApp Business Number</label>
+            <input
+              id="whatsappNumber"
+              placeholder="Enter WhatsApp number">
+          </div>
+
+          <div class="actions">
+            <button class="primary" onclick="saveSettings()">
+              Save Settings
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <script>
+
+    const API_BASE = "";
+
+    function showPage(pageId, button) {
+
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      const page = document.getElementById(pageId);
+
+      if (page) {
+        page.classList.add("active");
+      }
+
+      if (button) {
+        button.classList.add("active");
+      }
+    }
+
+
+    async function createLobby() {
+
+      const lobby = {
+        name: document.getElementById("lobbyName").value.trim(),
+        fee: Number(document.getElementById("lobbyFee").value || 0),
+        date: document.getElementById("lobbyDate").value,
+        time: document.getElementById("lobbyTime").value,
+        map: document.getElementById("lobbyMap").value,
+        slots: Number(document.getElementById("lobbySlots").value || 12),
+        description: document.getElementById("lobbyDescription").value.trim()
+      };
+
+      if (!lobby.name) {
+        alert("Please enter a scrim name.");
+        return;
+      }
+
+      try {
+
+        const response = await fetch(API_BASE + "/api/lobbies", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(lobby)
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to create lobby.");
+        }
+
+        alert("Lobby created successfully.");
+
+        document.getElementById("lobbyName").value = "";
+        document.getElementById("lobbyFee").value = "";
+        document.getElementById("lobbyDate").value = "";
+        document.getElementById("lobbyTime").value = "";
+        document.getElementById("lobbyDescription").value = "";
+
+        loadDashboard();
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "The admin interface is ready, but the lobby API is not connected yet."
+        );
+      }
+
+    }
+
+
+    async function loadDashboard() {
+
+      try {
+
+        const response = await fetch(API_BASE + "/api/lobbies");
+
+        if (!response.ok) {
+          throw new Error("Failed to load lobbies.");
+        }
+
+        const data = await response.json();
+
+        const lobbies = Array.isArray(data)
+          ? data
+          : Array.isArray(data.lobbies)
+            ? data.lobbies
+            : [];
+
+        document.getElementById("totalLobbies").textContent =
+          lobbies.length;
+
+        renderLobbies(lobbies);
+
+      } catch (error) {
+
+        console.log("Dashboard API not connected yet.");
+
+      }
+
+    }
+
+
+    function renderLobbies(lobbies) {
+
+      const table = document.getElementById("lobbiesTable");
+
+      if (!lobbies.length) {
+
+        table.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty">
+              No lobbies created yet.
+            </td>
+          </tr>
+        `;
+
+        return;
+      }
+
+      table.innerHTML = lobbies.map(lobby => `
+
+        <tr>
+
+          <td>${escapeHTML(lobby.id ?? "-")}</td>
+
+          <td>${escapeHTML(lobby.name ?? "-")}</td>
+
+          <td>₹${escapeHTML(lobby.fee ?? 0)}</td>
+
+          <td>${escapeHTML(lobby.date ?? "-")}</td>
+
+          <td>${escapeHTML(lobby.time ?? "-")}</td>
+
+          <td>${escapeHTML(lobby.map ?? "-")}</td>
+
+          <td>${escapeHTML(lobby.slots ?? "-")}</td>
+
+        </tr>
+
+      `).join("");
+
+    }
+
+
+    async function loadRegistrations() {
+
+      try {
+
+        const response =
+          await fetch(API_BASE + "/api/registrations");
+
+        if (!response.ok) {
+          throw new Error("Failed to load registrations.");
+        }
+
+        const data = await response.json();
+
+        const registrations = Array.isArray(data)
+          ? data
+          : Array.isArray(data.registrations)
+            ? data.registrations
+            : [];
+
+        document.getElementById("totalRegistrations").textContent =
+          registrations.length;
+
+        const confirmed =
+          registrations.filter(
+            item => item.status === "confirmed"
+          ).length;
+
+        const pending =
+          registrations.filter(
+            item => item.status !== "confirmed"
+          ).length;
+
+        document.getElementById("confirmedRegistrations").textContent =
+          confirmed;
+
+        document.getElementById("pendingRegistrations").textContent =
+          pending;
+
+        renderRegistrations(registrations);
+
+      } catch (error) {
+
+        console.log("Registration API not connected yet.");
+
+      }
+
+    }
+
+
+    function renderRegistrations(registrations) {
+
+      const table =
+        document.getElementById("registrationsTable");
+
+      if (!registrations.length) {
+
+        table.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty">
+              No registrations yet.
+            </td>
+          </tr>
+        `;
+
+        return;
+      }
+
+      table.innerHTML = registrations.map(item => {
+
+        const status =
+          item.status || "pending";
+
+        return `
+
+          <tr>
+
+            <td>${escapeHTML(item.id ?? "-")}</td>
+
+            <td>${escapeHTML(item.lobbyId ?? "-")}</td>
+
+            <td>${escapeHTML(item.teamName ?? "-")}</td>
+
+            <td>${escapeHTML(item.playerName ?? "-")}</td>
+
+            <td>₹${escapeHTML(item.fee ?? 0)}</td>
+
+            <td>
+              <span class="badge ${escapeHTML(status)}">
+                ${escapeHTML(status)}
+              </span>
+            </td>
+
+            <td>
+
+              ${
+                status !== "confirmed"
+                ?
+                `<button
+                  class="primary"
+                  onclick="confirmRegistration('${escapeHTML(item.id)}')">
+                  Confirm
+                </button>`
+                :
+                `<span class="badge confirmed">Confirmed</span>`
+              }
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join("");
+
+    }
+
+
+    async function confirmRegistration(id) {
+
+      if (!confirm("Confirm this registration?")) {
+        return;
+      }
+
+      try {
+
+        const response =
+          await fetch(
+            API_BASE + "/api/registrations/" +
+            encodeURIComponent(id) +
+            "/confirm",
+            {
+              method: "POST"
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error("Confirmation failed.");
+        }
+
+        alert("Registration confirmed.");
+
+        loadRegistrations();
+
+      } catch (error) {
+
+        alert(
+          "The confirmation API is not connected yet."
+        );
+
+      }
+
+    }
+
+
+    function saveSettings() {
+
+      const number =
+        document.getElementById("whatsappNumber").value.trim();
+
+      localStorage.setItem(
+        "scrimforge_whatsapp",
+        number
+      );
+
+      alert("WhatsApp setting saved on this device.");
+
+    }
+
+
+    function loadSettings() {
+
+      const number =
+        localStorage.getItem("scrimforge_whatsapp") || "";
+
+      document.getElementById("whatsappNumber").value =
+        number;
+
+    }
+
+
+    function escapeHTML(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        loadSettings();
+        loadDashboard();
+        loadRegistrations();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
