@@ -1502,7 +1502,7 @@ async function loadRegistrations(){
                     onchange="assignLobby(
                       ${Number(row.id)},
                       this.value
-                    "
+                    )"
                   >
 
                     <option value="">
