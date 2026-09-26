@@ -1,1253 +1,1087 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>  <html lang="en">  <head>    <meta charset="UTF-8">  <meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
+> 
+
+<meta
+name="description"
+content="ScrimForge V4 - Free Fire Scrims and Tournament Management"
+
+> 
+
+  <title>  
+    ScrimForge V4  
+  </title>    <link  
+    rel="stylesheet"  
+    href="/styles.css"  
+  >  </head>  <body>  <!-- =====================================================  
+     NAVIGATION  
+====================================================== -->  <header class="navbar">    <div class="nav-inner">  <div  
+  class="brand"  
+  onclick="showPage('home')"  
+>  
+
+  <div class="brand-mark">  
+    SF  
+  </div>  
+
+  <div>  
+
+    <strong>  
+      ScrimForge  
+    </strong>  
+
+    <span>  
+      V4  
+    </span>  
+
+  </div>  
+
+</div>  
+
+
+<nav class="nav-links">  
+
+  <button  
+    class="nav-btn"  
+    onclick="showPage('home')"  
+  >  
+    Home  
+  </button>  
+
+  <button  
+    class="nav-btn"  
+    onclick="showPage('scrims')"  
+  >  
+    Scrims  
+  </button>  
 
-<head>
-  <meta charset="UTF-8">
+  <button  
+    class="nav-btn"  
+    onclick="showPage('register')"  
+  >  
+    Register  
+  </button>  
+
+  <button  
+    class="nav-btn"  
+    onclick="showPage('status')"  
+  >  
+    Check Status  
+  </button>  
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <button  
+    class="nav-btn"  
+    onclick="showPage('leaderboard')"  
+  >  
+    Leaderboard  
+  </button>  
 
-  <meta
-    name="description"
-    content="ScrimForge V4 - Free Fire Scrims and Tournament Management"
-  >
+  <button  
+    class="nav-btn"  
+    onclick="showPage('admin')"  
+  >  
+    Admin  
+  </button>  
 
-  <title>ScrimForge V4</title>
+</nav>
 
-  <link rel="stylesheet" href="/styles.css">
-</head>
+  </div>  </header>  <!-- =====================================================  
+     MAIN  
+====================================================== -->  <main>  <!-- =====================================================  
+     HOME  
+====================================================== -->  <section  
+  id="home"  
+  class="page active"  
+>    <div class="hero">  <div class="hero-content">  
 
+  <span class="hero-badge">  
+    FREE FIRE SCRIM PLATFORM  
+  </span>  
 
-<body>
+  <h1>  
+    SCRIMFORGE  
+  </h1>  
 
+  <p class="hero-version">  
+    V4  
+  </p>  
 
-<!-- =====================================================
-     NAVIGATION
-====================================================== -->
+  <p class="hero-text">  
 
-<header class="navbar">
+    Manage Free Fire scrims,  
+    registrations, lobbies and  
+    live leaderboards from one  
+    powerful platform.  
 
-  <div class="nav-inner">
+  </p>  
 
-    <div
-      class="brand"
-      onclick="showPage('home')"
-    >
 
-      <div class="brand-mark">
-        SF
-      </div>
+  <div class="hero-actions">  
 
-      <div class="brand-text">
-        <strong>ScrimForge</strong>
-        <span>V4</span>
-      </div>
+    <button  
+      class="btn"  
+      onclick="showPage('scrims')"  
+    >  
+      View Scrims  
+    </button>  
 
-    </div>
+    <button  
+      class="btn secondary"  
+      onclick="showPage('leaderboard')"  
+    >  
+      Live Leaderboard  
+    </button>  
 
+  </div>  
 
-    <nav class="nav-links">
+</div>
 
-      <button
-        class="nav-btn"
-        onclick="showPage('home')"
-      >
-        Home
-      </button>
+  </div>    <section class="section">  <div class="section-heading">  
 
-      <button
-        class="nav-btn"
-        onclick="showPage('scrims')"
-      >
-        Scrims
-      </button>
+  <div>  
 
-      <button
-        class="nav-btn"
-        onclick="showPage('register')"
-      >
-        Register
-      </button>
+    <span class="eyebrow">  
+      ACTIVE ROOMS  
+    </span>  
 
-      <button
-        class="nav-btn"
-        onclick="showPage('status')"
-      >
-        Check Status
-      </button>
+    <h2>  
+      Available Scrims  
+    </h2>  
 
-      <button
-        class="nav-btn"
-        onclick="showPage('leaderboard')"
-      >
-        Leaderboard
-      </button>
+  </div>  
 
-      <button
-        class="nav-btn"
-        onclick="showPage('admin')"
-      >
-        Admin
-      </button>
+</div>  
 
-    </nav>
 
-  </div>
+<div  
+  id="homeLobbies"  
+  class="grid"  
+>  
 
-</header>
+  <p class="muted">  
+    Loading lobbies...  
+  </p>  
 
+</div>
 
+  </section>    <section class="section">  <div class="feature-grid">  
 
-<main>
+  <div class="card">  
 
+    <h3>  
+      ⚡ Fast Registration  
+    </h3>  
 
-<!-- =====================================================
-     HOME
-====================================================== -->
+    <p class="muted">  
+      Select an available lobby  
+      and submit your team details.  
+    </p>  
 
-<section id="home" class="page active">
+  </div>  
 
-  <div class="hero">
 
-    <div class="hero-content">
+  <div class="card">  
 
-      <span class="hero-badge">
-        FREE FIRE SCRIM PLATFORM
-      </span>
+    <h3>  
+      🏆 Live Leaderboards  
+    </h3>  
 
-      <h1>SCRIMFORGE</h1>
+    <p class="muted">  
+      View match-by-match and  
+      overall leaderboard results.  
+    </p>  
 
-      <p class="hero-version">
-        V4
-      </p>
+  </div>  
 
-      <p class="hero-text">
-        Manage Free Fire scrims,
-        registrations, lobbies and
-        live leaderboards from one
-        powerful platform.
-      </p>
 
+  <div class="card">  
 
-      <div class="hero-actions">
+    <h3>  
+      🛡️ Admin Control  
+    </h3>  
 
-        <button
-          class="btn"
-          onclick="showPage('scrims')"
-        >
-          View Scrims
-        </button>
+    <p class="muted">  
+      Manage lobbies, registrations  
+      and match scores from the  
+      admin dashboard.  
+    </p>  
 
-        <button
-          class="btn secondary"
-          onclick="showPage('leaderboard')"
-        >
-          Live Leaderboard
-        </button>
+  </div>  
 
-      </div>
+</div>
 
-    </div>
+  </section>  </section>  <!-- =====================================================  
+     SCRIMS  
+====================================================== -->  <section  
+  id="scrims"  
+  class="page"  
+>    <div class="page-header">  <span class="eyebrow">  
+  SCRIMS  
+</span>  
 
-  </div>
+<h1>  
+  Available Scrims  
+</h1>  
 
+<p>  
+  Choose an open lobby and register  
+  your team.  
+</p>
 
-  <section class="section">
+  </div>    <div  
+    id="scrimList"  
+    class="grid"  
+  >  <p class="muted">  
+  Loading lobbies...  
+</p>
 
-    <div class="section-heading">
+  </div>  </section>  <!-- =====================================================  
+     REGISTER  
+====================================================== -->  <section  
+  id="register"  
+  class="page"  
+>    <div class="page-header">  <span class="eyebrow">  
+  REGISTRATION  
+</span>  
 
-      <div>
-        <span class="eyebrow">
-          ACTIVE ROOMS
-        </span>
+<h1>  
+  Register Your Team  
+</h1>  
 
-        <h2>
-          Available Scrims
-        </h2>
-      </div>
+<p>  
+  Select a scrim from the Scrims page  
+  before submitting your registration.  
+</p>
 
+  </div>    <div class="form-card">  <form  
+  id="registrationForm"  
+>  
 
-      <button
-        class="refresh-btn"
-        onclick="loadPublicLobbies('homeLobbies')"
-      >
-        🔄 Refresh
-      </button>
+  <input  
+    type="hidden"  
+    id="regLobbyId"  
+  >  
 
-    </div>
 
+  <div class="form-group">  
 
-    <div
-      id="homeLobbies"
-      class="grid"
-    >
-      <p class="muted">
-        Loading lobbies...
-      </p>
-    </div>
+    <label>  
+      Selected Lobby  
+    </label>  
 
-  </section>
+    <input  
+      type="text"  
+      id="regTime"  
+      placeholder="Select a lobby first"  
+      readonly  
+    >  
 
+  </div>  
 
-  <section class="section">
 
-    <div class="feature-grid">
+  <div class="form-group">  
 
-      <div class="card feature-card">
-        <h3>⚡ Fast Registration</h3>
+    <label>  
+      Entry Fee  
+    </label>  
 
-        <p class="muted">
-          Select an available lobby
-          and submit your team details.
-        </p>
-      </div>
+    <input  
+      type="text"  
+      id="regFee"  
+      placeholder="Select a lobby first"  
+      readonly  
+    >  
 
+  </div>  
 
-      <div class="card feature-card">
-        <h3>🏆 Live Leaderboards</h3>
 
-        <p class="muted">
-          View match-by-match and
-          overall leaderboard results.
-        </p>
-      </div>
+  <div class="form-group">  
 
+    <label>  
+      Team Name  
+    </label>  
 
-      <div class="card feature-card">
-        <h3>🛡️ Admin Control</h3>
+    <input  
+      type="text"  
+      id="regTeam"  
+      placeholder="Enter team name"  
+      maxlength="50"  
+      required  
+    >  
 
-        <p class="muted">
-          Manage lobbies, registrations
-          and match scores from the
-          admin dashboard.
-        </p>
-      </div>
+  </div>  
 
-    </div>
 
-  </section>
+  <div class="form-group">  
 
-</section>
+    <label>  
+      Captain Name  
+    </label>  
 
+    <input  
+      type="text"  
+      id="regCaptain"  
+      placeholder="Enter captain name"  
+      maxlength="50"  
+      required  
+    >  
 
+  </div>  
 
-<!-- =====================================================
-     SCRIMS
-====================================================== -->
 
-<section id="scrims" class="page">
+  <div class="form-group">  
 
-  <div class="page-header">
+    <label>  
+      WhatsApp / Phone  
+    </label>  
 
-    <div>
-      <span class="eyebrow">
-        SCRIMS
-      </span>
+    <input  
+      type="tel"  
+      id="regPhone"  
+      placeholder="Enter contact number"  
+      maxlength="20"  
+      required  
+    >  
 
-      <h1>
-        Available Scrims
-      </h1>
+  </div>  
 
-      <p>
-        Choose an open lobby and register
-        your team.
-      </p>
-    </div>
 
+  <div class="form-group">  
 
-    <button
-      class="refresh-btn"
-      onclick="loadPublicLobbies('scrimList')"
-    >
-      🔄 Refresh Scrims
-    </button>
+    <label>  
+      Free Fire UID  
+    </label>  
 
-  </div>
+    <input  
+      type="text"  
+      id="regUid"  
+      placeholder="Enter Free Fire UID"  
+      maxlength="30"  
+      required  
+    >  
 
+  </div>  
 
-  <div
-    id="scrimList"
-    class="grid"
-  >
-    <p class="muted">
-      Loading lobbies...
-    </p>
-  </div>
 
-</section>
+  <button  
+    type="submit"  
+    class="btn full"  
+  >  
+    Submit Registration  
+  </button>  
 
 
+  <div  
+    id="registerMessage"  
+    class="message"  
+  ></div>  
 
-<!-- =====================================================
-     REGISTER
-====================================================== -->
+</form>
 
-<section id="register" class="page">
+  </div>  </section>  <!-- =====================================================  
+     STATUS  
+====================================================== -->  <section  
+  id="status"  
+  class="page"  
+>    <div class="page-header">  <span class="eyebrow">  
+  REGISTRATION STATUS  
+</span>  
 
-  <div class="page-header">
+<h1>  
+  Check Registration  
+</h1>  
 
-    <span class="eyebrow">
-      REGISTRATION
-    </span>
+<p>  
+  Enter the reference received after  
+  registration.  
+</p>
 
-    <h1>
-      Register Your Team
-    </h1>
+  </div>    <div class="form-card">  <div class="form-group">  
 
-    <p>
-      Select a scrim from the Scrims page
-      before submitting your registration.
-    </p>
+  <label>  
+    Registration Reference  
+  </label>  
 
-  </div>
+  <input  
+    type="text"  
+    id="statusRef"  
+    placeholder="Example: SF-A1B2C3D4"  
+  >  
 
+</div>  
 
-  <div class="form-card">
 
-    <form id="registrationForm">
+<button  
+  class="btn full"  
+  onclick="checkStatus()"  
+>  
+  Check Status  
+</button>  
 
-      <input
-        type="hidden"
-        id="regLobbyId"
-      >
 
+<div  
+  id="statusMessage"  
+  class="message"  
+></div>  
 
-      <div class="form-group">
 
-        <label>
-          Selected Lobby
-        </label>
+<div  
+  id="statusResult"  
+  class="result-box"  
+></div>
 
-        <input
-          type="text"
-          id="regTime"
-          placeholder="Select a lobby first"
-          readonly
-        >
+  </div>  </section>  <!-- =====================================================  
+     LEADERBOARD  
+====================================================== -->  <section  
+  id="leaderboard"  
+  class="page"  
+>    <div class="page-header">  <span class="eyebrow">  
+  LIVE RESULTS  
+</span>  
 
-      </div>
+<h1>  
+  Leaderboard  
+</h1>  
 
+<p>  
+  Match results and overall standings  
+  update automatically.  
+</p>
 
-      <div class="form-group">
+  </div>    <div class="leaderboard-controls">  <div class="form-group">  
 
-        <label>
-          Entry Fee
-        </label>
+  <label>  
+    Lobby  
+  </label>  
 
-        <input
-          type="text"
-          id="regFee"
-          placeholder="Select a lobby first"
-          readonly
-        >
+  <select  
+    id="publicLobbySelect"  
+  >  
 
-      </div>
+    <option value="">  
+      Select a lobby  
+    </option>  
 
+  </select>  
 
-      <div class="form-group">
+</div>  
 
-        <label>
-          Team Name
-        </label>
 
-        <input
-          type="text"
-          id="regTeam"
-          placeholder="Enter team name"
-          maxlength="50"
-          required
-        >
+<div class="form-group">  
 
-      </div>
+  <label>  
+    View  
+  </label>  
 
+  <select  
+    id="publicMatchSelect"  
+  >  
 
-      <div class="form-group">
+    <option value="overall">  
+      Overall  
+    </option>  
 
-        <label>
-          Captain Name
-        </label>
+    <option value="1">  
+      Match 1  
+    </option>  
 
-        <input
-          type="text"
-          id="regCaptain"
-          placeholder="Enter captain name"
-          maxlength="50"
-          required
-        >
+    <option value="2">  
+      Match 2  
+    </option>  
 
-      </div>
+    <option value="3">  
+      Match 3  
+    </option>  
 
+    <option value="4">  
+      Match 4  
+    </option>  
 
-      <div class="form-group">
+    <option value="5">  
+      Match 5  
+    </option>  
 
-        <label>
-          WhatsApp / Phone
-        </label>
+    <option value="6">  
+      Match 6  
+    </option>  
 
-        <input
-          type="tel"
-          id="regPhone"
-          placeholder="Enter contact number"
-          maxlength="20"
-          required
-        >
+  </select>  
 
-      </div>
+</div>
 
+  </div>    <div  
+    id="publicLeaderboard"  
+  >  <div class="card">  
 
-      <div class="form-group">
+  <p class="muted">  
+    Select a lobby to view results.  
+  </p>  
 
-        <label>
-          Free Fire UID
-        </label>
+</div>
 
-        <input
-          type="text"
-          id="regUid"
-          placeholder="Enter Free Fire UID"
-          maxlength="30"
-          required
-        >
+  </div>  </section>  <!-- =====================================================  
+     ADMIN  
+====================================================== -->  <section  
+  id="admin"  
+  class="page"  
+>    <div class="page-header">  <span class="eyebrow">  
+  CONTROL PANEL  
+</span>  
 
-      </div>
+<h1>  
+  Admin Dashboard  
+</h1>
 
+  </div>    <!-- ADMIN SETUP -->    <div  
+    id="adminSetupBox"  
+    class="form-card"  
+  >  <h2>  
+  Create Admin Account  
+</h2>  
 
-      <button
-        type="submit"
-        class="btn full"
-      >
-        Submit Registration
-      </button>
+<p class="muted">  
+  Create the first ScrimForge administrator.  
+</p>  
 
 
-      <div
-        id="registerMessage"
-        class="message"
-      ></div>
+<form id="setupForm">  
 
-    </form>
+  <div class="form-group">  
 
-  </div>
+    <label>  
+      Name  
+    </label>  
 
-</section>
+    <input  
+      id="setupName"  
+      type="text"  
+      required  
+    >  
 
+  </div>  
 
 
-<!-- =====================================================
-     STATUS
-====================================================== -->
+  <div class="form-group">  
 
-<section id="status" class="page">
+    <label>  
+      Email  
+    </label>  
 
-  <div class="page-header">
+    <input  
+      id="setupEmail"  
+      type="email"  
+      required  
+    >  
 
-    <span class="eyebrow">
-      REGISTRATION STATUS
-    </span>
+  </div>  
 
-    <h1>
-      Check Registration
-    </h1>
 
-    <p>
-      Enter the reference received after
-      registration.
-    </p>
+  <div class="form-group">  
 
-  </div>
+    <label>  
+      Password  
+    </label>  
 
+    <input  
+      id="setupPassword"  
+      type="password"  
+      minlength="6"  
+      required  
+    >  
 
-  <div class="form-card">
+  </div>  
 
-    <div class="form-group">
 
-      <label>
-        Registration Reference
-      </label>
+  <button  
+    class="btn full"  
+    type="submit"  
+  >  
+    Create Admin  
+  </button>  
 
-      <input
-        type="text"
-        id="statusRef"
-        placeholder="Example: SF-A1B2C3D4"
-      >
 
-    </div>
+  <div  
+    id="setupMessage"  
+    class="message"  
+  ></div>  
 
+</form>
 
-    <button
-      class="btn full"
-      onclick="checkStatus()"
-    >
-      Check Status
-    </button>
+  </div>    <!-- ADMIN LOGIN -->    <div  
+    id="adminLoginBox"  
+    class="form-card hidden"  
+  >  <h2>  
+  Admin Login  
+</h2>  
 
 
-    <div
-      id="statusMessage"
-      class="message"
-    ></div>
+<form id="loginForm">  
 
+  <div class="form-group">  
 
-    <div
-      id="statusResult"
-      class="result-box"
-    ></div>
+    <label>  
+      Email  
+    </label>  
 
-  </div>
+    <input  
+      id="loginEmail"  
+      type="email"  
+      required  
+    >  
 
-</section>
+  </div>  
 
 
+  <div class="form-group">  
 
-<!-- =====================================================
-     LEADERBOARD
-====================================================== -->
+    <label>  
+      Password  
+    </label>  
 
-<section id="leaderboard" class="page">
+    <input  
+      id="loginPassword"  
+      type="password"  
+      required  
+    >  
 
-  <div class="page-header">
+  </div>  
 
-    <div>
 
-      <span class="eyebrow">
-        LIVE RESULTS
-      </span>
+  <button  
+    class="btn full"  
+    type="submit"  
+  >  
+    Login  
+  </button>  
 
-      <h1>
-        Leaderboard
-      </h1>
 
-      <p>
-        Match results and overall standings
-        update automatically.
-      </p>
+  <div  
+    id="loginMessage"  
+    class="message"  
+  ></div>  
 
-    </div>
+</form>
 
+  </div>    <!-- ADMIN DASHBOARD -->    <div  
+    id="adminDashboard"  
+    class="hidden"  
+  >  <div class="admin-topbar">  
 
-    <button
-      class="refresh-btn"
-      onclick="loadLeaderboardLobbyOptions()"
-    >
-      🔄 Refresh
-    </button>
+  <div>  
 
-  </div>
+    <span class="eyebrow">  
+      ADMIN  
+    </span>  
 
+    <h2>  
+      Welcome,  
+      <span id="adminName">  
+        Admin  
+      </span>  
+    </h2>  
 
-  <div class="leaderboard-controls">
+  </div>  
 
-    <div class="form-group">
 
-      <label>
-        Lobby
-      </label>
+  <button  
+    class="btn danger"  
+    onclick="logout()"  
+  >  
+    Logout  
+  </button>  
 
-      <select id="publicLobbySelect">
+</div>  
 
-        <option value="">
-          Select a lobby
-        </option>
 
-      </select>
 
-    </div>
+<!-- STATS -->  
 
+<div class="stats-grid">  
 
-    <div class="form-group">
+  <div class="stat-card">  
 
-      <label>
-        View
-      </label>
+    <span>  
+      Pending  
+    </span>  
 
-      <select id="publicMatchSelect">
+    <strong  
+      id="pendingCount"  
+    >  
+      0  
+    </strong>  
 
-        <option value="overall">
-          Overall
-        </option>
+  </div>  
 
-        <option value="1">Match 1</option>
-        <option value="2">Match 2</option>
-        <option value="3">Match 3</option>
-        <option value="4">Match 4</option>
-        <option value="5">Match 5</option>
-        <option value="6">Match 6</option>
 
-      </select>
+  <div class="stat-card">  
 
-    </div>
+    <span>  
+      Confirmed  
+    </span>  
 
-  </div>
+    <strong  
+      id="confirmedCount"  
+    >  
+      0  
+    </strong>  
 
+  </div>  
 
-  <div id="publicLeaderboard">
 
-    <div class="card">
+  <div class="stat-card">  
 
-      <p class="muted">
-        Select a lobby to view results.
-      </p>
+    <span>  
+      Active Lobbies  
+    </span>  
 
-    </div>
+    <strong  
+      id="activeLobbyCount"  
+    >  
+      0  
+    </strong>  
 
-  </div>
+  </div>  
 
-</section>
+</div>  
 
 
 
-<!-- =====================================================
-     ADMIN
-====================================================== -->
+<!-- CREATE LOBBY -->  
 
-<section id="admin" class="page">
+<div class="admin-section">  
 
-  <div class="page-header">
+  <div class="section-heading">  
 
-    <span class="eyebrow">
-      CONTROL PANEL
-    </span>
+    <div>  
 
-    <h1>
-      Admin Dashboard
-    </h1>
+      <span class="eyebrow">  
+        LOBBY MANAGEMENT  
+      </span>  
 
-  </div>
+      <h2>  
+        Create Scrim  
+      </h2>  
 
+    </div>  
 
-  <!-- ADMIN SETUP -->
+  </div>  
 
-  <div
-    id="adminSetupBox"
-    class="form-card admin-auth-card"
-  >
 
-    <h2>
-      Create Admin Account
-    </h2>
+  <div class="form-card">  
 
-    <p class="muted">
-      Create the first ScrimForge administrator.
-    </p>
+    <form id="lobbyForm">  
 
+      <div class="form-group">  
 
-    <form id="setupForm">
+        <label>  
+          Scrim Name  
+        </label>  
 
-      <div class="form-group">
+        <input  
+          id="lobbyName"  
+          type="text"  
+          placeholder="Example: 12 PM ₹50 Scrim"  
+          required  
+        >  
 
-        <label>Name</label>
+      </div>  
 
-        <input
-          id="setupName"
-          type="text"
-          required
-        >
 
-      </div>
+      <div class="form-group">  
 
+        <label>  
+          Time  
+        </label>  
 
-      <div class="form-group">
+        <input  
+          id="lobbyTime"  
+          type="text"  
+          placeholder="Example: 12:00 PM"  
+          required  
+        >  
 
-        <label>Email</label>
+      </div>  
 
-        <input
-          id="setupEmail"
-          type="email"
-          required
-        >
 
-      </div>
+      <div class="form-group">  
 
+        <label>  
+          Entry Fee  
+        </label>  
 
-      <div class="form-group">
+        <input  
+          id="lobbyFee"  
+          type="text"  
+          placeholder="Example: ₹50"  
+          required  
+        >  
 
-        <label>Password</label>
+      </div>  
 
-        <input
-          id="setupPassword"
-          type="password"
-          minlength="6"
-          required
-        >
 
-      </div>
+      <div class="form-group">  
 
+        <label>  
+          Maximum Teams  
+        </label>  
 
-      <button
-        class="btn full"
-        type="submit"
-      >
-        Create Admin
-      </button>
+        <input  
+          id="lobbyMaxTeams"  
+          type="number"  
+          min="1"  
+          max="100"  
+          value="12"  
+          required  
+        >  
 
+      </div>  
 
-      <div
-        id="setupMessage"
-        class="message"
-      ></div>
 
-    </form>
+      <button  
+        type="submit"  
+        class="btn success full"  
+      >  
+        Create Scrim  
+      </button>  
 
-  </div>
 
+      <div  
+        id="lobbyMessage"  
+        class="message"  
+      ></div>  
 
+    </form>  
 
-  <!-- ADMIN LOGIN -->
+  </div>  
 
-  <div
-    id="adminLoginBox"
-    class="form-card admin-auth-card hidden"
-  >
+</div>  
 
-    <div class="auth-title-row">
 
-      <div>
 
-        <span class="eyebrow">
-          SECURE ACCESS
-        </span>
+<!-- LOBBY LIST -->  
 
-        <h2>
-          Admin Login
-        </h2>
+<div class="admin-section">  
 
-      </div>
+  <div class="section-heading">  
 
-      <span class="admin-lock">
-        🔐
-      </span>
+    <div>  
 
-    </div>
+      <span class="eyebrow">  
+        SCRIMS  
+      </span>  
 
+      <h2>  
+        Manage Scrims  
+      </h2>  
 
-    <form id="loginForm">
+    </div>  
 
-      <div class="form-group">
+  </div>  
 
-        <label>Email</label>
 
-        <input
-          id="loginEmail"
-          type="email"
-          autocomplete="username"
-          required
-        >
+  <div  
+    id="adminLobbies"  
+    class="grid"  
+  >  
 
-      </div>
+    <p class="muted">  
+      Loading...  
+    </p>  
 
+  </div>  
 
-      <div class="form-group">
+</div>  
 
-        <label>Password</label>
 
-        <input
-          id="loginPassword"
-          type="password"
-          autocomplete="current-password"
-          required
-        >
 
-      </div>
+<!-- REGISTRATIONS -->  
 
+<div class="admin-section">  
 
-      <button
-        class="btn full"
-        type="submit"
-      >
-        Login
-      </button>
+  <div class="section-heading">  
 
+    <div>  
 
-      <div
-        id="loginMessage"
-        class="message"
-      ></div>
+      <span class="eyebrow">  
+        REGISTRATIONS  
+      </span>  
 
-    </form>
+      <h2>  
+        Registration Management  
+      </h2>  
 
-  </div>
+    </div>  
 
+  </div>  
 
 
-  <!-- ADMIN DASHBOARD -->
+  <div class="table-wrap">  
 
-  <div
-    id="adminDashboard"
-    class="hidden"
-  >
+    <table>  
 
+      <thead>  
 
-    <!-- ADMIN TOP -->
+        <tr>  
 
-    <div class="admin-topbar">
+          <th>ID</th>  
+          <th>Reference</th>  
+          <th>Team</th>  
+          <th>Captain</th>  
+          <th>Fee</th>  
+          <th>Time</th>  
+          <th>Status</th>  
+          <th>Assign Lobby</th>  
+          <th>Actions</th>  
 
-      <div>
+        </tr>  
 
-        <span class="eyebrow">
-          ADMIN
-        </span>
+      </thead>  
 
-        <h2>
-          Welcome,
-          <span id="adminName">
-            Admin
-          </span>
-        </h2>
 
-      </div>
+      <tbody  
+        id="registrationTable"  
+      >  
 
+        <tr>  
 
-      <button
-        class="btn danger"
-        onclick="logout()"
-      >
-        Logout
-      </button>
+          <td colspan="9">  
+            Loading...  
+          </td>  
 
-    </div>
+        </tr>  
 
+      </tbody>  
 
+    </table>  
 
-    <!-- STATS -->
+  </div>  
 
-    <div class="admin-section">
+</div>  
 
-      <div class="section-heading">
 
-        <div>
 
-          <span class="eyebrow">
-            OVERVIEW
-          </span>
+<!-- SCORE ENTRY -->  
 
-          <h2>
-            Dashboard Stats
-          </h2>
+<div class="admin-section">  
 
-        </div>
+  <div class="section-heading">  
 
+    <div>  
 
-        <button
-          class="refresh-btn"
-          onclick="refreshStatsPanel()"
-        >
-          🔄 Refresh
-        </button>
+      <span class="eyebrow">  
+        MATCH CONTROL  
+      </span>  
 
-      </div>
+      <h2>  
+        Enter Match Scores  
+      </h2>  
 
+    </div>  
 
-      <div class="stats-grid">
+  </div>  
 
-        <div class="stat-card">
-          <span>Pending</span>
 
-          <strong id="pendingCount">
-            0
-          </strong>
-        </div>
+  <div class="form-card">  
 
+    <div class="form-group">  
 
-        <div class="stat-card">
-          <span>Confirmed</span>
+      <label>  
+        Lobby  
+      </label>  
 
-          <strong id="confirmedCount">
-            0
-          </strong>
-        </div>
+      <select  
+        id="scoreLobby"  
+      >  
 
+        <option value="">  
+          Select lobby  
+        </option>  
 
-        <div class="stat-card">
-          <span>Active Lobbies</span>
+      </select>  
 
-          <strong id="activeLobbyCount">
-            0
-          </strong>
-        </div>
+    </div>  
 
-      </div>
 
-    </div>
+    <div class="match-tabs">  
 
+      <button  
+        type="button"  
+        class="active"  
+        onclick="selectScoreMatch(1,this)"  
+      >  
+        Match 1  
+      </button>  
 
+      <button  
+        type="button"  
+        onclick="selectScoreMatch(2,this)"  
+      >  
+        Match 2  
+      </button>  
 
-    <!-- CREATE LOBBY -->
+      <button  
+        type="button"  
+        onclick="selectScoreMatch(3,this)"  
+      >  
+        Match 3  
+      </button>  
 
-    <div class="admin-section">
+      <button  
+        type="button"  
+        onclick="selectScoreMatch(4,this)"  
+      >  
+        Match 4  
+      </button>  
 
-      <div class="section-heading">
+      <button  
+        type="button"  
+        onclick="selectScoreMatch(5,this)"  
+      >  
+        Match 5  
+      </button>  
 
-        <div>
+      <button  
+        type="button"  
+        onclick="selectScoreMatch(6,this)"  
+      >  
+        Match 6  
+      </button>  
 
-          <span class="eyebrow">
-            LOBBY MANAGEMENT
-          </span>
+    </div>  
 
-          <h2>
-            Create Scrim
-          </h2>
 
-        </div>
+    <div  
+      id="scoreEntryBody"  
+      class="score-entry-body"  
+    >  
 
-      </div>
+      <p class="muted">  
+        Select a lobby first.  
+      </p>  
 
+    </div>  
 
-      <div class="form-card">
+  </div>  
 
-        <form id="lobbyForm">
+</div>
 
-          <div class="form-group">
+  </div>  </section>  </main>  <!-- =====================================================  
+     FOOTER  
+====================================================== -->  <footer class="footer">    <div>  <strong>  
+  ScrimForge V4  
+</strong>  
 
-            <label>
-              Scrim Name
-            </label>
+<p>  
+  Free Fire Scrim Management Platform  
+</p>
 
-            <input
-              id="lobbyName"
-              type="text"
-              placeholder="Example: 12 PM ₹50 Scrim"
-              required
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Time
-            </label>
-
-            <input
-              id="lobbyTime"
-              type="text"
-              placeholder="Example: 12:00 PM"
-              required
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Entry Fee
-            </label>
-
-            <input
-              id="lobbyFee"
-              type="text"
-              placeholder="Example: ₹50"
-              required
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Maximum Teams
-            </label>
-
-            <input
-              id="lobbyMaxTeams"
-              type="number"
-              min="1"
-              max="100"
-              value="12"
-              required
-            >
-
-          </div>
-
-
-          <button
-            type="submit"
-            class="btn success full"
-          >
-            Create Scrim
-          </button>
-
-
-          <div
-            id="lobbyMessage"
-            class="message"
-          ></div>
-
-        </form>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- LOBBY LIST -->
-
-    <div class="admin-section">
-
-      <div class="section-heading">
-
-        <div>
-
-          <span class="eyebrow">
-            SCRIMS
-          </span>
-
-          <h2>
-            Manage Scrims
-          </h2>
-
-        </div>
-
-
-        <button
-          class="refresh-btn"
-          onclick="refreshLobbyPanel()"
-        >
-          🔄 Refresh
-        </button>
-
-      </div>
-
-
-      <div
-        id="adminLobbies"
-        class="grid"
-      >
-
-        <p class="muted">
-          Loading...
-        </p>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- REGISTRATIONS -->
-
-    <div class="admin-section">
-
-      <div class="section-heading">
-
-        <div>
-
-          <span class="eyebrow">
-            REGISTRATIONS
-          </span>
-
-          <h2>
-            Registration Management
-          </h2>
-
-        </div>
-
-
-        <button
-          class="refresh-btn"
-          onclick="refreshRegistrationPanel()"
-        >
-          🔄 Refresh
-        </button>
-
-      </div>
-
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>ID</th>
-              <th>Reference</th>
-              <th>Team</th>
-              <th>Captain</th>
-              <th>Fee</th>
-              <th>Time</th>
-              <th>Status</th>
-              <th>Assign Lobby</th>
-              <th>Actions</th>
-            </tr>
-
-          </thead>
-
-
-          <tbody id="registrationTable">
-
-            <tr>
-              <td colspan="9">
-                Loading...
-              </td>
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- SCORE ENTRY -->
-
-    <div class="admin-section">
-
-      <div class="section-heading">
-
-        <div>
-
-          <span class="eyebrow">
-            MATCH CONTROL
-          </span>
-
-          <h2>
-            Enter Match Scores
-          </h2>
-
-        </div>
-
-
-        <button
-          class="refresh-btn"
-          onclick="refreshScorePanel()"
-        >
-          🔄 Refresh
-        </button>
-
-      </div>
-
-
-      <div class="form-card">
-
-        <div class="form-group">
-
-          <label>
-            Lobby
-          </label>
-
-          <select id="scoreLobby">
-
-            <option value="">
-              Select lobby
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="match-tabs">
-
-          <button
-            type="button"
-            class="active"
-            onclick="selectScoreMatch(1,this)"
-          >
-            Match 1
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(2,this)"
-          >
-            Match 2
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(3,this)"
-          >
-            Match 3
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(4,this)"
-          >
-            Match 4
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(5,this)"
-          >
-            Match 5
-          </button>
-
-          <button
-            type="button"
-            onclick="selectScoreMatch(6,this)"
-          >
-            Match 6
-          </button>
-
-        </div>
-
-
-        <div
-          id="scoreEntryBody"
-          class="score-entry-body"
-        >
-
-          <p class="muted">
-            Select a lobby first.
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-</main>
-
-
-
-<!-- =====================================================
-     FOOTER
-====================================================== -->
-
-<footer class="footer">
-
-  <div>
-
-    <strong>
-      ScrimForge V4
-    </strong>
-
-    <p>
-      Free Fire Scrim Management Platform
-    </p>
-
-  </div>
-
-
-  <p class="muted">
-    © 2026 ScrimForge. All rights reserved.
-  </p>
-
-</footer>
-
-
-
-<script
-  src="/app.js"
-  defer
-></script>
-
-</body>
-</html>
+  </div>    <p class="muted">  
+    © 2026 ScrimForge. All rights reserved.  
+  </p>  </footer>  <!-- =====================================================  
+     APP.JS  
+====================================================== -->  <script  
+  src="/app.js"  
+  defer  
+></script>  </body>  </html>
