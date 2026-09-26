@@ -1143,21 +1143,63 @@ app.get(
   "/api/stats",
   requireAdmin,
   (req, res) => {
+    const pending =
+      db.registrations.filter(
+        registration =>
+          registration.status === "pending"
+      ).length;
+
+    const confirmed =
+      db.registrations.filter(
+        registration =>
+          registration.status === "confirmed"
+      ).length;
+
+    const rejected =
+      db.registrations.filter(
+        registration =>
+          registration.status === "rejected"
+      ).length;
+
+    const activeLobbies =
+      db.lobbies.filter(
+        lobby =>
+          lobby.status === "open"
+      ).length;
+
+    const closedLobbies =
+      db.lobbies.filter(
+        lobby =>
+          lobby.status === "closed"
+      ).length;
+
+    const totalLobbies =
+      db.lobbies.length;
+
+    const totalRegistrations =
+      db.registrations.length;
+
+    const totalScores =
+      db.scores.length;
+
+    const confirmedTeams =
+      db.registrations.filter(
+        registration =>
+          registration.status === "confirmed"
+      ).length;
+
     res.json({
-      pending:
-        db.registrations.filter(
-          r => r.status === "pending"
-        ).length,
+      pending,
+      confirmed,
+      rejected,
 
-      confirmed:
-        db.registrations.filter(
-          r => r.status === "confirmed"
-        ).length,
+      activeLobbies,
+      closedLobbies,
+      totalLobbies,
 
-      activeLobbies:
-        db.lobbies.filter(
-          l => l.status === "open"
-        ).length
+      totalRegistrations,
+      confirmedTeams,
+      totalScores
     });
   }
 );
@@ -1185,9 +1227,7 @@ app.get(
       confirmedRegistrations(lobby.id)
         .filter(registration => {
           const key =
-            String(
-              registration.team
-            )
+            String(registration.team)
               .trim()
               .toLowerCase();
 
@@ -1199,10 +1239,26 @@ app.get(
           return true;
         })
         .map(registration => ({
-          team: registration.team
+          team: registration.team,
+          captain: registration.captain,
+          uid: registration.uid,
+          lobby_id: lobby.id,
+          lobby_name: lobby.name
         }));
 
-    res.json(teams);
+    res.json({
+      lobby: {
+        id: lobby.id,
+        name: lobby.name,
+        time: lobby.time,
+        fee: lobby.fee,
+        max_teams:
+          Number(lobby.max_teams)
+      },
+      confirmed:
+        teams.length,
+      teams
+    });
   }
 );
 
@@ -1231,7 +1287,7 @@ app.get(
       match > 6
     ) {
       return res.status(400).json({
-        error: "Invalid match."
+        error: "Invalid match. Match must be between 1 and 6."
       });
     }
 
@@ -1254,8 +1310,12 @@ app.get(
           const placement =
             Number(
               score.placement_points
-            ) ||
-            placementPoints(position);
+            );
+
+          const placementPts =
+            Number.isFinite(placement)
+              ? placement
+              : placementPoints(position);
 
           const kill =
             Number(score.kill_points);
@@ -1263,7 +1323,7 @@ app.get(
           const killPts =
             Number.isFinite(kill)
               ? kill
-              : kills;
+              : killPoints(kills);
 
           const booyah =
             position === 1 ? 1 : 0;
@@ -1273,20 +1333,42 @@ app.get(
             position,
             kills,
             booyah,
+
             placement_points:
-              placement,
+              placementPts,
+
             kill_points:
               killPts,
+
             total_points:
-              placement + killPts
+              placementPts +
+              killPts
           };
         })
         .sort(
           (a, b) =>
-            a.position - b.position
+            a.position -
+            b.position
         );
 
-    res.json(rows);
+    res.json({
+      lobby: {
+        id: lobby.id,
+        name: lobby.name,
+        time: lobby.time,
+        fee: lobby.fee
+      },
+
+      match,
+
+      results: rows,
+
+      total_teams:
+        rows.length,
+
+      completed:
+        rows.length === 12
+    });
   }
 );
 
@@ -1307,14 +1389,15 @@ app.post(
     const lobby =
       lobbyByName(lobbyName);
 
-    const match =
-      Number(matchNo);
-
     if (!lobby) {
       return res.status(404).json({
-        error: "Lobby not found."
+        error:
+          "Lobby not found."
       });
     }
+
+    const match =
+      Number(matchNo);
 
     if (
       !Number.isInteger(match) ||
@@ -1322,7 +1405,8 @@ app.post(
       match > 6
     ) {
       return res.status(400).json({
-        error: "Invalid match."
+        error:
+          "Invalid match. Match must be between 1 and 6."
       });
     }
 
@@ -1344,21 +1428,28 @@ app.post(
     if (confirmed.length !== 12) {
       return res.status(400).json({
         error:
-          `This lobby has ${confirmed.length}/12 confirmed teams. Exactly 12 teams are required.`
+          `This lobby has ${confirmed.length}/12 confirmed teams. Exactly 12 teams are required before entering match scores.`
       });
     }
 
     const confirmedMap =
       new Map();
 
-    confirmed.forEach(reg => {
-      confirmedMap.set(
-        String(reg.team)
-          .trim()
-          .toLowerCase(),
-        reg.team
-      );
-    });
+    confirmed.forEach(
+      registration => {
+        const key =
+          String(
+            registration.team
+          )
+            .trim()
+            .toLowerCase();
+
+        confirmedMap.set(
+          key,
+          registration.team
+        );
+      }
+    );
 
     const enteredTeams =
       new Set();
@@ -1393,7 +1484,7 @@ app.post(
       if (!confirmedMap.has(teamKey)) {
         return res.status(400).json({
           error:
-            `Team "${team}" is not assigned to this lobby.`
+            `Team "${team}" is not confirmed in this lobby.`
         });
       }
 
@@ -1411,7 +1502,7 @@ app.post(
       ) {
         return res.status(400).json({
           error:
-            "Positions must be unique numbers from 1 to 12."
+            "Positions must be whole numbers from 1 to 12."
         });
       }
 
@@ -1428,7 +1519,7 @@ app.post(
       ) {
         return res.status(400).json({
           error:
-            "Kills must be whole numbers greater than or equal to zero."
+            "Kills must be a whole number greater than or equal to zero."
         });
       }
 
@@ -1449,7 +1540,9 @@ app.post(
 
       cleanedEntries.push({
         team:
-          confirmedMap.get(teamKey),
+          confirmedMap.get(
+            teamKey
+          ),
 
         position,
 
@@ -1488,7 +1581,10 @@ app.post(
       });
     }
 
-    /* Remove previous version of this match */
+    /*
+      Remove the previous saved version
+      of this specific match.
+    */
     db.scores =
       db.scores.filter(
         score =>
@@ -1500,51 +1596,71 @@ app.post(
           )
       );
 
-    /* Save new results */
-    cleanedEntries.forEach(entry => {
-      db.scores.push({
-        id:
-          db.nextScoreId++,
+    /*
+      Save the new match results.
+    */
+    cleanedEntries.forEach(
+      entry => {
+        db.scores.push({
+          id:
+            db.nextScoreId++,
 
-        lobby_id:
-          lobby.id,
+          lobby_id:
+            lobby.id,
 
-        match_no:
-          match,
+          match_no:
+            match,
 
-        team:
-          entry.team,
+          team:
+            entry.team,
 
-        position:
-          entry.position,
+          position:
+            entry.position,
 
-        kills:
-          entry.kills,
+          kills:
+            entry.kills,
 
-        booyah:
-          entry.booyah,
+          booyah:
+            entry.booyah,
 
-        placement_points:
-          entry.placement_points,
+          placement_points:
+            entry.placement_points,
 
-        kill_points:
-          entry.kill_points,
+          kill_points:
+            entry.kill_points,
 
-        total_points:
-          entry.total_points,
+          total_points:
+            entry.total_points,
 
-        updated_at:
-          new Date().toISOString()
-      });
-    });
+          updated_at:
+            new Date().toISOString()
+        });
+      }
+    );
 
     saveDB();
 
     res.json({
       ok: true,
-      lobby: lobby.name,
+
+      message:
+        `Match ${match} results saved successfully.`,
+
+      lobby: {
+        id:
+          lobby.id,
+
+        name:
+          lobby.name
+      },
+
       match,
-      entries: cleanedEntries
+
+      total_teams:
+        cleanedEntries.length,
+
+      entries:
+        cleanedEntries
     });
   }
 );
@@ -1561,98 +1677,141 @@ app.get(
 
     if (!lobby) {
       return res.status(404).json({
-        error: "Lobby not found."
+        error:
+          "Lobby not found."
       });
     }
 
     const teams = new Map();
 
-    /* Add every confirmed team first */
+    /*
+      Add every confirmed team first.
+      This makes sure teams with zero
+      matches still appear on the leaderboard.
+    */
     confirmedRegistrations(
       lobby.id
-    ).forEach(registration => {
-      const key =
-        String(
-          registration.team
-        )
-          .trim()
-          .toLowerCase();
+    ).forEach(
+      registration => {
+        const key =
+          String(
+            registration.team
+          )
+            .trim()
+            .toLowerCase();
 
-      if (!teams.has(key)) {
-        teams.set(key, {
-          team: registration.team,
-          matchesPlayed: 0,
-          booyahs: 0,
-          placementPoints: 0,
-          killPoints: 0,
-          totalPoints: 0
-        });
+        if (!teams.has(key)) {
+          teams.set(key, {
+            team:
+              registration.team,
+
+            matchesPlayed: 0,
+
+            booyahs: 0,
+
+            placementPoints: 0,
+
+            killPoints: 0,
+
+            totalPoints: 0
+          });
+        }
       }
-    });
+    );
 
-    /* Add saved match results */
+    /*
+      Add all saved match results.
+    */
     db.scores
       .filter(
         score =>
           Number(score.lobby_id) ===
           Number(lobby.id)
       )
-      .forEach(score => {
-        const key =
-          String(score.team)
-            .trim()
-            .toLowerCase();
+      .forEach(
+        score => {
+          const key =
+            String(score.team)
+              .trim()
+              .toLowerCase();
 
-        if (!teams.has(key)) {
-          teams.set(key, {
-            team: score.team,
-            matchesPlayed: 0,
-            booyahs: 0,
-            placementPoints: 0,
-            killPoints: 0,
-            totalPoints: 0
-          });
+          if (!teams.has(key)) {
+            teams.set(key, {
+              team:
+                score.team,
+
+              matchesPlayed: 0,
+
+              booyahs: 0,
+
+              placementPoints: 0,
+
+              killPoints: 0,
+
+              totalPoints: 0
+            });
+          }
+
+          const team =
+            teams.get(key);
+
+          const position =
+            Number(score.position);
+
+          const placement =
+            Number(
+              score.placement_points
+            );
+
+          const placementPts =
+            Number.isFinite(
+              placement
+            )
+              ? placement
+              : placementPoints(
+                  position
+                );
+
+          const kills =
+            Number(score.kills) || 0;
+
+          const kill =
+            Number(
+              score.kill_points
+            );
+
+          const killPts =
+            Number.isFinite(kill)
+              ? kill
+              : killPoints(kills);
+
+          team.matchesPlayed += 1;
+
+          team.booyahs +=
+            position === 1
+              ? 1
+              : 0;
+
+          team.placementPoints +=
+            placementPts;
+
+          team.killPoints +=
+            killPts;
+
+          team.totalPoints +=
+            placementPts +
+            killPts;
         }
+      );
 
-        const team =
-          teams.get(key);
-
-        const position =
-          Number(score.position);
-
-        const placement =
-          Number(
-            score.placement_points
-          ) ||
-          placementPoints(position);
-
-        const kills =
-          Number(score.kills) || 0;
-
-        const kill =
-          Number(score.kill_points);
-
-        const killPts =
-          Number.isFinite(kill)
-            ? kill
-            : kills;
-
-        team.matchesPlayed += 1;
-
-        team.booyahs +=
-          position === 1 ? 1 : 0;
-
-        team.placementPoints +=
-          placement;
-
-        team.killPoints +=
-          killPts;
-
-        team.totalPoints +=
-          placement + killPts;
-      });
-
-    /* Sort by total points */
+    /*
+      Sort leaderboard:
+      1. Total points
+      2. Kill points
+      3. Placement points
+      4. Booyahs
+      5. Team name
+    */
     const rows =
       [...teams.values()].sort(
         (a, b) =>
@@ -1673,6 +1832,9 @@ app.get(
           )
       );
 
+    /*
+      Add leaderboard position.
+    */
     rows.forEach(
       (row, index) => {
         row.position =
@@ -1682,57 +1844,51 @@ app.get(
 
     res.json({
       lobby: {
-        id: lobby.id,
-        name: lobby.name,
-        time: lobby.time,
-        fee: lobby.fee
+        id:
+          lobby.id,
+
+        name:
+          lobby.name,
+
+        time:
+          lobby.time,
+
+        fee:
+          lobby.fee,
+
+        max_teams:
+          Number(
+            lobby.max_teams
+          ),
+
+        confirmed:
+          confirmedCount(
+            lobby.id
+          )
       },
+
+      total_teams:
+        rows.length,
+
+      matches_completed:
+        new Set(
+          db.scores
+            .filter(
+              score =>
+                Number(
+                  score.lobby_id
+                ) ===
+                Number(lobby.id)
+            )
+            .map(
+              score =>
+                Number(
+                  score.match_no
+                )
+            )
+        ).size,
+
       rows
-    });
-  }
-);
-
-/* =====================================================
-   V4 LOBBY DETAILS
-===================================================== */
-
-app.get(
-  "/api/public/lobbies/:id",
-  (req, res) => {
-    const lobby =
-      lobbyById(req.params.id);
-
-    if (!lobby) {
-      return res.status(404).json({
-        error: "Lobby not found."
-      });
-    }
-
-    const registrations =
-      confirmedRegistrations(lobby.id)
-        .map(registration => ({
-          team: registration.team,
-          captain: registration.captain,
-          uid: registration.uid
-        }));
-
-    res.json({
-      id: lobby.id,
-      name: lobby.name,
-      time: lobby.time,
-      fee: lobby.fee,
-      max_teams:
-        Number(lobby.max_teams),
-      confirmed:
-        registrations.length,
-      remaining:
-        Math.max(
-          0,
-          Number(lobby.max_teams) -
-            registrations.length
-        ),
-      status: lobby.status,
-      registrations
     });
   }
 );
