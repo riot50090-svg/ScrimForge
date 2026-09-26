@@ -2465,7 +2465,7 @@ function startLeaderboardLive(){
 
   leaderboardTimer =
     setInterval(
-      () => {
+     async () => {
 
         const page =
           document.getElementById(
