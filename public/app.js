@@ -1,7 +1,6 @@
 /* =========================================================
    SCRIMFORGE V4
    APP.JS
-   COMPLETE VERSION
    ========================================================= */
 
 "use strict";
@@ -52,8 +51,8 @@ function showPage(pageId){
   }
 
   window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+    top:0,
+    behavior:"smooth"
   });
 }
 
@@ -73,7 +72,8 @@ function showMessage(
 
   if(!element) return;
 
-  element.textContent = text;
+  element.textContent =
+    String(text || "");
 
   element.className =
     "message show " + type;
@@ -82,6 +82,7 @@ function showMessage(
 
 /* =========================================================
    API HELPER
+   IMPROVED ERROR HANDLING
 ========================================================= */
 
 async function api(
@@ -90,17 +91,16 @@ async function api(
 ){
 
   const finalOptions = {
-    credentials: "same-origin",
+    credentials:"same-origin",
     ...options,
-
-    headers: {
+    headers:{
+      "Accept":"application/json",
       ...(options.body
         ? {
             "Content-Type":
               "application/json"
           }
         : {}),
-
       ...(options.headers || {})
     }
   };
@@ -117,36 +117,141 @@ async function api(
 
   }catch(error){
 
+    console.error(
+      "FETCH ERROR:",
+      error
+    );
+
     throw new Error(
-      "Unable to connect to the server."
+      "Unable to connect to the server. Please check that the website server is running."
     );
 
   }
 
-  let data = {};
+
+  /*
+    Read the response as text first.
+
+    This is important because some server
+    errors may return HTML/plain text instead
+    of JSON.
+  */
+
+  let rawText = "";
 
   try{
 
-    data =
-      await response.json();
+    rawText =
+      await response.text();
 
   }catch(error){
 
-    data = {};
-
-  }
-
-  if(!response.ok){
-
-    throw new Error(
-      data.error ||
-      data.message ||
-      "Request failed."
+    console.error(
+      "Response reading error:",
+      error
     );
 
   }
 
-  return data;
+
+  let data = null;
+
+
+  if(rawText){
+
+    try{
+
+      data =
+        JSON.parse(rawText);
+
+    }catch(error){
+
+      data = null;
+
+    }
+
+  }
+
+
+  /*
+    IMPORTANT:
+
+    Do not hide the real HTTP status.
+
+    Example:
+    401 = invalid login
+    403 = forbidden
+    404 = route missing
+    500 = server error
+  */
+
+  if(!response.ok){
+
+    console.error(
+      "API ERROR:",
+      {
+        url,
+        status:response.status,
+        statusText:response.statusText,
+        body:rawText
+      }
+    );
+
+
+    const serverMessage =
+      data?.error ||
+      data?.message ||
+      rawText?.trim();
+
+
+    if(serverMessage){
+
+      throw new Error(
+        `HTTP ${response.status}: ${serverMessage}`
+      );
+
+    }
+
+
+    throw new Error(
+      `HTTP ${response.status}: ${
+        response.statusText ||
+        "Request failed"
+      }`
+    );
+
+  }
+
+
+  /*
+    Successful response.
+
+    Some endpoints may return an empty
+    response, so don't force JSON.
+  */
+
+  if(!rawText){
+
+    return {};
+
+  }
+
+
+  if(data !== null){
+
+    return data;
+
+  }
+
+
+  /*
+    Successful plain-text response.
+  */
+
+  return {
+    message:rawText
+  };
+
 }
 
 
@@ -164,11 +269,7 @@ async function loadPublicLobbies(
   if(!target) return;
 
   target.innerHTML =
-    `
-    <p class="muted">
-      Loading lobbies...
-    </p>
-    `;
+    '<p class="muted">Loading lobbies...</p>';
 
   try{
 
@@ -185,20 +286,19 @@ async function loadPublicLobbies(
       target.innerHTML =
         `
         <div class="card">
-
           <p class="muted">
             No lobbies available right now.
           </p>
-
         </div>
         `;
 
       return;
     }
 
+
     target.innerHTML =
-      lobbies
-        .map(lobby => {
+      lobbies.map(
+        lobby => {
 
           const confirmed =
             Number(
@@ -218,6 +318,7 @@ async function loadPublicLobbies(
             String(
               lobby.status || ""
             ).toLowerCase() === "open";
+
 
           return `
             <div class="card lobby-card">
@@ -265,7 +366,9 @@ async function loadPublicLobbies(
                 `
                 <button
                   class="btn small"
-                  onclick="useLobby(${Number(lobby.id)})"
+                  onclick="useLobby(
+                    ${Number(lobby.id)}
+                  )"
                 >
                   Register
                 </button>
@@ -290,10 +393,15 @@ async function loadPublicLobbies(
             </div>
           `;
 
-        })
-        .join("");
+        }
+      ).join("");
 
   }catch(error){
+
+    console.error(
+      "Public lobby error:",
+      error
+    );
 
     target.innerHTML =
       `
@@ -360,15 +468,12 @@ async function useLobby(
       return;
     }
 
+
     const confirmed =
-      Number(
-        lobby.confirmed || 0
-      );
+      Number(lobby.confirmed || 0);
 
     const maxTeams =
-      Number(
-        lobby.max_teams || 0
-      );
+      Number(lobby.max_teams || 0);
 
     if(
       maxTeams > 0 &&
@@ -382,21 +487,14 @@ async function useLobby(
       return;
     }
 
+
     selectedRegistrationLobby = {
-
-      id:
-        Number(lobby.id),
-
-      name:
-        String(lobby.name || ""),
-
-      time:
-        String(lobby.time || ""),
-
-      fee:
-        String(lobby.fee || "")
-
+      id:Number(lobby.id),
+      name:String(lobby.name || ""),
+      time:String(lobby.time || ""),
+      fee:String(lobby.fee || "")
     };
+
 
     const lobbyInput =
       document.getElementById(
@@ -413,12 +511,12 @@ async function useLobby(
         "regFee"
       );
 
-    if(lobbyInput){
 
+    if(lobbyInput){
       lobbyInput.value =
         selectedRegistrationLobby.id;
-
     }
+
 
     if(timeInput){
 
@@ -432,13 +530,8 @@ async function useLobby(
         "readonly"
       );
 
-      timeInput.style.opacity =
-        "0.75";
-
-      timeInput.style.cursor =
-        "not-allowed";
-
     }
+
 
     if(feeInput){
 
@@ -452,13 +545,8 @@ async function useLobby(
         "readonly"
       );
 
-      feeInput.style.opacity =
-        "0.75";
-
-      feeInput.style.cursor =
-        "not-allowed";
-
     }
+
 
     showPage("register");
 
@@ -489,10 +577,12 @@ if(registrationForm){
 
       event.preventDefault();
 
+
       const lobbyId =
         document.getElementById(
           "regLobbyId"
         )?.value;
+
 
       if(!lobbyId){
 
@@ -505,56 +595,44 @@ if(registrationForm){
         return;
       }
 
+
       try{
 
         const data =
           await api(
             "/api/registrations",
             {
-              method: "POST",
+              method:"POST",
 
-              body:
-                JSON.stringify({
+              body:JSON.stringify({
 
-                  lobbyId:
-                    Number(lobbyId),
+                lobbyId:
+                  Number(lobbyId),
 
-                  team:
-                    document
-                      .getElementById(
-                        "regTeam"
-                      )
-                      .value
-                      .trim(),
+                team:
+                  document.getElementById(
+                    "regTeam"
+                  ).value.trim(),
 
-                  captain:
-                    document
-                      .getElementById(
-                        "regCaptain"
-                      )
-                      .value
-                      .trim(),
+                captain:
+                  document.getElementById(
+                    "regCaptain"
+                  ).value.trim(),
 
-                  phone:
-                    document
-                      .getElementById(
-                        "regPhone"
-                      )
-                      .value
-                      .trim(),
+                phone:
+                  document.getElementById(
+                    "regPhone"
+                  ).value.trim(),
 
-                  uid:
-                    document
-                      .getElementById(
-                        "regUid"
-                      )
-                      .value
-                      .trim()
+                uid:
+                  document.getElementById(
+                    "regUid"
+                  ).value.trim()
 
-                })
-
+              })
             }
           );
+
 
         showMessage(
           "registerMessage",
@@ -563,46 +641,12 @@ if(registrationForm){
             : "Registration submitted successfully."
         );
 
+
         registrationForm.reset();
-
-        const timeInput =
-          document.getElementById(
-            "regTime"
-          );
-
-        const feeInput =
-          document.getElementById(
-            "regFee"
-          );
-
-        if(timeInput){
-
-          timeInput.readOnly = true;
-
-          timeInput.style.opacity =
-            "0.75";
-
-        }
-
-        if(feeInput){
-
-          feeInput.readOnly = true;
-
-          feeInput.style.opacity =
-            "0.75";
-
-        }
 
         selectedRegistrationLobby =
           null;
 
-        await loadPublicLobbies(
-          "homeLobbies"
-        );
-
-        await loadPublicLobbies(
-          "scrimList"
-        );
 
       }catch(error){
 
@@ -621,7 +665,7 @@ if(registrationForm){
 
 
 /* =========================================================
-   STATUS CHECK
+   STATUS
 ========================================================= */
 
 async function checkStatus(){
@@ -638,8 +682,10 @@ async function checkStatus(){
 
   if(!input) return;
 
+
   const ref =
     input.value.trim();
+
 
   if(!ref){
 
@@ -652,6 +698,7 @@ async function checkStatus(){
     return;
   }
 
+
   try{
 
     const data =
@@ -659,10 +706,12 @@ async function checkStatus(){
         `/api/registration-status/${encodeURIComponent(ref)}`
       );
 
+
     showMessage(
       "statusMessage",
       "Registration found."
     );
+
 
     if(result){
 
@@ -717,9 +766,7 @@ async function checkStatus(){
     );
 
     if(result){
-
       result.innerHTML = "";
-
     }
 
   }
@@ -739,10 +786,12 @@ async function checkAdmin(){
         "/api/admin-exists"
       );
 
+
     const me =
       await api(
         "/api/me"
       );
+
 
     const loginBox =
       document.getElementById(
@@ -759,24 +808,38 @@ async function checkAdmin(){
         "adminDashboard"
       );
 
-    if(loginBox){
 
-      loginBox.classList.toggle(
-        "hidden",
-        !exists.exists ||
-        me.loggedIn
-      );
+    /*
+      FIRST ADMIN:
+      show setup
 
-    }
+      ADMIN EXISTS:
+      show login
+
+      LOGGED IN:
+      show dashboard
+    */
 
     if(setupBox){
 
       setupBox.classList.toggle(
         "hidden",
-        exists.exists
+        Boolean(exists.exists)
       );
 
     }
+
+
+    if(loginBox){
+
+      loginBox.classList.toggle(
+        "hidden",
+        !exists.exists ||
+        Boolean(me.loggedIn)
+      );
+
+    }
+
 
     if(dashboard){
 
@@ -786,6 +849,7 @@ async function checkAdmin(){
       );
 
     }
+
 
     if(me.loggedIn){
 
@@ -801,6 +865,23 @@ async function checkAdmin(){
       "Admin check failed:",
       error
     );
+
+
+    const loginMessage =
+      document.getElementById(
+        "loginMessage"
+      );
+
+
+    if(loginMessage){
+
+      showMessage(
+        "loginMessage",
+        error.message,
+        "error"
+      );
+
+    }
 
   }
 }
@@ -822,6 +903,7 @@ function showAdminDashboard(
       "hidden"
     );
 
+
   document
     .getElementById(
       "adminSetupBox"
@@ -829,6 +911,7 @@ function showAdminDashboard(
     ?.classList.add(
       "hidden"
     );
+
 
   document
     .getElementById(
@@ -838,10 +921,12 @@ function showAdminDashboard(
       "hidden"
     );
 
+
   const nameElement =
     document.getElementById(
       "adminName"
     );
+
 
   if(nameElement){
 
@@ -849,6 +934,7 @@ function showAdminDashboard(
       name || "Admin";
 
   }
+
 
   loadAdminData();
 }
@@ -863,6 +949,7 @@ const setupForm =
     "setupForm"
   );
 
+
 if(setupForm){
 
   setupForm.addEventListener(
@@ -871,48 +958,41 @@ if(setupForm){
 
       event.preventDefault();
 
+
       try{
 
         const data =
           await api(
             "/api/setup-admin",
             {
-              method: "POST",
+              method:"POST",
 
-              body:
-                JSON.stringify({
+              body:JSON.stringify({
 
-                  name:
-                    document
-                      .getElementById(
-                        "setupName"
-                      )
-                      .value
-                      .trim(),
+                name:
+                  document.getElementById(
+                    "setupName"
+                  ).value.trim(),
 
-                  email:
-                    document
-                      .getElementById(
-                        "setupEmail"
-                      )
-                      .value
-                      .trim(),
+                email:
+                  document.getElementById(
+                    "setupEmail"
+                  ).value.trim(),
 
-                  password:
-                    document
-                      .getElementById(
-                        "setupPassword"
-                      )
-                      .value
+                password:
+                  document.getElementById(
+                    "setupPassword"
+                  ).value
 
-                })
-
+              })
             }
           );
+
 
         showAdminDashboard(
           data.name
         );
+
 
       }catch(error){
 
@@ -939,6 +1019,7 @@ const loginForm =
     "loginForm"
   );
 
+
 if(loginForm){
 
   loginForm.addEventListener(
@@ -947,48 +1028,127 @@ if(loginForm){
 
       event.preventDefault();
 
+
+      const loginButton =
+        loginForm.querySelector(
+          'button[type="submit"]'
+        );
+
+
+      const loginMessage =
+        document.getElementById(
+          "loginMessage"
+        );
+
+
+      if(loginButton){
+
+        loginButton.disabled =
+          true;
+
+        loginButton.textContent =
+          "Logging in...";
+
+      }
+
+
+      if(loginMessage){
+
+        loginMessage.className =
+          "message";
+
+        loginMessage.textContent =
+          "";
+
+      }
+
+
       try{
+
+        const email =
+          document.getElementById(
+            "loginEmail"
+          )?.value
+          .trim();
+
+
+        const password =
+          document.getElementById(
+            "loginPassword"
+          )?.value;
+
+
+        if(!email || !password){
+
+          throw new Error(
+            "Please enter both email and password."
+          );
+
+        }
+
+
+        console.log(
+          "Attempting admin login..."
+        );
+
 
         const data =
           await api(
             "/api/login",
             {
-              method: "POST",
+              method:"POST",
 
-              body:
-                JSON.stringify({
+              body:JSON.stringify({
 
-                  email:
-                    document
-                      .getElementById(
-                        "loginEmail"
-                      )
-                      .value
-                      .trim(),
+                email,
+                password
 
-                  password:
-                    document
-                      .getElementById(
-                        "loginPassword"
-                      )
-                      .value
-
-                })
-
+              })
             }
           );
 
-        showAdminDashboard(
-          data.name
+
+        console.log(
+          "Admin login response:",
+          data
         );
+
+
+        showAdminDashboard(
+          data.name || "Admin"
+        );
+
+
+        loginForm.reset();
+
 
       }catch(error){
 
+        console.error(
+          "ADMIN LOGIN ERROR:",
+          error
+        );
+
+
         showMessage(
           "loginMessage",
-          error.message,
+          error.message ||
+            "Login failed.",
           "error"
         );
+
+
+      }finally{
+
+        if(loginButton){
+
+          loginButton.disabled =
+            false;
+
+          loginButton.textContent =
+            "Login";
+
+        }
 
       }
 
@@ -1009,11 +1169,24 @@ async function logout(){
     await api(
       "/api/logout",
       {
-        method: "POST"
+        method:"POST"
       }
     );
 
-    checkAdmin();
+
+    document
+      .getElementById(
+        "adminDashboard"
+      )
+      ?.classList.add(
+        "hidden"
+      );
+
+
+    showPage("admin");
+
+    await checkAdmin();
+
 
   }catch(error){
 
@@ -1034,16 +1207,14 @@ async function loadAdminData(){
   try{
 
     await Promise.all([
-
       loadStats(),
-
       loadAdminLobbies(),
-
       loadRegistrations()
-
     ]);
 
+
     await loadScoreLobbyOptions();
+
 
   }catch(error){
 
@@ -1053,6 +1224,158 @@ async function loadAdminData(){
     );
 
   }
+}
+
+
+/* =========================================================
+   INDIVIDUAL REFRESH BUTTONS
+========================================================= */
+
+async function refreshStatsPanel(){
+
+  const button =
+    event?.currentTarget;
+
+  setRefreshLoading(
+    button,
+    true
+  );
+
+
+  try{
+
+    await loadStats();
+
+  }finally{
+
+    setRefreshLoading(
+      button,
+      false
+    );
+
+  }
+
+}
+
+
+async function refreshLobbyPanel(){
+
+  const button =
+    event?.currentTarget;
+
+  setRefreshLoading(
+    button,
+    true
+  );
+
+
+  try{
+
+    await loadAdminLobbies();
+    await loadStats();
+    await loadScoreLobbyOptions();
+
+
+  }finally{
+
+    setRefreshLoading(
+      button,
+      false
+    );
+
+  }
+
+}
+
+
+async function refreshRegistrationPanel(){
+
+  const button =
+    event?.currentTarget;
+
+  setRefreshLoading(
+    button,
+    true
+  );
+
+
+  try{
+
+    await loadRegistrations();
+    await loadStats();
+
+
+  }finally{
+
+    setRefreshLoading(
+      button,
+      false
+    );
+
+  }
+
+}
+
+
+async function refreshScorePanel(){
+
+  const button =
+    event?.currentTarget;
+
+  setRefreshLoading(
+    button,
+    true
+  );
+
+
+  try{
+
+    await loadScoreLobbyOptions();
+    await renderScoreEntry();
+
+
+  }finally{
+
+    setRefreshLoading(
+      button,
+      false
+    );
+
+  }
+
+}
+
+
+function setRefreshLoading(
+  button,
+  loading
+){
+
+  if(!button) return;
+
+
+  if(loading){
+
+    button.dataset.originalText =
+      button.textContent;
+
+    button.textContent =
+      "⟳ Loading...";
+
+    button.disabled =
+      true;
+
+  }else{
+
+    button.textContent =
+      button.dataset.originalText ||
+      "🔄 Refresh";
+
+    button.disabled =
+      false;
+
+  }
+
 }
 
 
@@ -1069,6 +1392,7 @@ async function loadStats(){
         "/api/stats"
       );
 
+
     const pending =
       document.getElementById(
         "pendingCount"
@@ -1084,32 +1408,27 @@ async function loadStats(){
         "activeLobbyCount"
       );
 
-    if(pending){
 
+    if(pending)
       pending.textContent =
         Number(
           stats.pending || 0
         );
 
-    }
 
-    if(confirmed){
-
+    if(confirmed)
       confirmed.textContent =
         Number(
           stats.confirmed || 0
         );
 
-    }
 
-    if(active){
-
+    if(active)
       active.textContent =
         Number(
           stats.activeLobbies || 0
         );
 
-    }
 
   }catch(error){
 
@@ -1131,6 +1450,7 @@ const lobbyForm =
     "lobbyForm"
   );
 
+
 if(lobbyForm){
 
   lobbyForm.addEventListener(
@@ -1139,89 +1459,68 @@ if(lobbyForm){
 
       event.preventDefault();
 
+
       try{
 
         await api(
           "/api/lobbies",
           {
-            method: "POST",
+            method:"POST",
 
-            body:
-              JSON.stringify({
+            body:JSON.stringify({
 
-                name:
-                  document
-                    .getElementById(
-                      "lobbyName"
-                    )
-                    .value
-                    .trim(),
+              name:
+                document.getElementById(
+                  "lobbyName"
+                ).value.trim(),
 
-                time:
-                  document
-                    .getElementById(
-                      "lobbyTime"
-                    )
-                    .value
-                    .trim(),
+              time:
+                document.getElementById(
+                  "lobbyTime"
+                ).value.trim(),
 
-                fee:
-                  document
-                    .getElementById(
-                      "lobbyFee"
-                    )
-                    .value
-                    .trim(),
+              fee:
+                document.getElementById(
+                  "lobbyFee"
+                ).value.trim(),
 
-                maxTeams:
-                  Number(
-                    document
-                      .getElementById(
-                        "lobbyMaxTeams"
-                      )
-                      .value
-                  )
+              maxTeams:
+                Number(
+                  document.getElementById(
+                    "lobbyMaxTeams"
+                  ).value
+                )
 
-              })
-
+            })
           }
         );
+
 
         showMessage(
           "lobbyMessage",
           "Lobby created successfully."
         );
 
+
         lobbyForm.reset();
+
 
         const maxTeams =
           document.getElementById(
             "lobbyMaxTeams"
           );
 
+
         if(maxTeams){
 
-          maxTeams.value = 12;
+          maxTeams.value =
+            12;
 
         }
 
-        await Promise.all([
 
-          loadAdminLobbies(),
+        await refreshAllLobbyData();
 
-          loadStats(),
-
-          loadScoreLobbyOptions(),
-
-          loadPublicLobbies(
-            "homeLobbies"
-          ),
-
-          loadPublicLobbies(
-            "scrimList"
-          )
-
-        ]);
 
       }catch(error){
 
@@ -1240,6 +1539,27 @@ if(lobbyForm){
 
 
 /* =========================================================
+   LOBBY DATA REFRESH
+========================================================= */
+
+async function refreshAllLobbyData(){
+
+  await loadAdminLobbies();
+  await loadStats();
+  await loadScoreLobbyOptions();
+
+  await loadPublicLobbies(
+    "homeLobbies"
+  );
+
+  await loadPublicLobbies(
+    "scrimList"
+  );
+
+}
+
+
+/* =========================================================
    ADMIN LOBBIES
 ========================================================= */
 
@@ -1250,14 +1570,9 @@ async function loadAdminLobbies(){
       "adminLobbies"
     );
 
+
   if(!target) return;
 
-  target.innerHTML =
-    `
-    <p class="muted">
-      Loading scrims...
-    </p>
-    `;
 
   try{
 
@@ -1265,6 +1580,7 @@ async function loadAdminLobbies(){
       await api(
         "/api/lobbies"
       );
+
 
     if(
       !Array.isArray(lobbies) ||
@@ -1274,28 +1590,28 @@ async function loadAdminLobbies(){
       target.innerHTML =
         `
         <div class="card">
-
           <p class="muted">
             No lobbies created yet.
           </p>
-
         </div>
         `;
 
       return;
     }
 
+
     target.innerHTML =
-      lobbies
-        .map(lobby => {
+      lobbies.map(
+        lobby => {
 
           const open =
             String(
               lobby.status || ""
             ).toLowerCase() === "open";
 
+
           return `
-            <div class="card lobby-card">
+            <div class="card">
 
               <span class="badge ${
                 open
@@ -1311,11 +1627,13 @@ async function loadAdminLobbies(){
 
               </span>
 
+
               <h3>
                 ${escapeHTML(
                   lobby.name
                 )}
               </h3>
+
 
               <p>
                 <strong>Time:</strong>
@@ -1324,12 +1642,14 @@ async function loadAdminLobbies(){
                 )}
               </p>
 
+
               <p>
                 <strong>Fee:</strong>
                 ${escapeHTML(
                   lobby.fee
                 )}
               </p>
+
 
               <p>
                 <strong>Teams:</strong>
@@ -1342,7 +1662,17 @@ async function loadAdminLobbies(){
                 )}
               </p>
 
-              <div class="panel-actions">
+
+              <br>
+
+
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  flex-wrap:wrap;
+                "
+              >
 
                 <button
                   class="btn small ${
@@ -1366,6 +1696,7 @@ async function loadAdminLobbies(){
 
                 </button>
 
+
                 <button
                   class="btn small danger-outline"
                   onclick="deleteLobby(
@@ -1375,7 +1706,9 @@ async function loadAdminLobbies(){
                     )}'
                   )"
                 >
+
                   Delete Scrim
+
                 </button>
 
               </div>
@@ -1383,21 +1716,20 @@ async function loadAdminLobbies(){
             </div>
           `;
 
-        })
-        .join("");
+        }
+      ).join("");
+
 
   }catch(error){
 
     target.innerHTML =
       `
       <div class="card">
-
         <p class="muted">
           ${escapeHTML(
             error.message
           )}
         </p>
-
       </div>
       `;
 
@@ -1419,40 +1751,23 @@ async function toggleLobby(
     await api(
       `/api/lobbies/${id}`,
       {
-        method: "PATCH",
+        method:"PATCH",
 
-        body:
-          JSON.stringify({
+        body:JSON.stringify({
 
-            status:
-              String(
-                currentStatus
-              ).toLowerCase() === "open"
-                ? "closed"
-                : "open"
+          status:
+            String(currentStatus)
+              .toLowerCase() === "open"
+              ? "closed"
+              : "open"
 
-          })
-
+        })
       }
     );
 
-    await Promise.all([
 
-      loadAdminLobbies(),
+    await refreshAllLobbyData();
 
-      loadStats(),
-
-      loadScoreLobbyOptions(),
-
-      loadPublicLobbies(
-        "homeLobbies"
-      ),
-
-      loadPublicLobbies(
-        "scrimList"
-      )
-
-    ]);
 
   }catch(error){
 
@@ -1478,42 +1793,40 @@ async function deleteLobby(
       `Delete "${name}" permanently?\n\nThis will delete the scrim and its linked registrations and match scores. This cannot be undone.`
     );
 
+
   if(!confirmed) return;
+
 
   try{
 
     await api(
       `/api/lobbies/${id}`,
       {
-        method: "DELETE"
+        method:"DELETE"
       }
     );
+
 
     alert(
       "Scrim deleted successfully."
     );
 
-    await Promise.all([
 
-      loadAdminLobbies(),
+    await loadAdminLobbies();
+    await loadRegistrations();
+    await loadStats();
+    await loadScoreLobbyOptions();
 
-      loadRegistrations(),
+    await loadPublicLobbies(
+      "homeLobbies"
+    );
 
-      loadStats(),
+    await loadPublicLobbies(
+      "scrimList"
+    );
 
-      loadScoreLobbyOptions(),
+    await loadLeaderboardLobbyOptions();
 
-      loadPublicLobbies(
-        "homeLobbies"
-      ),
-
-      loadPublicLobbies(
-        "scrimList"
-      ),
-
-      loadLeaderboardLobbyOptions()
-
-    ]);
 
   }catch(error){
 
@@ -1526,7 +1839,7 @@ async function deleteLobby(
 
 
 /* =========================================================
-   REGISTRATION ADMIN TABLE
+   REGISTRATIONS
 ========================================================= */
 
 async function loadRegistrations(){
@@ -1536,18 +1849,9 @@ async function loadRegistrations(){
       "registrationTable"
     );
 
+
   if(!tbody) return;
 
-  tbody.innerHTML =
-    `
-    <tr>
-
-      <td colspan="9">
-        Loading registrations...
-      </td>
-
-    </tr>
-    `;
 
   try{
 
@@ -1555,6 +1859,7 @@ async function loadRegistrations(){
       await api(
         "/api/registrations"
       );
+
 
     if(
       !Array.isArray(rows) ||
@@ -1564,31 +1869,29 @@ async function loadRegistrations(){
       tbody.innerHTML =
         `
         <tr>
-
           <td colspan="9">
-
             No registrations yet.
-
           </td>
-
         </tr>
         `;
 
       return;
     }
 
+
     const lobbies =
       await api(
         "/api/lobbies"
       );
 
+
     tbody.innerHTML =
-      rows
-        .map(row => {
+      rows.map(
+        row => {
 
           const options =
-            lobbies
-              .map(lobby => {
+            lobbies.map(
+              lobby => {
 
                 const selected =
                   Number(
@@ -1597,6 +1900,7 @@ async function loadRegistrations(){
                   Number(
                     lobby.id
                   );
+
 
                 return `
                   <option
@@ -1615,8 +1919,9 @@ async function loadRegistrations(){
                   </option>
                 `;
 
-              })
-              .join("");
+              }
+            ).join("");
+
 
           return `
             <tr>
@@ -1626,46 +1931,33 @@ async function loadRegistrations(){
               </td>
 
               <td>
-                ${escapeHTML(
-                  row.ref
-                )}
+                ${escapeHTML(row.ref)}
               </td>
 
               <td>
-                ${escapeHTML(
-                  row.team
-                )}
+                ${escapeHTML(row.team)}
               </td>
 
               <td>
-                ${escapeHTML(
-                  row.captain
-                )}
+                ${escapeHTML(row.captain)}
               </td>
 
               <td>
-                ${escapeHTML(
-                  row.fee
-                )}
+                ${escapeHTML(row.fee)}
               </td>
 
               <td>
-                ${escapeHTML(
-                  row.time
-                )}
+                ${escapeHTML(row.time)}
               </td>
 
               <td>
-                ${escapeHTML(
-                  row.status
-                )}
+                ${escapeHTML(row.status)}
               </td>
 
               <td>
 
                 ${
-                  row.status ===
-                  "confirmed"
+                  row.status === "confirmed"
 
                   ?
 
@@ -1695,7 +1987,13 @@ async function loadRegistrations(){
 
               <td>
 
-                <div class="panel-actions">
+                <div
+                  style="
+                    display:flex;
+                    gap:6px;
+                    flex-wrap:wrap;
+                  "
+                >
 
                   ${
                     row.status !==
@@ -1717,6 +2015,7 @@ async function loadRegistrations(){
 
                     : ""
                   }
+
 
                   ${
                     row.status !==
@@ -1746,23 +2045,20 @@ async function loadRegistrations(){
             </tr>
           `;
 
-        })
-        .join("");
+        }
+      ).join("");
+
 
   }catch(error){
 
     tbody.innerHTML =
       `
       <tr>
-
         <td colspan="9">
-
           ${escapeHTML(
             error.message
           )}
-
         </td>
-
       </tr>
       `;
 
@@ -1784,33 +2080,27 @@ async function updateRegistration(
     await api(
       `/api/registrations/${id}`,
       {
-        method: "PATCH",
+        method:"PATCH",
 
-        body:
-          JSON.stringify({
-            status
-          })
-
+        body:JSON.stringify({
+          status
+        })
       }
     );
 
-    await Promise.all([
 
-      loadRegistrations(),
+    await loadRegistrations();
+    await loadStats();
+    await loadScoreLobbyOptions();
 
-      loadStats(),
+    await loadPublicLobbies(
+      "homeLobbies"
+    );
 
-      loadScoreLobbyOptions(),
+    await loadPublicLobbies(
+      "scrimList"
+    );
 
-      loadPublicLobbies(
-        "homeLobbies"
-      ),
-
-      loadPublicLobbies(
-        "scrimList"
-      )
-
-    ]);
 
   }catch(error){
 
@@ -1833,41 +2123,24 @@ async function assignLobby(
 
   if(!lobbyId) return;
 
+
   try{
 
     await api(
       `/api/registrations/${registrationId}/lobby`,
       {
-        method: "PATCH",
+        method:"PATCH",
 
-        body:
-          JSON.stringify({
-
-            lobbyId:
-              Number(lobbyId)
-
-          })
-
+        body:JSON.stringify({
+          lobbyId:Number(lobbyId)
+        })
       }
     );
 
-    await Promise.all([
 
-      loadRegistrations(),
+    await loadRegistrations();
+    await loadStats();
 
-      loadStats(),
-
-      loadScoreLobbyOptions(),
-
-      loadPublicLobbies(
-        "homeLobbies"
-      ),
-
-      loadPublicLobbies(
-        "scrimList"
-      )
-
-    ]);
 
   }catch(error){
 
@@ -1892,7 +2165,9 @@ async function loadScoreLobbyOptions(){
       "scoreLobby"
     );
 
+
   if(!select) return;
+
 
   try{
 
@@ -1901,8 +2176,10 @@ async function loadScoreLobbyOptions(){
         "/api/lobbies"
       );
 
+
     const previous =
       select.value;
+
 
     select.innerHTML =
       `
@@ -1911,30 +2188,26 @@ async function loadScoreLobbyOptions(){
       </option>
       ` +
 
-      lobbies
-        .map(lobby => {
+      lobbies.map(
+        lobby => `
+          <option
+            value="${escapeAttribute(
+              lobby.name
+            )}"
+          >
+            ${escapeHTML(
+              lobby.name
+            )}
+          </option>
+        `
+      ).join("");
 
-          return `
-            <option
-              value="${escapeAttribute(
-                lobby.name
-              )}"
-            >
-              ${escapeHTML(
-                lobby.name
-              )}
-            </option>
-          `;
-
-        })
-        .join("");
 
     if(
       previous &&
       lobbies.some(
         lobby =>
-          lobby.name ===
-          previous
+          lobby.name === previous
       )
     ){
 
@@ -1943,12 +2216,13 @@ async function loadScoreLobbyOptions(){
 
     }
 
+
     await renderScoreEntry();
+
 
   }catch(error){
 
     console.error(
-      "Score lobby options error:",
       error
     );
 
@@ -1957,7 +2231,7 @@ async function loadScoreLobbyOptions(){
 
 
 /* =========================================================
-   SELECT SCORE MATCH
+   SCORE MATCH
 ========================================================= */
 
 function selectScoreMatch(
@@ -1968,17 +2242,21 @@ function selectScoreMatch(
   currentScoreMatch =
     Number(match);
 
+
   document
     .querySelectorAll(
       ".match-tabs button"
     )
-    .forEach(element => {
+    .forEach(
+      element => {
 
-      element.classList.remove(
-        "active"
-      );
+        element.classList.remove(
+          "active"
+        );
 
-    });
+      }
+    );
+
 
   if(button){
 
@@ -1987,6 +2265,7 @@ function selectScoreMatch(
     );
 
   }
+
 
   renderScoreEntry();
 }
@@ -2003,15 +2282,19 @@ async function renderScoreEntry(){
       "scoreEntryBody"
     );
 
+
   const select =
     document.getElementById(
       "scoreLobby"
     );
 
+
   if(!body || !select) return;
+
 
   const lobby =
     select.value;
+
 
   if(!lobby){
 
@@ -2025,12 +2308,14 @@ async function renderScoreEntry(){
     return;
   }
 
+
   body.innerHTML =
     `
     <p class="muted">
       Loading teams...
     </p>
     `;
+
 
   try{
 
@@ -2040,6 +2325,7 @@ async function renderScoreEntry(){
           lobby
         )}`
       );
+
 
     if(
       !Array.isArray(teams) ||
@@ -2066,7 +2352,9 @@ async function renderScoreEntry(){
       return;
     }
 
+
     let existing = [];
+
 
     try{
 
@@ -2083,6 +2371,7 @@ async function renderScoreEntry(){
 
     }
 
+
     const oldMap =
       new Map(
         existing.map(
@@ -2092,6 +2381,7 @@ async function renderScoreEntry(){
           ]
         )
       );
+
 
     body.innerHTML =
       `
@@ -2104,17 +2394,11 @@ async function renderScoreEntry(){
             <tr>
 
               <th>Team</th>
-
               <th>Position</th>
-
               <th>Kills</th>
-
               <th>Booyah</th>
-
               <th>Placement</th>
-
               <th>Kill Points</th>
-
               <th>Total</th>
 
             </tr>
@@ -2124,115 +2408,115 @@ async function renderScoreEntry(){
           <tbody>
 
             ${
-              teams
-                .map(
-                  (team,index) => {
+              teams.map(
+                (team,index) => {
 
-                    const old =
-                      oldMap.get(
-                        team.team
-                      );
+                  const old =
+                    oldMap.get(
+                      team.team
+                    );
 
-                    const position =
-                      old
-                        ? old.position
-                        : index + 1;
 
-                    const kills =
-                      old
-                        ? old.kills
-                        : 0;
+                  const position =
+                    old
+                      ? old.position
+                      : index + 1;
 
-                    const placement =
-                      old
-                        ? old.placement_points
-                        : calculatePlacement(
-                            position
-                          );
 
-                    const killPoints =
-                      old
-                        ? old.kill_points
-                        : kills;
+                  const kills =
+                    old
+                      ? old.kills
+                      : 0;
 
-                    const total =
-                      placement +
-                      killPoints;
 
-                    return `
-                      <tr>
+                  const placement =
+                    old
+                      ? old.placement_points
+                      : calculatePlacement(
+                          position
+                        );
 
-                        <td>
-                          <strong>
-                            ${escapeHTML(
-                              team.team
-                            )}
-                          </strong>
-                        </td>
 
-                        <td>
+                  const killPoints =
+                    old
+                      ? old.kill_points
+                      : kills;
 
-                          <input
-                            type="number"
-                            min="1"
-                            max="12"
-                            class="score-position"
-                            data-team="${escapeAttribute(
-                              team.team
-                            )}"
-                            value="${position}"
-                            oninput="previewScoreRow(this)"
-                          >
 
-                        </td>
+                  const total =
+                    placement +
+                    killPoints;
 
-                        <td>
 
-                          <input
-                            type="number"
-                            min="0"
-                            class="score-kills"
-                            data-team="${escapeAttribute(
-                              team.team
-                            )}"
-                            value="${kills}"
-                            oninput="previewScoreRow(this)"
-                          >
+                  return `
+                    <tr>
 
-                        </td>
+                      <td>
+                        <strong>
+                          ${escapeHTML(
+                            team.team
+                          )}
+                        </strong>
+                      </td>
 
-                        <td class="preview-booyah">
+                      <td>
 
-                          ${
-                            Number(position) === 1
-                              ? "YES"
-                              : "—"
-                          }
+                        <input
+                          type="number"
+                          min="1"
+                          max="12"
+                          class="score-position"
+                          data-team="${escapeAttribute(
+                            team.team
+                          )}"
+                          value="${position}"
+                          oninput="previewScoreRow(this)"
+                        >
 
-                        </td>
+                      </td>
 
-                        <td class="preview-placement">
-                          ${placement}
-                        </td>
+                      <td>
 
-                        <td class="preview-kills">
-                          ${killPoints}
-                        </td>
+                        <input
+                          type="number"
+                          min="0"
+                          class="score-kills"
+                          data-team="${escapeAttribute(
+                            team.team
+                          )}"
+                          value="${kills}"
+                          oninput="previewScoreRow(this)"
+                        >
 
-                        <td class="preview-total">
+                      </td>
 
-                          <strong>
-                            ${total}
-                          </strong>
+                      <td class="preview-booyah">
+                        ${
+                          Number(position) === 1
+                            ? "YES"
+                            : "—"
+                        }
+                      </td>
 
-                        </td>
+                      <td class="preview-placement">
+                        ${placement}
+                      </td>
 
-                      </tr>
-                    `;
+                      <td class="preview-kills">
+                        ${killPoints}
+                      </td>
 
-                  }
-                )
-                .join("")
+                      <td class="preview-total">
+                        <strong>
+                          ${total}
+                        </strong>
+                      </td>
+
+                    </tr>
+                  `;
+
+                }
+              ).join("")
             }
 
           </tbody>
@@ -2247,20 +2531,20 @@ async function renderScoreEntry(){
         class="btn success"
         onclick="saveCurrentMatch()"
       >
-        Save Match ${currentScoreMatch}
+        Save Match
+        ${currentScoreMatch}
       </button>
       `;
+
 
   }catch(error){
 
     body.innerHTML =
       `
       <div class="message show error">
-
         ${escapeHTML(
           error.message
         )}
-
       </div>
       `;
 
@@ -2278,26 +2562,28 @@ function calculatePlacement(
 
   const table = {
 
-    1: 12,
-    2: 9,
-    3: 8,
-    4: 7,
-    5: 6,
-    6: 5,
-    7: 4,
-    8: 3,
-    9: 2,
-    10: 1,
-    11: 0,
-    12: 0
+    1:12,
+    2:9,
+    3:8,
+    4:7,
+    5:6,
+    6:5,
+    7:4,
+    8:3,
+    9:2,
+    10:1,
+    11:0,
+    12:0
 
   };
+
 
   return (
     table[
       Number(position)
     ] || 0
   );
+
 }
 
 
@@ -2312,86 +2598,86 @@ function previewScoreRow(
   const row =
     input.closest("tr");
 
+
   if(!row) return;
+
 
   const position =
     Number(
-      row
-        .querySelector(
-          ".score-position"
-        )
-        .value
+      row.querySelector(
+        ".score-position"
+      ).value
     );
+
 
   const kills =
     Number(
-      row
-        .querySelector(
-          ".score-kills"
-        )
-        .value
+      row.querySelector(
+        ".score-kills"
+      ).value
     ) || 0;
+
 
   const placement =
     calculatePlacement(
       position
     );
 
+
   const booyah =
     position === 1
       ? "YES"
       : "—";
 
+
   const total =
-    placement + kills;
+    placement +
+    kills;
+
 
   const booyahCell =
     row.querySelector(
       ".preview-booyah"
     );
 
+
   const placementCell =
     row.querySelector(
       ".preview-placement"
     );
+
 
   const killsCell =
     row.querySelector(
       ".preview-kills"
     );
 
+
   const totalCell =
     row.querySelector(
       ".preview-total"
     );
 
-  if(booyahCell){
 
+  if(booyahCell)
     booyahCell.textContent =
       booyah;
 
-  }
 
-  if(placementCell){
-
+  if(placementCell)
     placementCell.textContent =
       placement;
 
-  }
 
-  if(killsCell){
-
+  if(killsCell)
     killsCell.textContent =
       kills;
 
-  }
 
-  if(totalCell){
-
+  if(totalCell)
     totalCell.innerHTML =
       `<strong>${total}</strong>`;
 
-  }
 }
 
 
@@ -2406,6 +2692,7 @@ async function saveCurrentMatch(){
       "scoreLobby"
     )?.value;
 
+
   if(!lobby){
 
     alert(
@@ -2415,74 +2702,84 @@ async function saveCurrentMatch(){
     return;
   }
 
+
   const entries = [];
+
 
   document
     .querySelectorAll(
       ".score-position"
     )
-    .forEach(input => {
+    .forEach(
+      input => {
 
-      const row =
-        input.closest("tr");
+        const row =
+          input.closest("tr");
 
-      if(!row) return;
 
-      const killsInput =
-        row.querySelector(
-          ".score-kills"
-        );
+        if(!row) return;
 
-      entries.push({
 
-        team:
-          input.dataset.team,
+        const killsInput =
+          row.querySelector(
+            ".score-kills"
+          );
 
-        position:
-          Number(
-            input.value
-          ),
 
-        kills:
-          Number(
-            killsInput?.value
-          ) || 0
+        entries.push({
 
-      });
+          team:
+            input.dataset.team,
 
-    });
+          position:
+            Number(
+              input.value
+            ),
+
+          kills:
+            Number(
+              killsInput?.value
+            ) || 0
+
+        });
+
+      }
+    );
+
 
   try{
 
     await api(
       "/api/leaderboard/match",
       {
-        method: "POST",
+        method:"POST",
 
-        body:
-          JSON.stringify({
+        body:JSON.stringify({
 
-            lobby,
+          lobby,
 
-            matchNo:
-              currentScoreMatch,
+          matchNo:
+            currentScoreMatch,
 
-            entries
+          entries
 
-          })
-
+        })
       }
     );
+
 
     alert(
       `Match ${currentScoreMatch} saved successfully.`
     );
 
+
     await renderScoreEntry();
+
 
     await loadPublicLeaderboard(
       true
     );
+
 
   }catch(error){
 
@@ -2495,7 +2792,7 @@ async function saveCurrentMatch(){
 
 
 /* =========================================================
-   PUBLIC LEADERBOARD LOBBIES
+   PUBLIC LEADERBOARD OPTIONS
 ========================================================= */
 
 async function loadLeaderboardLobbyOptions(){
@@ -2505,10 +2802,13 @@ async function loadLeaderboardLobbyOptions(){
       "publicLobbySelect"
     );
 
+
   if(!select) return;
+
 
   const previous =
     select.value;
+
 
   try{
 
@@ -2517,6 +2817,7 @@ async function loadLeaderboardLobbyOptions(){
         "/api/public/lobbies"
       );
 
+
     select.innerHTML =
       `
       <option value="">
@@ -2524,30 +2825,26 @@ async function loadLeaderboardLobbyOptions(){
       </option>
       ` +
 
-      lobbies
-        .map(lobby => {
+      lobbies.map(
+        lobby => `
+          <option
+            value="${escapeAttribute(
+              lobby.name
+            )}"
+          >
+            ${escapeHTML(
+              lobby.name
+            )}
+          </option>
+        `
+      ).join("");
 
-          return `
-            <option
-              value="${escapeAttribute(
-                lobby.name
-              )}"
-            >
-              ${escapeHTML(
-                lobby.name
-              )}
-            </option>
-          `;
-
-        })
-        .join("");
 
     if(
       previous &&
       lobbies.some(
         lobby =>
-          lobby.name ===
-          previous
+          lobby.name === previous
       )
     ){
 
@@ -2556,7 +2853,9 @@ async function loadLeaderboardLobbyOptions(){
 
     }
 
+
     startLeaderboardLive();
+
 
     if(select.value){
 
@@ -2566,10 +2865,10 @@ async function loadLeaderboardLobbyOptions(){
 
     }
 
+
   }catch(error){
 
     console.error(
-      "Leaderboard lobby error:",
       error
     );
 
@@ -2590,17 +2889,21 @@ async function loadPublicLeaderboard(
       "publicLobbySelect"
     )?.value;
 
+
   const match =
     document.getElementById(
       "publicMatchSelect"
     )?.value;
+
 
   const target =
     document.getElementById(
       "publicLeaderboard"
     );
 
+
   if(!target) return;
+
 
   if(!lobby){
 
@@ -2609,9 +2912,7 @@ async function loadPublicLeaderboard(
       target.innerHTML =
         `
         <div class="message show error">
-
           Please select a lobby.
-
         </div>
         `;
 
@@ -2620,32 +2921,34 @@ async function loadPublicLeaderboard(
     return;
   }
 
-  try{
 
-    let data;
+  try{
 
     if(match === "overall"){
 
-      data =
+      const data =
         await api(
           `/api/public-leaderboard?lobby=${encodeURIComponent(
             lobby
           )}`
         );
 
+
       const rows =
         Array.isArray(data)
           ? data
           : data.rows || [];
+
 
       renderOverallLeaderboard(
         target,
         rows
       );
 
+
     }else{
 
-      data =
+      const data =
         await api(
           `/api/leaderboard/match?lobby=${encodeURIComponent(
             lobby
@@ -2654,6 +2957,7 @@ async function loadPublicLeaderboard(
           )}`
         );
 
+
       renderMatchLeaderboard(
         target,
         data,
@@ -2661,6 +2965,7 @@ async function loadPublicLeaderboard(
       );
 
     }
+
 
   }catch(error){
 
@@ -2697,6 +3002,7 @@ function startLeaderboardLive(){
 
   }
 
+
   leaderboardTimer =
     setInterval(
       async () => {
@@ -2706,10 +3012,12 @@ function startLeaderboardLive(){
             "leaderboard"
           );
 
+
         const lobby =
           document.getElementById(
             "publicLobbySelect"
           );
+
 
         if(
           page &&
@@ -2720,7 +3028,7 @@ function startLeaderboardLive(){
           lobby.value
         ){
 
-          loadPublicLeaderboard(
+          await loadPublicLeaderboard(
             true
           );
 
@@ -2729,6 +3037,7 @@ function startLeaderboardLive(){
       },
       5000
     );
+
 }
 
 
@@ -2751,10 +3060,8 @@ function renderOverallLeaderboard(
       <div class="card">
 
         <p class="muted">
-
           No confirmed teams in this
           lobby yet.
-
         </p>
 
       </div>
@@ -2762,6 +3069,7 @@ function renderOverallLeaderboard(
 
     return;
   }
+
 
   target.innerHTML =
     `
@@ -2787,6 +3095,7 @@ function renderOverallLeaderboard(
 
       </div>
 
+
       <div class="table-wrap">
 
         <table>
@@ -2794,79 +3103,67 @@ function renderOverallLeaderboard(
           <thead>
 
             <tr>
-
               <th>Rank</th>
-
               <th>Team</th>
-
               <th>Booyahs</th>
-
               <th>Kill Points</th>
-
               <th>Placement Points</th>
-
               <th>Total Points</th>
-
             </tr>
 
           </thead>
 
+
           <tbody>
 
             ${
-              rows
-                .map(row => {
+              rows.map(
+                row => `
+                  <tr>
 
-                  return `
-                    <tr>
+                    <td class="rank">
+                      #${Number(
+                        row.position
+                      )}
+                    </td>
 
-                      <td class="rank">
-                        #${Number(
-                          row.position
+                    <td>
+                      <strong>
+                        ${escapeHTML(
+                          row.team
                         )}
-                      </td>
+                      </strong>
+                    </td>
 
-                      <td>
-                        <strong>
-                          ${escapeHTML(
-                            row.team
-                          )}
-                        </strong>
-                      </td>
+                    <td>
+                      ${Number(
+                        row.booyahs || 0
+                      )}
+                    </td>
 
-                      <td>
+                    <td>
+                      ${Number(
+                        row.killPoints || 0
+                      )}
+                    </td>
+
+                    <td>
+                      ${Number(
+                        row.placementPoints || 0
+                      )}
+                    </td>
+
+                    <td>
+                      <strong>
                         ${Number(
-                          row.booyahs || 0
+                          row.totalPoints || 0
                         )}
-                      </td>
+                      </strong>
+                    </td>
 
-                      <td>
-                        ${Number(
-                          row.killPoints || 0
-                        )}
-                      </td>
-
-                      <td>
-                        ${Number(
-                          row.placementPoints || 0
-                        )}
-                      </td>
-
-                      <td>
-
-                        <strong>
-                          ${Number(
-                            row.totalPoints || 0
-                          )}
-                        </strong>
-
-                      </td>
-
-                    </tr>
-                  `;
-
-                })
-                .join("")
+                  </tr>
+                `
+              ).join("")
             }
 
           </tbody>
@@ -2914,6 +3211,7 @@ function renderMatchLeaderboard(
     return;
   }
 
+
   target.innerHTML =
     `
     <div class="card">
@@ -2939,6 +3237,7 @@ function renderMatchLeaderboard(
 
       </div>
 
+
       <div class="table-wrap">
 
         <table>
@@ -2946,93 +3245,78 @@ function renderMatchLeaderboard(
           <thead>
 
             <tr>
-
               <th>Position</th>
-
               <th>Team</th>
-
               <th>Booyah</th>
-
               <th>Kills</th>
-
               <th>Kill Points</th>
-
               <th>Placement Points</th>
-
               <th>Total Points</th>
-
             </tr>
 
           </thead>
 
+
           <tbody>
 
             ${
-              rows
-                .map(row => {
+              rows.map(
+                row => `
+                  <tr>
 
-                  return `
-                    <tr>
+                    <td class="rank">
+                      #${Number(
+                        row.position
+                      )}
+                    </td>
 
-                      <td class="rank">
-                        #${Number(
-                          row.position
+                    <td>
+                      <strong>
+                        ${escapeHTML(
+                          row.team
                         )}
-                      </td>
+                      </strong>
+                    </td>
 
-                      <td>
-                        <strong>
-                          ${escapeHTML(
-                            row.team
-                          )}
-                        </strong>
-                      </td>
+                    <td>
+                      ${
+                        Number(
+                          row.booyah
+                        ) === 1
+                          ? "YES"
+                          : "—"
+                      }
+                    </td>
 
-                      <td>
+                    <td>
+                      ${Number(
+                        row.kills || 0
+                      )}
+                    </td>
 
-                        ${
-                          Number(
-                            row.booyah
-                          ) === 1
-                            ? "YES"
-                            : "—"
-                        }
+                    <td>
+                      ${Number(
+                        row.kill_points || 0
+                      )}
+                    </td>
 
-                      </td>
+                    <td>
+                      ${Number(
+                        row.placement_points || 0
+                      )}
+                    </td>
 
-                      <td>
+                    <td>
+                      <strong>
                         ${Number(
-                          row.kills || 0
+                          row.total_points || 0
                         )}
-                      </td>
+                      </strong>
+                    </td>
 
-                      <td>
-                        ${Number(
-                          row.kill_points || 0
-                        )}
-                      </td>
-
-                      <td>
-                        ${Number(
-                          row.placement_points || 0
-                        )}
-                      </td>
-
-                      <td>
-
-                        <strong>
-                          ${Number(
-                            row.total_points || 0
-                          )}
-                        </strong>
-
-                      </td>
-
-                    </tr>
-                  `;
-
-                })
-                .join("")
+                  </tr>
+                `
+              ).join("")
             }
 
           </tbody>
@@ -3134,6 +3418,7 @@ document
           "publicLobbySelect"
         )?.value;
 
+
       if(lobby){
 
         loadPublicLeaderboard();
@@ -3156,21 +3441,26 @@ document.addEventListener(
       "homeLobbies"
     );
 
+
     startLeaderboardLive();
+
 
     const timeInput =
       document.getElementById(
         "regTime"
       );
 
+
     const feeInput =
       document.getElementById(
         "regFee"
       );
 
+
     if(timeInput){
 
-      timeInput.readOnly = true;
+      timeInput.readOnly =
+        true;
 
       timeInput.setAttribute(
         "readonly",
@@ -3179,9 +3469,11 @@ document.addEventListener(
 
     }
 
+
     if(feeInput){
 
-      feeInput.readOnly = true;
+      feeInput.readOnly =
+        true;
 
       feeInput.setAttribute(
         "readonly",
